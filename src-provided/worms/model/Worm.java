@@ -102,5 +102,17 @@ public class Worm {
 			setActionPoints(getActionPoints() - (int) Math.ceil(60*(Math.abs(angle)/(2*Math.PI))));
 		}
 	}
+	
+	public boolean canMove(int steps){
+		return getActionPoints() >= (int) Math.ceil(steps*(Math.abs(Math.cos(getDirection())) + 4*Math.abs(Math.sin(getDirection()))));
+	}
+	
+	public void move(int steps){
+		if (canMove(steps)){
+			setXCoordinates(getXCoordinates() + getRadius()*steps*Math.cos(getDirection()));
+			setYCoordinates(getYCoordinates() + getRadius()*steps*Math.sin(getDirection()));
+			setActionPoints(getActionPoints() - (int) Math.ceil(steps*(Math.abs(Math.cos(getDirection())) + 4*Math.abs(Math.sin(getDirection())))));
+		}
+	}
 
 }
