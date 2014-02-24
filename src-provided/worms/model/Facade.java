@@ -32,35 +32,35 @@ public class Facade implements IFacade {
 	 * Returns whether or not the given worm can move a given number of steps.
 	 */
 	public boolean canMove(Worm worm, int nbSteps) {
-		return false;
+		return worm.canMove(nbSteps);
 	}
 
 	/**
 	 * Moves the given worm by the given number of steps.
 	 */
 	public void move(Worm worm, int nbSteps) {
-		
+		worm.move(nbSteps);
 	}
 
 	/**
 	 * Returns whether or not the given worm can turn by the given angle.
 	 */
 	public boolean canTurn(Worm worm, double angle) {
-		return false;
+		return worm.canTurn(angle);
 	}
 
 	/**
 	 * Turns the given worm by the given angle.
 	 */
 	public void turn(Worm worm, double angle) {
-		
+		worm.turn(angle);
 	}
 
 	/**
 	 * Makes the given worm jump.
 	 */
 	public void jump(Worm worm) {
-		
+		worm.jump();
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class Facade implements IFacade {
 	 * jump of the given worm would take.
 	 */
 	public double getJumpTime(Worm worm) {
-		return 0;
+		return worm.jumpTime();
 	}
 
 	/**
@@ -80,8 +80,7 @@ public class Facade implements IFacade {
 	 *  the second element the y-coordinate
 	 */
 	public double[] getJumpStep(Worm worm, double t) {
-		double[] array = {0,0};
-		return array;
+		return worm.jumpStep(t);
 	}
 
 	/**
@@ -117,6 +116,7 @@ public class Facade implements IFacade {
 	 */
 	public void setRadius(Worm worm, double newRadius) {
 		worm.setRadius(newRadius);
+		worm.setMass(worm.calcMass(newRadius));
 	}
 	
 	/**
