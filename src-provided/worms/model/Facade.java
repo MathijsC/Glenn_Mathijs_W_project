@@ -60,7 +60,7 @@ public class Facade implements IFacade {
 	 * Makes the given worm jump.
 	 */
 	public void jump(Worm worm) {
-		
+		worm.jump();
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class Facade implements IFacade {
 	 * jump of the given worm would take.
 	 */
 	public double getJumpTime(Worm worm) {
-		return 0;
+		return worm.jumpTime();
 	}
 
 	/**
@@ -80,8 +80,7 @@ public class Facade implements IFacade {
 	 *  the second element the y-coordinate
 	 */
 	public double[] getJumpStep(Worm worm, double t) {
-		double[] array = {0,0};
-		return array;
+		return worm.jumpStep(t);
 	}
 
 	/**
