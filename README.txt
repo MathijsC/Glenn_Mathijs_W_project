@@ -11,3 +11,5 @@ WORMS
 =====
 
 The assignment of this project is to create the game 'Worms'.
+
+END
