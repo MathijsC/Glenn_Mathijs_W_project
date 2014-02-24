@@ -25,7 +25,7 @@ public class Facade implements IFacade {
 	 * The name of the new worm
 	 */
 	public Worm createWorm(double x, double y, double direction, double radius, String name) {
-		return null;
+		return new Worm(x,y,direction,radius,name);
 	}
 
 	/**
@@ -88,35 +88,35 @@ public class Facade implements IFacade {
 	 * Returns the x-coordinate of the current location of the given worm.
 	 */
 	public double getX(Worm worm) {
-		return 0;
+		return worm.getXCoordinates();
 	}
 
 	/**
 	 * Returns the y-coordinate of the current location of the given worm.
 	 */
 	public double getY(Worm worm) {
-		return 0;
+		return worm.getYCoordinates();
 	}
 
 	/**
 	 * Returns the current orientation of the given worm (in radians).
 	 */
 	public double getOrientation(Worm worm) {
-		return 0;
+		return worm.getDirection();
 	}
 
 	/**
 	 * Returns the radius of the given worm.
 	 */
 	public double getRadius(Worm worm) {
-		return 0;
+		return worm.getRadius();
 	}
 	
 	/**
 	 * Sets the radius of the given worm to the given value.
 	 */
 	public void setRadius(Worm worm, double newRadius) {
-		
+		worm.setRadius(newRadius);
 	}
 	
 	/**
@@ -130,35 +130,35 @@ public class Facade implements IFacade {
 	 * Returns the current number of action points of the given worm.
 	 */
 	public int getActionPoints(Worm worm) {
-		return 0;
+		return worm.getActionPoints();
 	}
 	
 	/**
 	 * Returns the maximum number of action points of the given worm.
 	 */
 	public int getMaxActionPoints(Worm worm) {
-		return 0;
+		return worm.getMaxActionPoints();
 	}
 	
 	/**
 	 * Returns the name the given worm.
 	 */
 	public String getName(Worm worm) {
-		return null;
+		return worm.getName();
 	}
 
 	/**
 	 * Renames the given worm.
 	 */
 	public void rename(Worm worm, String newName) {
-		
+		worm.setName(newName);
 	}
 
 	/**
 	 * Returns the mass of the given worm.
 	 */
 	public double getMass(Worm worm) {
-		return 0;
+		return worm.getMass();
 	}
 	
 	
