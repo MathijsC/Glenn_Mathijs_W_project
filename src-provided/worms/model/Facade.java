@@ -46,14 +46,14 @@ public class Facade implements IFacade {
 	 * Returns whether or not the given worm can turn by the given angle.
 	 */
 	public boolean canTurn(Worm worm, double angle) {
-		return false;
+		return worm.canTurn(angle);
 	}
 
 	/**
 	 * Turns the given worm by the given angle.
 	 */
 	public void turn(Worm worm, double angle) {
-		
+		worm.turn(angle);
 	}
 
 	/**
@@ -117,6 +117,7 @@ public class Facade implements IFacade {
 	 */
 	public void setRadius(Worm worm, double newRadius) {
 		worm.setRadius(newRadius);
+		worm.setMass(worm.calcMass(newRadius));
 	}
 	
 	/**

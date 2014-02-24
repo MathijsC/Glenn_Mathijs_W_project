@@ -91,5 +91,16 @@ public class Worm {
 	public int getMaxActionPoints(){
 		return (int) Math.round(getMass());
 	}
+	
+	public boolean canTurn(double angle){
+		return getActionPoints() >= 60*(Math.abs(angle)/(2*Math.PI));
+	}
+	
+	public void turn(double angle){
+		if (canTurn(angle)) {
+			setDirection(getDirection()+angle);
+			setActionPoints(getActionPoints() - (int) Math.ceil(60*(Math.abs(angle)/(2*Math.PI))));
+		}
+	}
 
 }
