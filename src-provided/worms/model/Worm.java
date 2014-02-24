@@ -40,6 +40,12 @@ public class Worm {
 	}
 
 	public void setDirection(double direction) {
+		while (direction >= 2*Math.PI){
+			direction -= 2*Math.PI;
+		}
+		while (direction < 0){
+			direction += 2*Math.PI;
+		}
 		this.direction = direction;
 	}
 	
@@ -51,6 +57,10 @@ public class Worm {
 
 	public void setRadius(double radius) {
 		this.radius = radius;
+	}
+	
+	public double getMinRadius(){
+		return 0.25;
 	}
 	
 	public String name;
