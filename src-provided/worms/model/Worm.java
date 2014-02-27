@@ -43,8 +43,8 @@ public class Worm {
 	 * 			|	then new.getName == name
 	 */
 	public Worm(double x, double y, double direction, double radius, String name) {
-		setXCoordinates(x);
-		setYCoordinates(y);
+		setXCoordinate(x);
+		setYCoordinate(y);
 		setDirection(direction);
 		setRadius(radius);
 		setMass(calcMass(radius));
@@ -52,75 +52,173 @@ public class Worm {
 		setName(name);
 	}
 	
-	public double xCoordinates;
+	/**
+	 * Variable registering the x-coordinate of the position of this worm.
+	 */
+	public double xCoordinate;
 
-	public double getXCoordinates() {
-		return xCoordinates;
+	/**
+	 * Return the x-coordinate of the position of this worm.
+	 * @return	The x-coordinate of the position of this worm.
+	 */
+	@Basic
+	public double getXCoordinate() {
+		return xCoordinate;
 	}
-
-	public void setXCoordinates(double xCoordinates) {
-		this.xCoordinates = xCoordinates;
-	}
-
-	public double yCoordinates;
-
-	public double getYCoordinates() {
-		return yCoordinates;
-	}
-
-	public void setYCoordinates(double yCoordinates) {
-		this.yCoordinates = yCoordinates;
+	/**
+	 * Set the x-coordinate of the position of this worm to the given xCoordinate.
+	 * @param 	xCoordinate
+	 * 			The x-coordinate to be set as the position of this worm
+	 * @post	The given xCoordinate is the new position of this worm.
+	 * 			| new.getXCoordinate() == xCoordinate
+	 */
+	public void setXCoordinate(double xCoordinate) {
+		this.xCoordinate = xCoordinate;
 	}
 	
+	/**
+	 * Variable registering the y-coordinate of the position of this worm.
+	 */
+	public double yCoordinate;
+	
+	/**
+	 * Return the y-coordinate of the position of this worm.
+	 * @return	The y-coordinate of the position of this worm.
+	 */
+	@Basic
+	public double getYCoordinate() {
+		return yCoordinate;
+	}
+
+	/**
+	 * Set the y-coordinate of the position of this worm to the given yCoordinate.
+	 * @param 	yCoordinate
+	 * 			The x-coordinate to be set as the position of this worm
+	 * @post	The given yCoordinate is the new position of this worm.
+	 * 			| new.getYCoordinate() == yCoordinate
+	 */
+	public void setYCoordinate(double yCoordinate) {
+		this.yCoordinate = yCoordinate;
+	}
+	
+	/**
+	 * Variable to register the looking direction of this worm.
+	 */
 	public double direction;
 
+	/**
+	 * Return the looking direction of this worm.
+	 * @return	The looking direction of this worm.
+	 */
 	public double getDirection() {
 		return direction;
 	}
 
+	/**
+	 * Set the direction of this worm to the given direction
+	 * 
+	 * @param 	direction
+	 * 			The new direction of this worm
+	 * @pre		???????????????????????????????????????????
+	 * 
+	 * @post	The new direction of this worm is equal to the
+	 * 			given direction calculated module 2*PI
+	 * 			| new.getDirection() == direction % (Math.PI*2)
+	 */
 	public void setDirection(double direction) {
 		this.direction = (direction % (Math.PI*2));
 	}
 	
+	/**
+	 * Variable holding the radius of this worm
+	 */
 	public double radius;
 	
+	/**
+	 * Return the radius of this worm.
+	 * @return	The radius of this worm.
+	 */
 	public double getRadius() {
 		return radius;
 	}
 
+	//defensief uitwerken met throws!!
 	public void setRadius(double radius) {
 		if (radius < getMinRadius())
 			this.radius = getMinRadius();
 		else
 			this.radius = radius;
 	}
-	
+
+	/**
+	 * Return the minimal radius this worm should have.
+	 * @return	The minimal radius this worm should have.
+	 */
 	public double getMinRadius(){
 		return 0.25;
 	}
 	
+	/**
+	 * Variable holding the name of this worm.
+	 */
 	public String name;
 
+	/**
+	 * Return the name of this worm.
+	 * @return	The name of this worm.
+	 */
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		if(isValidName(name))
-			this.name = name;
+	/**
+	 * Set the name of this worm to the given name.
+	 * @param 	name
+	 * 			The new name this worm should have.
+	 * @post	The given name is the new name of this worm.
+	 * 			| new.getName() == name
+	 * @throws 	IllegalArgumentException
+	 * 			The name is an invalid name.
+	 * 			| !isValidName(name)
+	 */			
+	public void setName(String name) throws IllegalArgumentException {
+		if(!isValidName(name))
+			throw new IllegalArgumentException();
+		this.name = name;
 	}
 	
+	/**
+	 * Check whether a given name is a valid name.
+	 * 
+	 * @param 	name
+	 * 			The name to check whether it is valid or not.
+	 * @return	True if the name starts with a Capital letter
+	 * 			and contains only letter, spaces, single quotes
+	 * 			and/or double quotes and is at least two characters
+	 * 			long.
+	 * 			| name.matches("[A-Z][a-zA-Z\'\" ]+");
+	 */
 	public boolean isValidName(String name){
 		return name.matches("[A-Z][a-zA-Z\'\" ]+");
 	}
 	
+	/**
+	 * Variable containing the mass of this worm.
+	 */
 	public double mass;
 	
-
+	/**
+	 * Return the mass of this worm.
+	 * @return	The mass of this worm.
+	 */
 	public double getMass() {
 		return mass;
 	}
 
+	/**
+	 * 
+	 * @param mass
+	 */
 	public void setMass(double mass) {
 		this.mass = mass;
 	}
@@ -129,16 +227,50 @@ public class Worm {
 		return 1062*(4/3)*Math.pow(r, 3)*Math.PI;
 	}
 
+	/**
+	 * Variable holding the number of actionpoints of this worm.
+	 */
 	public int actionPoints;
 	
+	/**
+	 * Return the number of actionpoints of this worm.
+	 * @return	The number of actionpoints of this worm.
+	 */
 	public int getActionPoints() {
 		return actionPoints;
 	}
 
+	/**
+	 * Set the number of actionpoints of this worm to the given number of points.
+	 * @param 	actionPoints
+	 * 			The new number of actionpoints of this worm.
+	 * @post	If the given actionpoints are negative, the actionpoints of
+	 * 			this worm are set to zero.
+	 * 			| if (actionPoints < 0)
+	 * 			|	then new.getActionPoints() == 0
+	 * @post	Else if the given actionpoints are greater then the maximum amount
+	 * 			of actionpoint, the actionpoints of this worm are set to the
+	 * 			maximum amount.
+	 * 			| else if (actionPoints > this.getMaxActionPoints())
+	 * 			| 	then new.getActionPoints() == this.getActionPoints()
+	 * @post	Else the actionpoints of this worm are set to the given 
+	 * 			amount of actionpoints.
+	 * 			| else
+	 * 			|	then new.getActionPoints() == actionPoints
+	 */
 	public void setActionPoints(int actionPoints) {
-		this.actionPoints = actionPoints;
+		if (actionPoints < 0)
+			this.actionPoints = 0;
+		else if (actionPoints > this.getMaxActionPoints())
+			this.actionPoints = this.getMaxActionPoints();
+		else
+			this.actionPoints = actionPoints;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getMaxActionPoints(){
 		return (int) Math.round(getMass());
 	}
