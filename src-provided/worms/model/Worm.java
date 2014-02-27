@@ -1,8 +1,47 @@
 package worms.model;
+import be.kuleuven.cs.som.annotate.*;
 
+/**
+ * A class for the worm objects who are used in the game Worms.
+ * @author Glenn Cools, Mathijs Cuppens
+ *
+ */
 public class Worm {
 	
-	
+	/**
+	 * Initialize this new worm with a given position (x,y), looking direction,
+	 * radius and name.
+	 * @param 	x
+	 * 			The x-coordinate of the position for this new worm (in meters).
+	 * @param 	y
+	 * 			The y-coordinate of the position for this new worm (in meters).
+	 * @param 	direction
+	 * 			The looking direction for this new worm (in radians).
+	 * @param 	radius
+	 * 			The radius for this new worm (in meters).
+	 * @param 	name
+	 * 			The name for this new worm.
+	 * @post	The looking direction of the new worm is equal to the given
+	 * 			direction modulo 2*PI.
+	 * 			| new.getDirection() == direction % (Math.PI*2)
+	 * @post	If the given radius is smaller then the lower bound, then the 
+	 * 			radius of this new worm is equal to the lower bound. 
+	 * 			Else the radius of this new worm is equal to the given radius.
+	 * 			| if (radius < getMinRadius())
+	 * 			|	then radius == getMinRadius()
+	 * 			| else
+	 * 			|	then radius == radius
+	 * @post	The mass of this new worm is set to a value calculated like a
+	 * 			sphere density and the given radius.
+	 * 			| new.getMass() == calcMass(radius)
+	 * @post	The actionpoints of this new worm is set the the maximum possible
+	 * 			actionpoints for this new worm in accordance to its mass.
+	 * 			| new.getActionPoints == getMaxActionPoints()
+	 * @post	If the given name is a valid name, the name of this new worm is
+	 * 			equal to the given name.
+	 * 			| if (isValidName(name))
+	 * 			|	then new.getName == name
+	 */
 	public Worm(double x, double y, double direction, double radius, String name) {
 		setXCoordinates(x);
 		setYCoordinates(y);
@@ -40,13 +79,7 @@ public class Worm {
 	}
 
 	public void setDirection(double direction) {
-		while (direction >= 2*Math.PI){
-			direction -= 2*Math.PI;
-		}
-		while (direction < 0){
-			direction += 2*Math.PI;
-		}
-		this.direction = direction;
+		this.direction = (direction % (Math.PI*2));
 	}
 	
 	public double radius;
@@ -56,7 +89,10 @@ public class Worm {
 	}
 
 	public void setRadius(double radius) {
-		this.radius = radius;
+		if (radius < getMinRadius())
+			this.radius = getMinRadius();
+		else
+			this.radius = radius;
 	}
 	
 	public double getMinRadius(){
@@ -70,7 +106,12 @@ public class Worm {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		if(isValidName(name))
+			this.name = name;
+	}
+	
+	public boolean isValidName(String name){
+		return name.matches("[A-Z][a-zA-Z\'\" ]+");
 	}
 	
 	public double mass;
