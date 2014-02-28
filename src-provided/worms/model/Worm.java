@@ -114,9 +114,10 @@ public class Worm {
 			setActionPoints(getActionPoints() - (int) Math.ceil(steps*(Math.abs(Math.cos(getDirection())) + 4*Math.abs(Math.sin(getDirection())))));
 		}
 	}
+	final double GRAVITY = 9.80665;
 	
 	public double initialVelocity(){
-		double force = 5*getActionPoints() + getMass()*9.80665;
+		double force = 5*getActionPoints() + getMass()*GRAVITY;
 		return force/getMass()*0.5;
 	}
 	
@@ -126,7 +127,7 @@ public class Worm {
 	
 	public void jump(){
 		if (canJump()){
-			double dist = Math.pow(initialVelocity(),2)*Math.sin(2*getDirection())/9.80665;
+			double dist = Math.pow(initialVelocity(),2)*Math.sin(2*getDirection())/GRAVITY;
 			setXCoordinates(getXCoordinates()+dist);
 			setActionPoints(0);
 		}
@@ -134,7 +135,7 @@ public class Worm {
 	
 	public double jumpTime(){
 		if (canJump()){
-			return initialVelocity()*Math.sin(2*getDirection())/(9.80665*Math.cos(getDirection()));
+			return initialVelocity()*Math.sin(2*getDirection())/(GRAVITY*Math.cos(getDirection()));
 		} else {
 			return 0;
 		}
@@ -142,7 +143,7 @@ public class Worm {
 	
 	public double[] jumpStep(double time){
 		double X = getXCoordinates()+initialVelocity()*Math.cos(getDirection())*time;
-		double Y = getYCoordinates()+initialVelocity()*Math.sin(getDirection())*time-0.5*9.80665*Math.pow(time,2);
+		double Y = getYCoordinates()+initialVelocity()*Math.sin(getDirection())*time-0.5*GRAVITY*Math.pow(time,2);
 		double[] coord = {X,Y};
 		return coord;
 	}
