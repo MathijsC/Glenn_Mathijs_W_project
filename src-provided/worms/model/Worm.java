@@ -4,7 +4,8 @@ import be.kuleuven.cs.som.annotate.*;
 /**
  * A class for the worm objects who are used in the game Worms.
  * @author Glenn Cools, Mathijs Cuppens
- *
+ *	
+ * @version 1.03
  */
 public class Worm {
 	
@@ -120,6 +121,7 @@ public class Worm {
 	 * @param 	direction
 	 * 			The new direction of this worm
 	 * @pre		???????????????????????????????????????????
+	 * 			!Hoe doen we het met negative richtingen? !
 	 * 
 	 * @post	The new direction of this worm is equal to the
 	 * 			given direction calculated module 2*PI
@@ -216,15 +218,29 @@ public class Worm {
 	}
 
 	/**
-	 * 
-	 * @param mass
+	 * Set the mass of this worm to the given mass
+	 * @pre 	The given mass may not be negative
+	 * 			|mass > 0
+	 * @post	The mass of the worm will now be equal to the given mass
+	 * 			|new.getMass() = mass
 	 */
 	public void setMass(double mass) {
+		// preconditie erin zetten ?! 
 		this.mass = mass;
 	}
 	
-	public double calcMass(double r){
-		return 1062*(4/3)*Math.pow(r, 3)*Math.PI;
+	
+	/**
+	 * Calculates the mass of the worm by multiplying its density by its volume (spherical: 4/3 * PI * radius)
+	 * @pre		The radius of the worm have to be an positive number
+	 * 			|radius > 0
+	 * @post	The worm will now have a mass equal to the product of its density and volume
+	 * 			|new.getMass() = DENSITY_OF_THE_WORM*VOLUME with VOLUME= 4/3*r^3*PI
+	 */
+	public double calcMass(double radius){
+		final int DENSITY_OF_THE_WORM = 1062;
+		
+		return DENSITY_OF_THE_WORM*(4/3)*Math.pow(radius, 3)*Math.PI;
 	}
 
 	/**
@@ -268,8 +284,8 @@ public class Worm {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Return the maximum number of actionpoints of this worm.
+	 * @return	The maximum number of actionpoints of this worm.
 	 */
 	public int getMaxActionPoints(){
 		return (int) Math.round(getMass());
