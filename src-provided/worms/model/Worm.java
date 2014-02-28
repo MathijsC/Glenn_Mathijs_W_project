@@ -111,6 +111,7 @@ public class Worm {
 	 * Return the looking direction of this worm.
 	 * @return	The looking direction of this worm.
 	 */
+	@Basic
 	public double getDirection() {
 		return direction;
 	}
@@ -140,16 +141,22 @@ public class Worm {
 	 * Return the radius of this worm.
 	 * @return	The radius of this worm.
 	 */
+	@Basic
 	public double getRadius() {
 		return radius;
 	}
-
-	//defensief uitwerken met throws!!
-	public void setRadius(double radius) {
-		if (radius < getMinRadius())
-			this.radius = getMinRadius();
-		else
+	// misschien een catch erbij steken, anders stop het spel plots.. :/
+	public void setRadius(double radius) throws IllegalArgumentException{
+		if(!isValidRadius(radius))
+				throw new IllegalArgumentException();
+		//if (radius < getMinRadius())
+		//	this.radius = getMinRadius();
+		//else
 			this.radius = radius;
+	}
+	
+	public boolean isValidRadius(double radius){
+		return radius >= getMinRadius();
 	}
 
 	/**
@@ -169,6 +176,7 @@ public class Worm {
 	 * Return the name of this worm.
 	 * @return	The name of this worm.
 	 */
+	@Basic
 	public String getName() {
 		return name;
 	}
@@ -182,7 +190,8 @@ public class Worm {
 	 * @throws 	IllegalArgumentException
 	 * 			The name is an invalid name.
 	 * 			| !isValidName(name)
-	 */			
+	 */	
+	//Catch?
 	public void setName(String name) throws IllegalArgumentException {
 		if(!isValidName(name))
 			throw new IllegalArgumentException();
@@ -213,6 +222,7 @@ public class Worm {
 	 * Return the mass of this worm.
 	 * @return	The mass of this worm.
 	 */
+	@Basic
 	public double getMass() {
 		return mass;
 	}
@@ -224,8 +234,10 @@ public class Worm {
 	 * @post	The mass of the worm will now be equal to the given mass
 	 * 			|new.getMass() = mass
 	 */
-	public void setMass(double mass) {
-		// preconditie erin zetten ?! 
+	//Catch? 
+	public void setMass(double mass) throws IllegalArgumentException{
+		if(mass < 0) 
+			throw new IllegalArgumentException();
 		this.mass = mass;
 	}
 	
@@ -237,8 +249,11 @@ public class Worm {
 	 * @post	The worm will now have a mass equal to the product of its density and volume
 	 * 			|new.getMass() = DENSITY_OF_THE_WORM*VOLUME with VOLUME= 4/3*r^3*PI
 	 */
-	public double calcMass(double radius){
+	public double calcMass(double radius) throws IllegalArgumentException{
 		final int DENSITY_OF_THE_WORM = 1062;
+		
+		if(!isValidRadius(radius))
+			throw new IllegalArgumentException();		
 		
 		return DENSITY_OF_THE_WORM*(4/3)*Math.pow(radius, 3)*Math.PI;
 	}
@@ -252,6 +267,7 @@ public class Worm {
 	 * Return the number of actionpoints of this worm.
 	 * @return	The number of actionpoints of this worm.
 	 */
+	@Basic
 	public int getActionPoints() {
 		return actionPoints;
 	}
