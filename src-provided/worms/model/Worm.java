@@ -358,8 +358,8 @@ public class Worm {
 		 */
 	public void move(int steps){
 		if (canMove(steps)){
-				setXCoordinates(getXCoordinate() + getRadius()*steps*Math.cos(getDirection()));
-				setYCoordinates(getYCoordinate() + getRadius()*steps*Math.sin(getDirection()));
+				setXCoordinate(getXCoordinate() + getRadius()*steps*Math.cos(getDirection()));
+				setYCoordinate(getYCoordinate() + getRadius()*steps*Math.sin(getDirection()));
 				setActionPoints(getActionPoints() - (int) Math.ceil(steps*(Math.abs(Math.cos(getDirection())) + 4*Math.abs(Math.sin(getDirection())))));
 		}
 	}
@@ -398,7 +398,7 @@ public class Worm {
 	public void jump(){
 		if (canJump()){
 			double dist = Math.pow(initialVelocity(),2)*Math.sin(2*getDirection())/GRAVITY;
-			setXCoordinates(getXCoordinate()+dist);
+			setXCoordinate(getXCoordinate()+dist);
 			setActionPoints(0);
 		}
 	}
