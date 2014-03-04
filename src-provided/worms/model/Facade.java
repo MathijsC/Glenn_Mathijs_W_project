@@ -87,14 +87,14 @@ public class Facade implements IFacade {
 	 * Returns the x-coordinate of the current location of the given worm.
 	 */
 	public double getX(Worm worm) {
-		return worm.getXCoordinates();
+		return worm.getXCoordinate();
 	}
 
 	/**
 	 * Returns the y-coordinate of the current location of the given worm.
 	 */
 	public double getY(Worm worm) {
-		return worm.getYCoordinates();
+		return worm.getYCoordinate();
 	}
 
 	/**
