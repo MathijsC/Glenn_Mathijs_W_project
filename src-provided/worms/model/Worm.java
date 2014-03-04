@@ -4,8 +4,8 @@ public class Worm {
 	
 	
 	public Worm(double x, double y, double direction, double radius, String name) {
-		setXCoordinate(x);
-		setYCoordinate(y);
+		setXCoordinates(x);
+		setYCoordinates(y);
 		setDirection(direction);
 		setRadius(radius);
 		setMass(calcMass(radius));
@@ -13,24 +13,24 @@ public class Worm {
 		setName(name);
 	}
 	
-	public double xCoordinate;
+	public double xCoordinates;
 
-	public double getXCoordinate() {
-		return xCoordinate;
+	public double getXCoordinates() {
+		return xCoordinates;
 	}
 
-	public void setXCoordinate(double xCoordinate) {
-		this.xCoordinate = xCoordinate;
+	public void setXCoordinates(double xCoordinates) {
+		this.xCoordinates = xCoordinates;
 	}
 
-	public double yCoordinate;
+	public double yCoordinates;
 
-	public double getYCoordinate() {
-		return yCoordinate;
+	public double getYCoordinates() {
+		return yCoordinates;
 	}
 
-	public void setYCoordinate(double yCoordinate) {
-		this.yCoordinate = yCoordinate;
+	public void setYCoordinates(double yCoordinates) {
+		this.yCoordinates = yCoordinates;
 	}
 	
 	public double direction;
@@ -143,8 +143,8 @@ public class Worm {
 		 */
 	public void move(int steps){
 		if (canMove(steps)){
-				setXCoordinate(getXCoordinate() + getRadius()*steps*Math.cos(getDirection()));
-				setYCoordinate(getYCoordinate() + getRadius()*steps*Math.sin(getDirection()));
+				setXCoordinates(getXCoordinate() + getRadius()*steps*Math.cos(getDirection()));
+				setYCoordinates(getYCoordinate() + getRadius()*steps*Math.sin(getDirection()));
 				setActionPoints(getActionPoints() - (int) Math.ceil(steps*(Math.abs(Math.cos(getDirection())) + 4*Math.abs(Math.sin(getDirection())))));
 		}
 	}
@@ -183,7 +183,7 @@ public class Worm {
 	public void jump(){
 		if (canJump()){
 			double dist = Math.pow(initialVelocity(),2)*Math.sin(2*getDirection())/GRAVITY;
-			setXCoordinate(getXCoordinate()+dist);
+			setXCoordinates(getXCoordinate()+dist);
 			setActionPoints(0);
 		}
 	}
