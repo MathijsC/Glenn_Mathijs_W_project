@@ -38,8 +38,12 @@ public class Facade implements IFacade {
 	/**
 	 * Moves the given worm by the given number of steps.
 	 */
-	public void move(Worm worm, int nbSteps) {
-		worm.move(nbSteps);
+	public void move(Worm worm, int nbSteps) throws ModelException{
+		try{
+			worm.move(nbSteps);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument");
+		}
 	}
 
 	/**
@@ -59,16 +63,25 @@ public class Facade implements IFacade {
 	/**
 	 * Makes the given worm jump.
 	 */
-	public void jump(Worm worm) {
-		worm.jump();
+	public void jump(Worm worm) throws ModelException {
+		try{
+			worm.jump();
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument");
+		}
+		
 	}
 
 	/**
 	 * Returns the total amount of time (in seconds) that a
 	 * jump of the given worm would take.
 	 */
-	public double getJumpTime(Worm worm) {
-		return worm.jumpTime();
+	public double getJumpTime(Worm worm) throws ModelException {
+		try{
+			return worm.jumpTime();
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument");
+		}
 	}
 
 	/**
@@ -80,7 +93,11 @@ public class Facade implements IFacade {
 	 *  the second element the y-coordinate
 	 */
 	public double[] getJumpStep(Worm worm, double t) {
-		return worm.jumpStep(t);
+		try{
+			return worm.jumpStep(t);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument");
+		}
 	}
 
 	/**
@@ -114,9 +131,16 @@ public class Facade implements IFacade {
 	/**
 	 * Sets the radius of the given worm to the given value.
 	 */
-	public void setRadius(Worm worm, double newRadius) {
-		worm.setRadius(newRadius);
-		worm.setMass(worm.calcMass(newRadius));
+	public void setRadius(Worm worm, double newRadius) throws ModelException {
+		try{
+			worm.setRadius(newRadius);
+			worm.setMass(worm.calcMass(newRadius));
+			worm.setActionPoints(worm.getActionPoints());
+			;
+		} catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument!");
+		}
+		
 	}
 	
 	/**
@@ -150,8 +174,12 @@ public class Facade implements IFacade {
 	/**
 	 * Renames the given worm.
 	 */
-	public void rename(Worm worm, String newName) {
-		worm.setName(newName);
+	public void rename(Worm worm, String newName) throws ModelException{
+		try{
+			worm.setName(newName);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument");
+		}
 	}
 
 	/**

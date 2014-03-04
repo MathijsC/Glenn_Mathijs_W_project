@@ -1,17 +1,17 @@
 ASSIGNMENT WORMS:
 PART I:
 - existance:
-	- Position (def.): (x,y) coordinates (meters) 			|get,set
-	- Direction (nom.): facing angle				|get,set
-	- Shape (def.): circle (r = 0.25m)				|get,set
-	- Mass (def.): 							|get,init
-	- Action Points (tot.): max = mass				|get,set
-	- Name (def.):							|get,set
+	- Position (def.): (x,y) coordinates (meters) 	|get,set check
+	- Direction (nom.): facing angle				|get,set check
+	- Shape (def.): circle (r = 0.25m)				|get,set check
+	- Mass (def.): 									|get,init check
+	- Action Points (tot.): max = mass				|get,set check
+	- Name (def.):									|get,set check
 
 - moving:
-	- Move (def.): steps-> change pos				|move
-	- Turn (nom.): angle -> change dir				|turn
-	- Jump (def.): / -> change pos					|jump
+	- Move (def.): steps-> change pos				|move check
+	- Turn (nom.): angle -> change dir				|turn check
+	- Jump (def.): / -> change pos					|jump check
 		-> jumptime
 		-> jumpstep
 		
