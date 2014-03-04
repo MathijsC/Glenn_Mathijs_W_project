@@ -3,7 +3,7 @@ package worms.model;
 public class Facade implements IFacade {
 
 	/**
-	 * Default constructor
+	 * Defaut constructor
 	 */
 	public Facade() {
 		
@@ -123,7 +123,7 @@ public class Facade implements IFacade {
 	 * Returns the minimal radius of the given worm.
 	 */
 	public double getMinimalRadius(Worm worm) {
-		return 0.25;
+		return worm.getMinRadius();
 	}
 
 	/**
