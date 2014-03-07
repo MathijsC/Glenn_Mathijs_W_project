@@ -66,8 +66,8 @@ public class Facade implements IFacade {
 	public void jump(Worm worm) throws ModelException {
 		try{
 			worm.jump();
-		}catch(IllegalArgumentException exc){
-			throw new ModelException("Illegal argument");
+		}catch(IllegalStateException exc){
+			throw new ModelException("Illegal state");
 		}
 		
 	}
@@ -79,8 +79,8 @@ public class Facade implements IFacade {
 	public double getJumpTime(Worm worm) throws ModelException {
 		try{
 			return worm.jumpTime();
-		}catch(IllegalArgumentException exc){
-			throw new ModelException("Illegal argument");
+		}catch(IllegalStateException exc){
+			throw new ModelException("Illegal state");
 		}
 	}
 
@@ -97,6 +97,8 @@ public class Facade implements IFacade {
 			return worm.jumpStep(t);
 		}catch(IllegalArgumentException exc){
 			throw new ModelException("Illegal argument");
+		}catch(IllegalStateException exc){
+			throw new ModelException("Illegal state");
 		}
 	}
 
