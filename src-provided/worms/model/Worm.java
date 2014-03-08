@@ -1,12 +1,27 @@
 package worms.model;
 
-import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
- * A class for the worm objects who are used in the game Worms.
- * @author Glenn Cools, Mathijs Cuppens
+ * A class for a worm objects containing a x-coordinate, y-coordinate
+ * looking direction, radius, name and action points of this worm.
+ * The class also implements methods to jump, turn and move this worm.
+ * 
+ * @invar	The direction of this worm should be a valid direction at all time.
+ * 			|isValidDirection(getDirection())
+ * @invar	The radius of this worm should be a valid radius at all time.
+ * 			|isValidRadius(getRadius())
+ * @invar	The name of this worm should be a valid name at all time.
+ * 			|isValidName(getName())
+ * @invar	The mass of this worm should be equal to the calculated mass according 
+ * 			to the radius of this worm.
+ * 			|getMass() == calcMass(getRadius())
+ * @invar	The amount of action points of this worm should be a valid amount at all time.
+ * 			|isValidNbActionPoints(getActionPoints())
+ * 
+ * @author 	Glenn Cools, Mathijs Cuppens
  *	
- * @version 1.10
+ * @version 1.20
  */
 public class Worm {
 
@@ -45,6 +60,7 @@ public class Worm {
 	 * 			| if (isValidName(name))
 	 * 			|	then new.getName == name
 	 */
+	@Raw
 	public Worm(double x, double y, double direction, double radius, String name) {
 		setXCoordinate(x);
 		setYCoordinate(y);
@@ -113,13 +129,26 @@ public class Worm {
 	 * Variable to register the looking direction of this worm.
 	 */
 	public double direction;
+	
+	/**
+	 * Return true if the given direction is a valid direction
+	 * 
+	 * @param 	direction
+	 * 			The direction to check whether it is a valid one.
+	 * @return	Return true if the given direction is a number between
+	 * 			0 and 2*PI
+	 * 			|(direction > 0) && (direction < Math.PI*2)
+	 */
+	public boolean isValidDirection(double direction){
+		return (direction >= 0) && (direction < Math.PI*2);
+	}
 
 	/**
 	 * Return the looking direction of this worm.
 	 * 
 	 * @return	The looking direction of this worm.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getDirection() {
 		return direction;
 	}
@@ -147,7 +176,7 @@ public class Worm {
 	 * 
 	 * @return	The radius of this worm.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getRadius() {
 		return radius;
 	}
@@ -159,7 +188,11 @@ public class Worm {
 	 * @post	If the given radius is valid, then the new radius of this worm is equal
 	 * 			to the given radius.
 	 * 			| if(isValidRadius)
-	 * 			| 	then new.radius = radius
+	 * 			| 	then new.getRadius() = radius
+	 * @effect	The mass of this worm is set to the calculated mass of this worm.
+	 * 			| setMass(calcMass(radius))
+	 * @effect	The action points of this worm are set to the old amount of action points.
+	 * 			|setActionPoints(getActionPoints())
 	 * @throws 	IllegalArgumentException
 	 * 			The given radius is an invalid radius.
 	 * 			| !isValidRadius(radius)
@@ -168,6 +201,8 @@ public class Worm {
 		if (!isValidRadius(radius))
 			throw new IllegalArgumentException();
 		this.radius = radius;
+		this.setMass(this.calcMass(radius));
+		this.setActionPoints(this.getActionPoints());
 	}
 	/**
 	 * Check if the given radius is a given radius.
@@ -186,6 +221,7 @@ public class Worm {
 	 * 
 	 * @return	The minimal radius this worm should have.
 	 */
+	@Immutable
 	public double getMinRadius() {
 		return 0.25;
 	}
@@ -200,7 +236,7 @@ public class Worm {
 	 * 
 	 * @return	The name of this worm.
 	 */
-	@Basic
+	@Basic @Raw
 	public String getName() {
 		return name;
 	}
@@ -247,7 +283,7 @@ public class Worm {
 	 * 
 	 * @return	The mass of this worm.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getMass() {
 		return mass;
 	}
@@ -296,13 +332,28 @@ public class Worm {
 	 * Variable holding the number of action points of this worm.
 	 */
 	public int actionPoints;
+	
+	/**
+	 * Return true if the given amount of action points if a valid
+	 * amount of action points.
+	 * 
+	 * @param 	actionPoints
+	 * 			The amount of action points to check whether it is a valid amount.
+	 * @return	Return true if the given amount of action points is not
+	 * 			negative and less or equal to the maximum amount of action points
+	 * 			of this worm.
+	 * 			|(actionPoints >=0) && (actionPoints <= getMaxActionPoints())
+	 */
+	public boolean isValidNbActionPoints(int actionPoints){
+		return (actionPoints >=0) && (actionPoints <= getMaxActionPoints());
+	}
 
 	/**
 	 * Return the number of action points of this worm.
 	 * 
 	 * @return	The number of action points of this worm.
 	 */
-	@Basic
+	@Basic @Raw
 	public int getActionPoints() {
 		return actionPoints;
 	}

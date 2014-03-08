@@ -4,3 +4,5 @@ VRAGEN:
 - constructor defensief??
 - returns bij canturn,canmove,canjump,getmass,... formeel nodig?? Want indien aanpassing formule, is ook aanpassing van commentaar nodig.
 - formeel bij isValidname
+- invarianten
+- raw annotations

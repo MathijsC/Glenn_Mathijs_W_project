@@ -136,9 +136,6 @@ public class Facade implements IFacade {
 	public void setRadius(Worm worm, double newRadius) throws ModelException {
 		try{
 			worm.setRadius(newRadius);
-			worm.setMass(worm.calcMass(newRadius));
-			worm.setActionPoints(worm.getActionPoints());
-			;
 		} catch(IllegalArgumentException exc){
 			throw new ModelException("Illegal argument!");
 		}
