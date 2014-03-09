@@ -139,7 +139,7 @@ public class Worm {
 	 * 			0 and 2*PI
 	 * 			|(direction > 0) && (direction < Math.PI*2)
 	 */
-	public boolean isValidDirection(double direction){
+	public static boolean isValidDirection(double direction){
 		return (direction >= 0) && (direction < Math.PI*2);
 	}
 
@@ -212,7 +212,7 @@ public class Worm {
 	 * @return	True if the given radius is valid.
 	 * 			| radius >= getMinRadius();
 	 */
-	public boolean isValidRadius(double radius) {
+	public static boolean isValidRadius(double radius) {
 		return radius >= getMinRadius();
 	}
 
@@ -222,7 +222,7 @@ public class Worm {
 	 * @return	The minimal radius this worm should have.
 	 */
 	@Immutable
-	public double getMinRadius() {
+	public static double getMinRadius() {
 		return 0.25;
 	}
 
@@ -269,7 +269,7 @@ public class Worm {
 	 * 			long.
 	 * 			| name.matches("[A-Z][a-zA-Z\'\" ]+");
 	 */
-	public boolean isValidName(String name) {
+	public static boolean isValidName(String name) {
 		return name.matches("[A-Z][a-zA-Z\'\" ]+");
 	}
 
@@ -324,8 +324,7 @@ public class Worm {
 
 		if (!isValidRadius(radius))
 			throw new IllegalArgumentException();
-
-		return DENSITY_OF_THE_WORM * (4 / 3) * Math.pow(radius, 3) * Math.PI;
+		return DENSITY_OF_THE_WORM * (4.0 / 3.0) * Math.pow(radius, 3) * Math.PI;
 	}
 
 	/**
