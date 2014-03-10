@@ -146,7 +146,7 @@ public class Facade implements IFacade {
 	 * Returns the minimal radius of the given worm.
 	 */
 	public double getMinimalRadius(Worm worm) {
-		return worm.getMinRadius();
+		return Worm.getMinRadius();
 	}
 
 	/**
