@@ -8,31 +8,32 @@ import org.junit.Test;
 
 public class WormTest {
 
+	private static Worm noActionPoints;
 	/**
-	 * Runs once before entry testClass
-	 * @throws Exception
+	 * Set up n immutable test fixture.
+	 * 
+	 * @post   The variable noActionPoints references a new
+	 *         worm with: X-Coordinate 0, Y-Coordinate 0, Direction 1, Radius 0.5,
+	 *         Mass 556.0919, ActionPoints 0 and Name Test.
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		noActionPoints = new Worm(0,0,1,0.5,"Test");
+		noActionPoints.setActionPoints(0);		
 	}
 
-	private Worm testWorm, noActionPoints;
-	
+	private Worm testWorm;
+
 	/**
-	 * Creates worms with:
-	 * X-coordinate: 	0				0
-	 * Y-coordinate: 	0				0
-	 * Direction: 		1				1
-	 * Radius:			0.5				0.5
-	 * Mass:			556.0619		556.0619
-	 * ActionPoints:	556				300
-	 * Name:			Test			Test
+	 * Set up a mutable test fixture.
+	 * 
+	 * @post   The variable testWorm references a new
+	 *         worm with: X-Coordinate 0, Y-Coordinate 0, Direction 1, Radius 0.5,
+	 *         Mass 556.0919, ActionPoints 556 and Name Test.
 	 */
 	@Before
 	public void setUp() throws Exception {
 		testWorm = new Worm(0,0,1,0.5,"Test");
-		noActionPoints = new Worm(0,0,1,0.5,"Test");
-		noActionPoints.setActionPoints(0);
 	}
 
 
@@ -57,11 +58,11 @@ public class WormTest {
 		assertFalse(Worm.isValidDirection(7));
 	}
 	@Test
-	public final void isValidDirection_TrueCase_Boundry(){
+	public final void isValidDirection_TrueCase_Boundary(){
 		assertTrue(Worm.isValidDirection(0));
 	}
 	@Test
-	public final void isValidDirection_FalseCase_Boundry(){
+	public final void isValidDirection_FalseCase_Boundary(){
 		assertFalse(Worm.isValidDirection(2*Math.PI));
 	}
 	@Test
@@ -80,7 +81,7 @@ public class WormTest {
 		assertFalse(Worm.isValidRadius(0.1));
 	}
 	@Test
-	public final void isValidRadius_TrueCase_Boundry(){
+	public final void isValidRadius_TrueCase_Boundary(){
 		assertTrue(Worm.isValidRadius(0.25));
 	}
 	
@@ -112,22 +113,22 @@ public class WormTest {
 		assertFalse(testWorm.isValidNbActionPoints(560));
 	}	
 	@Test
-	public final void isValidNbActionPoints_TrueCase_UpperBoundry(){
+	public final void isValidNbActionPoints_TrueCase_UpperBoundary(){
 		assertTrue(testWorm.isValidNbActionPoints(556));
 	}
 	@Test
-	public final void isValidNbActionPoints_TrueCase_LowerBoundry(){
+	public final void isValidNbActionPoints_TrueCase_LowerBoundary(){
 		assertTrue(testWorm.isValidNbActionPoints(0));
 	}
 	@Test
 	public final void setActionPoints_ToMany(){
-		noActionPoints.setActionPoints(1000);
-		assertEquals(556,noActionPoints.getActionPoints());		
+		testWorm.setActionPoints(1000);
+		assertEquals(556,testWorm.getActionPoints());		
 	}
 	@Test
 	public final void setActionPoints_Negative(){
-		noActionPoints.setActionPoints(-200);
-		assertEquals(0,noActionPoints.getActionPoints());		
+		testWorm.setActionPoints(-200);
+		assertEquals(0,testWorm.getActionPoints());		
 	}
 	
 	//TURN
@@ -140,13 +141,14 @@ public class WormTest {
 		assertFalse(noActionPoints.canTurn(Math.PI));
 	}
 	@Test
-	public final void canTurn_FalseCase_Boundry(){
+	public final void canTurn_FalseCase_Boundary(){
 		assertFalse(testWorm.canTurn(18.5334*Math.PI));
 	}
 	@Test
-	public final void turn_singleCase(){
+	public final void turn_SingleCase(){
 		testWorm.turn(3*Math.PI);
 		assertEquals(556-90,testWorm.getActionPoints());
+		assertEquals(1+3*Math.PI,testWorm.getDirection(),0.00001);
 	}
 	
 	//MOVEMENT
@@ -159,12 +161,38 @@ public class WormTest {
 		assertFalse(noActionPoints.canMove(15));
 	}
 	@Test
-	public final void canMove_FalseCase_Boundry(){
+	public final void canMove_FalseCase_Boundary(){
 		assertFalse(testWorm.canMove(143));
 	}
 	@Test
-	public final void move_singleCase(){
+	public final void move_SingleCase(){
 		testWorm.move(50);
 		assertEquals(556-196,testWorm.getActionPoints());
-	}	
+		//TEST DE COORDINATEN!!!!!!
+	}
+	
+	//JUMP
+	@Test
+	public final void canJump_TrueCase(){
+		assertTrue(testWorm.canJump());
+	}
+	@Test
+	public final void canJump_FalseCase_ActionPoints(){
+		assertFalse(noActionPoints.canJump());
+	}
+	@Test
+	public final void canJump_FalseCase_Direction(){
+		testWorm.setDirection(Math.PI*1.5);
+		assertFalse(testWorm.canJump());
+	}
+	@Test
+	public final void canJump_FalseCase_Direction_UpperBoundary(){
+		testWorm.setDirection(Math.PI);
+		assertFalse(testWorm.canJump());
+	}
+	@Test
+	public final void canJump_FalseCase_Direction_LowerBoundary(){
+		testWorm.setDirection(0);
+		assertFalse(testWorm.canJump());
+	}
 }

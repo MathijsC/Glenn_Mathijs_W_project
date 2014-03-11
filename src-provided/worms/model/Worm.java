@@ -74,7 +74,7 @@ public class Worm {
 	/**
 	 * Variable registering the x-coordinate of the position of this worm.
 	 */
-	public double xCoordinate;
+	private double xCoordinate;
 
 	/**
 	 * Return the x-coordinate of the position of this worm.
@@ -94,14 +94,14 @@ public class Worm {
 	 * @post	The given xCoordinate is the new position of this worm.
 	 * 			| new.getXCoordinate() == xCoordinate
 	 */
-	public void setXCoordinate(double xCoordinate) {
+	private void setXCoordinate(double xCoordinate) {
 		this.xCoordinate = xCoordinate;
 	}
 
 	/**
 	 * Variable registering the y-coordinate of the position of this worm.
 	 */
-	public double yCoordinate;
+	private double yCoordinate;
 
 	/**
 	 * Return the y-coordinate of the position of this worm.
@@ -121,14 +121,14 @@ public class Worm {
 	 * @post	The given yCoordinate is the new position of this worm.
 	 * 			| new.getYCoordinate() == yCoordinate
 	 */
-	public void setYCoordinate(double yCoordinate) {
+	private void setYCoordinate(double yCoordinate) {
 		this.yCoordinate = yCoordinate;
 	}
 
 	/**
 	 * Variable to register the looking direction of this worm.
 	 */
-	public double direction;
+	private double direction;
 	
 	/**
 	 * Return true if the given direction is a valid direction
@@ -162,14 +162,14 @@ public class Worm {
 	 * 			given direction calculated module 2*PI
 	 * 			| new.getDirection() == direction % (Math.PI*2)
 	 */
-	public void setDirection(double direction) {
+	private void setDirection(double direction) {
 		this.direction = (direction % (Math.PI * 2));
 	}
 
 	/**
 	 * Variable holding the radius of this worm
 	 */
-	public double radius;
+	private double radius;
 
 	/**
 	 * Return the radius of this worm.
@@ -229,7 +229,7 @@ public class Worm {
 	/**
 	 * Variable holding the name of this worm.
 	 */
-	public String name;
+	private String name;
 
 	/**
 	 * Return the name of this worm.
@@ -276,7 +276,7 @@ public class Worm {
 	/**
 	 * Variable containing the mass of this worm.
 	 */
-	public double mass;
+	private double mass;
 
 	/**
 	 * Return the mass of this worm.
@@ -299,7 +299,7 @@ public class Worm {
 	 * 			The given mass is negative.
 	 * 			| mass<0
 	 */
-	public void setMass(double mass) throws IllegalArgumentException {
+	private void setMass(double mass) throws IllegalArgumentException {
 		if (mass < 0)
 			throw new IllegalArgumentException();
 		this.mass = mass;
@@ -330,7 +330,7 @@ public class Worm {
 	/**
 	 * Variable holding the number of action points of this worm.
 	 */
-	public int actionPoints;
+	private int actionPoints;
 	
 	/**
 	 * Return true if the given amount of action points if a valid
@@ -376,7 +376,7 @@ public class Worm {
 	 * 			| else
 	 * 			|	then new.getActionPoints() == actionPoints
 	 */
-	public void setActionPoints(int actionPoints) {
+	private void setActionPoints(int actionPoints) {
 		if (actionPoints < 0)
 			this.actionPoints = 0;
 		else if (actionPoints > this.getMaxActionPoints())
