@@ -401,10 +401,10 @@ public class Worm {
 	 * Returns if this worm is able to turn or not
 	 * 
 	 * @return a boolean that states if this worm is able to turn or not
-	 * 			|getActionPoints() >= 60 * (Math.abs(angle) / (2 * Math.PI)); 
+	 * 			|getActionPoints() >= 60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI)); 
 	 */
 	public boolean canTurn(double angle) {
-		return getActionPoints() >= 60 * (Math.abs(angle) / (2 * Math.PI));
+		return getActionPoints() >= 60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI));
 	}
 
 	/** 
@@ -419,12 +419,12 @@ public class Worm {
 	 * 			|new.getDirection() = this.getDirection + angle
 	 * @post	the worms action points is decreased by the amount defined by the rule above
 	 * 			|new.getActionPoints() = this.getActionPoints - 
-	 * 			|	(int) Math.ceil(60*(Math.abs(angle)/(2*Math.PI))));
+	 * 			|	(int) Math.ceil(60*((Math.abs(angle) % (Math.PI * 2))/(2*Math.PI))));
 	 */
 	public void turn(double angle) {
 		setDirection(getDirection() + angle);
 		setActionPoints(getActionPoints()
-				- (int) Math.ceil(60 * (Math.abs(angle) / (2 * Math.PI))));
+				- (int) Math.ceil(60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI))));
 	}
 
 	/** 
