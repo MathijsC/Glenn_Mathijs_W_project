@@ -1,5 +1,5 @@
 VRAGEN:
-- pre bij setDirection?? (volgens ons alles toegelaten)
+- pre bij setDirection?? (volgens ons alles toegelaten (behalve NAN))
 - resize: wat met actionpoints (houdt action points tenzij max is te laag)
 - constructor defensief?? 
 - returns bij canturn,canmove,canjump,getmass,... formeel nodig?? Want 
