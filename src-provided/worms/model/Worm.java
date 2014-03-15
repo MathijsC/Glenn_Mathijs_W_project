@@ -502,11 +502,16 @@ public class Worm {
 	final double GRAVITY = 9.80665;
 
 	/** 
-	 * Calculates the initial velocity a worm has when it jumps based on the following formula:
+	 * Calculates the initial velocity this worm has when it jumps.
+	 * 
 	 * -> force = 5*getActionPoints() + getMass()*GRAVITY
 	 * -> velocity = force*time(0.5) / getMass().
 	 * 
-	 * @return Return the initial velocity of the worm when it jumps.
+	 * @return 	Return the initial velocity of this worm when it jumps based on the force
+	 * 			a worm pushes himself of the ground and its mass. The force of this worm
+	 * 			is based on the action points of this worm, its mass and the gravity
+	 * 			of the environment.
+	 * 			| FORCE / MASS * CONTSTANT
 	 */
 	public double initialVelocity() {
 		double force = 5 * getActionPoints() + getMass() * GRAVITY;
@@ -514,9 +519,10 @@ public class Worm {
 	}
 
 	/** 
-	 * returns if this worm is able to jump or not
+	 * Returns if this worm is able to jump or not.
 	 * 
 	 * @return 	Return a boolean that states if the worm is able to jump or not
+	 * 			based on its direction and action points.
 	 * 			|(getDirection() < Math.PI) && (getDirection() > 0) && (getActionPoints() > 0);
 	 */
 	public boolean canJump() {
@@ -525,14 +531,14 @@ public class Worm {
 	}
 
 	/** 
-	 * Let the worm jump over a distance based on his action points, direction and his mass
-	 * This consumes all action points left
+	 * Let this worm jump over a distance and consumes all action points left.
 	 * 
-	 * @post	the worm has moved a distance horizontally equal to the formula beneath
-	 * 			|new.getXCoordinate() = this.getXCoordinate + 
-	 * 			|	Math.pow(initialVelocity(),2)*Math.sin(2*getDirection())/GRAVITY
+	 * @post	The new X-coordinate of this worm is equal to the old X-coordinate added
+	 * 			with the distance moved horizontally based on the gravity of the environment
+	 * 			and the direction of this worm. The Y-coordinate stays the same.
+	 * 			|new.getXCoordinate() = this.getXCoordinate + DISTANCE_MOVED
 	 * 			|new.getYCoordinate() = this.getYCoordinate()
-	 * @post	the worm has consumed all its action points
+	 * @post	The new amount of action points is equal to zero.
 	 * 			|new.getActionPoints = 0
 	 * @throws	IllegalStateException
 	 * 			The worm is not able to jump.
@@ -550,8 +556,9 @@ public class Worm {
 	/**
 	 * Return the time a jump of this worm would take.
 	 * 
-	 * @return	Return the time a jump of this worm would take.
-	 * 			|initialVelocity() * Math.sin(2 * getDirection())/ (GRAVITY * Math.cos(getDirection()))
+	 * @return	Return the time a jump of this worm would take
+	 * 			based on the direction of this worm, the gravity
+	 * 			of the environment and the initial velocity.
 	 * @throws 	IllegalStateException
 	 * 			The worm cannot jump.
 	 * 			| !canjump()
@@ -560,7 +567,7 @@ public class Worm {
 		if (!canJump()) {
 			throw new IllegalStateException();
 		}
-		return initialVelocity() * Math.sin(2 * getDirection())
+		return this.initialVelocity() * Math.sin(2 * getDirection())
 				/ (GRAVITY * Math.cos(getDirection()));
 
 	}
@@ -571,7 +578,9 @@ public class Worm {
 	 * 
 	 * @param 	time
 	 * 			The time during the jump where you want to know the position of this worm.
-	 * @return	Return the position at the given time of the jump.
+	 * @return	Return the position of this worm at the given time of 
+	 * 			the jump based on the old coordinates of this worm, the initial velocity
+	 * 			the direction of this worm and de gravity of the environment.
 	 * @throws 	IllegalArgumentException
 	 * 			The given time is not during the jump.
 	 * 			| time <=0
