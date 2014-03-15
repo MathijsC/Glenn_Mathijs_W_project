@@ -14,15 +14,15 @@ public class WormTest {
 	 * 
 	 * @post   The variable noActionPoints references a new
 	 *         worm with: X-Coordinate 0, Y-Coordinate 0, Direction 1, Radius 0.5,
-	 *         Mass 556.0919, ActionPoints 0 and Name Test.
+	 *         Mass 556.0919, ActionPoints 0 and Name No Action Points.
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		noActionPoints = new Worm(0,0,1,0.5,"Test");
+		noActionPoints = new Worm(0,0,1,0.5,"No Action Points");
 		noActionPoints.jump();		
 	}
 
-	private Worm testWorm;
+	private Worm testWorm, noDirection;
 
 	/**
 	 * Set up a mutable test fixture.
@@ -30,10 +30,13 @@ public class WormTest {
 	 * @post   The variable testWorm references a new
 	 *         worm with: X-Coordinate 0, Y-Coordinate 0, Direction 1, Radius 0.5,
 	 *         Mass 556.0919, ActionPoints 556 and Name Test.
+	 *         worm with: X-Coordinate 0, Y-Coordinate 0, Direction 0, Radius 0.5,
+	 *         Mass 556.0919, ActionPoints 556 and Name No Direction.
 	 */
 	@Before
 	public void setUp() throws Exception {
 		testWorm = new Worm(0,0,1,0.5,"Test");
+		noDirection = new Worm(0,0,0,0.5,"No Direction");
 	}
 
 
@@ -65,11 +68,16 @@ public class WormTest {
 	public final void isValidDirection_FalseCase_Boundary(){
 		assertFalse(Worm.isValidDirection(2*Math.PI));
 	}
-	/**@Test
-	public final void setDirection_Mod(){
-		testWorm.setDirection(2*Math.PI);
-		assertEquals(0,testWorm.getDirection(),0.00001);
-	}*/
+	@Test
+	public final void setDirection_Mod_Pos(){
+		noDirection.turn(3*Math.PI);
+		assertEquals(Math.PI,noDirection.getDirection(),0.00001);
+	}
+	@Test
+	public final void setDirection_Mod_Neg(){
+		noDirection.turn((-3)*Math.PI);
+		assertEquals(Math.PI,noDirection.getDirection(),0.00001);
+	}
 	
 	//RADIUS
 	@Test
@@ -120,16 +128,6 @@ public class WormTest {
 	public final void isValidNbActionPoints_TrueCase_LowerBoundary(){
 		assertTrue(testWorm.isValidNbActionPoints(0));
 	}
-	/**@Test
-	public final void setActionPoints_ToMany(){
-		testWorm.setActionPoints(1000);
-		assertEquals(556,testWorm.getActionPoints());		
-	}
-	@Test
-	public final void setActionPoints_Negative(){
-		testWorm.setActionPoints(-200);
-		assertEquals(0,testWorm.getActionPoints());		
-	}*/
 	
 	//TURN
 	@Test
@@ -182,19 +180,18 @@ public class WormTest {
 	public final void canJump_FalseCase_ActionPoints(){
 		assertFalse(noActionPoints.canJump());
 	}
-	/**@Test
+	@Test
 	public final void canJump_FalseCase_Direction(){
-		testWorm.setDirection(Math.PI*1.5);
+		testWorm.turn(Math.PI*1.5);
 		assertFalse(testWorm.canJump());
 	}
 	@Test
 	public final void canJump_FalseCase_Direction_UpperBoundary(){
-		testWorm.setDirection(Math.PI);
-		assertFalse(testWorm.canJump());
+		noDirection.turn(Math.PI);
+		assertFalse(noDirection.canJump());
 	}
 	@Test
 	public final void canJump_FalseCase_Direction_LowerBoundary(){
-		testWorm.setDirection(0);
-		assertFalse(testWorm.canJump());
-	}*/
+		assertFalse(noDirection.canJump());
+	}
 }

@@ -21,7 +21,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author 	Glenn Cools, Mathijs Cuppens
  *	
- * @version 1.20
+ * @version 1.30
  */
 public class Worm {
 
@@ -158,12 +158,20 @@ public class Worm {
 	 * 
 	 * @param 	direction
 	 * 			The new direction of this worm
-	 * @post	The new direction of this worm is equal to the
-	 * 			given direction calculated module 2*PI
+	 * @post	If the new direction of this worm is positive after calculated
+	 * 			module 2*PI, the direction is added to the base (2*PI) to get
+	 * 			a positive direction between 0 and 2*PI.
+	 * 			| if (direction % (Math.PI * 2) <0)
+	 * 			|	then new.getDirection = (direction % (Math.PI * 2) + 2*Math.PI)
+	 * @post	Else the new direction of this worm is positive after calculated
+	 * 			module 2*PI, the direction of this worm is set to this number.
 	 * 			| new.getDirection() == direction % (Math.PI*2)
 	 */
 	private void setDirection(double direction) {
-		this.direction = (direction % (Math.PI * 2));
+		if (direction % (Math.PI * 2) <0)
+			this.direction = (direction % (Math.PI * 2) + 2*Math.PI);
+		else
+			this.direction = (direction % (Math.PI * 2));
 	}
 
 	/**
@@ -263,11 +271,9 @@ public class Worm {
 	 * 
 	 * @param 	name
 	 * 			The name to check whether it is valid or not.
-	 * @return	True if the name starts with a Capital letter
-	 * 			and contains only letter, spaces, single quotes
-	 * 			and/or double quotes and is at least two characters
-	 * 			long.
-	 * 			| name.matches("[A-Z][a-zA-Z\'\" ]+");
+	 * @return	True if the name is a valid name based on the 
+	 * 			characters allowed in the name.
+	 * 			| name.matches(A regular expression with the allowed characters);
 	 */
 	public static boolean isValidName(String name) {
 		return name.matches("[A-Z][a-zA-Z\'\" ]+");
@@ -307,14 +313,12 @@ public class Worm {
 
 	/** 
 	 * Calculates the mass of the worm by multiplying its density 
-	 * by its volume (spherical: 4/3 * PI * radius)
+	 * by its volume.
 	 * 
 	 * @param	radius
 	 * 			The radius of a worm to calculate the mass of that worm.
-	 * @post	The worm will now have a mass equal to the product of its density and volume
-	 * 			|new.getMass() = DENSITY_OF_THE_WORM*VOLUME with VOLUME= 4/3*r^3*PI
 	 * @return	Returns the mass of a worm with the given radius.
-	 * 			| DENSITY_OF_THE_WORM * (4 / 3) * Math.pow(radius, 3) * Math.PI;
+	 * 			| DENSITY_OF_THE_WORM * VOLUME;
 	 * @throws	IllegalArgumentException
 	 * 			The radius is an invalid radius.
 	 * 			| !isValidRadius(radius)
@@ -400,26 +404,32 @@ public class Worm {
 	/**
 	 * Returns if this worm is able to turn or not
 	 * 
-	 * @return a boolean that states if this worm is able to turn or not
-	 * 			|getActionPoints() >= 60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI)); 
+	 * @return 	a boolean that states if this worm is able to turn or not
+	 * 			based on its action points, the given angle and the cost
+	 * 			to turn a little. The expense of action points is rounded up
+	 * 			to an integer.
+	 * 			|getActionPoints() >= (int) Math.ceil(COST * ANGLE); 
 	 */
 	public boolean canTurn(double angle) {
-		return getActionPoints() >= 60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI));
+		return getActionPoints() >= (int) Math.ceil(60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI)));
 	}
 
 	/** 
-	 * Lets this worm turn over a given angle at the expense of 60/(angle/2*PI) action points.
+	 * Turns this worm over a given angle at the expense of action points.
 	 * The expense of action points is rounded up.
 	 * 
 	 * @param	angle
-	 * 			The angle this worm should turn his direction.
+	 * 			The angle this worm should turn this direction.
 	 * @pre		the worm has to have enough action points left to make the turn
 	 * 			|canTurn(angle)
-	 * @post	the worm has turned over the given angle
+	 * @post	The new direction of this worm is equal to its old direction
+	 * 			added with the given angle to turn.
 	 * 			|new.getDirection() = this.getDirection + angle
-	 * @post	the worms action points is decreased by the amount defined by the rule above
-	 * 			|new.getActionPoints() = this.getActionPoints - 
-	 * 			|	(int) Math.ceil(60*((Math.abs(angle) % (Math.PI * 2))/(2*Math.PI))));
+	 * @post	The amount of action points of this worm is decreased by an amount
+	 * 			of action points based on the given angle and the cost to turn a little.
+	 * 			This amount is rounded up to an integer. 
+	 * 			|new.getActionPoints() = this.getActionPoints() - 
+	 * 			|	(int) Math.ceil(COST * ANGLE);
 	 */
 	public void turn(double angle) {
 		setDirection(getDirection() + angle);
@@ -428,13 +438,15 @@ public class Worm {
 	}
 
 	/** 
-	 * Returns if this worm is able to move or not
+	 * Returns if this worm is able to move the given amount of steps.
 	 * 
 	 * @param	steps
 	 * 			The amount of steps that is checked if the worm is able to move them.
 	 * @return 	Return a boolean that states if this worm is able to turn or not
-	 * 			|getActionPoints() >= (int) Math.ceil(steps * (Math.abs(Math.cos(getDirection())) 
-	 * 			|	+ 4 * Math.abs(Math.sin(getDirection()))))
+				based on its action points, the given amount of steps and the cost
+	 * 			to move one step in the direction of this worm.	The amount of action points
+	 * 			is rounded up to an integer.	
+	 * 			|getActionPoints() >= (int) Math.ceil(steps * COST)
 	 * @throws	IllegalArgumentException
 	 * 			The steps are negative.
 	 * 			| steps <0
@@ -449,19 +461,21 @@ public class Worm {
 	}
 
 	/**	
-	 * Let the worm move a given amount of steps in the direction angle 
-	 * whereas one step equals the worms radius.
-	 * This consumes 1 action point for each movement horizontally equal to the worms radius.
-	 * This consumes 4 action points for each movement vertically equal to the worms radius.
-	 * The expense of action points is rounded up.
+	 * Let this worm move a given amount of steps in the direction of this worm
+	 * at the expense of an amount of action points.
 	 * 
 	 * @param	steps
 	 * 			The amount of steps this worm will move.
-	 * @post	the worm has moved the amount of steps in its current direction
-	 *			|new.getXCoordinate() = this.getXCoordinate() + getRadius()*steps*Math.cos(getDirection()))
-	 *			|new.getYCoordinate() = this.getYCoordinate() + getRadius()*steps*Math.sin(getDirection()));
-	 * @post	the number of action points is decreased by the amount defined by the rules above
-	 * 			|new.getActionPoints = this.getActionPoints - (int) Math.ceil(steps*(Math.abs(Math.cos(getDirection())) + 4*Math.abs(Math.sin(getDirection()))))
+	 * @post	The new coordinates of this worm are equal to the old coordinate added to
+	 * 			the amount of steps moved in the direction of this worm. The length of a 
+	 * 			step is based on the radius of this worm.
+	 *			|new.getXCoordinate() = this.getXCoordinate() + getRadius()*STEPS_IN_X_DIRECTION
+	 *			|new.getYCoordinate() = this.getYCoordinate() + getRadius()*STEPS_IN_Y_DIRECTION;
+	 * @post	The number of action points of this worm is decreased by the amount based on the 
+	 * 			given amount of steps and the cost to move one step in the direction of this worm.
+	 * 			This expense is rounded up to an integer.
+	 * 			|new.getActionPoints = this.getActionPoints - (int) Math.ceil(STEPS_IN_X_DIRECTION * 
+	 * 				COST_X + STEPS_IN_Y_DIRECTION * COST_Y)
 	 * @throws	IllegalArgumentException
 	 * 			This worm cannot move the given steps.
 	 * 			| !canMove(steps)
