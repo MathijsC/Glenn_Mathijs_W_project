@@ -504,9 +504,6 @@ public class Worm {
 	/** 
 	 * Calculates the initial velocity this worm has when it jumps.
 	 * 
-	 * -> force = 5*getActionPoints() + getMass()*GRAVITY
-	 * -> velocity = force*time(0.5) / getMass().
-	 * 
 	 * @return 	Return the initial velocity of this worm when it jumps based on the force
 	 * 			a worm pushes himself of the ground and its mass. The force of this worm
 	 * 			is based on the action points of this worm, its mass and the gravity
