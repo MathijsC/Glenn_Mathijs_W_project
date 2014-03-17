@@ -432,6 +432,7 @@ public class Worm {
 	 * 			|	(int) Math.ceil(COST * ANGLE);
 	 */
 	public void turn(double angle) {
+		assert(this.canTurn(angle));
 		setDirection(getDirection() + angle);
 		setActionPoints(getActionPoints()
 				- (int) Math.ceil(60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI))));
