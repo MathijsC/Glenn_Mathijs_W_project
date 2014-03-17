@@ -37,6 +37,7 @@ public class Facade implements IFacade {
 
 	/**
 	 * Moves the given worm by the given number of steps.
+	 * Can throw a model exception if the given worm can't move the given number of steps.
 	 */
 	public void move(Worm worm, int nbSteps) throws ModelException{
 		try{
@@ -62,6 +63,7 @@ public class Facade implements IFacade {
 
 	/**
 	 * Makes the given worm jump.
+	 * Can throw a model exception when the given worm isn't able to jump.
 	 */
 	public void jump(Worm worm) throws ModelException {
 		try{
@@ -75,6 +77,7 @@ public class Facade implements IFacade {
 	/**
 	 * Returns the total amount of time (in seconds) that a
 	 * jump of the given worm would take.
+	 * Can throw a model exception when the given worm isn't able to jump.
 	 */
 	public double getJumpTime(Worm worm) throws ModelException {
 		try{
@@ -87,6 +90,7 @@ public class Facade implements IFacade {
 	/**
 	 * Returns the location on the jump trajectory of the given worm
 	 * after a time t.
+	 * Can throw a model exception when the given worm isn't able to jump.
 	 *  
 	 * @return An array with two elements,
 	 *  with the first element being the x-coordinate and
@@ -132,6 +136,7 @@ public class Facade implements IFacade {
 	
 	/**
 	 * Sets the radius of the given worm to the given value.
+	 * Can throw a model exception when the given radius is smaller than the minimum radius.
 	 */
 	public void setRadius(Worm worm, double newRadius) throws ModelException {
 		try{
@@ -172,6 +177,7 @@ public class Facade implements IFacade {
 
 	/**
 	 * Renames the given worm.
+	 * Can throw a model exception when the new name doesn't fit the constraints.
 	 */
 	public void rename(Worm worm, String newName) throws ModelException{
 		try{
