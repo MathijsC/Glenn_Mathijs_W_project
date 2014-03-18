@@ -17,7 +17,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 			to the radius of this worm.
  * 			|getMass() == calcMass(getRadius())
  * @invar	The amount of action points of this worm should be a valid amount at all time.
- * 			|isValidNbActionPoints(getActionPoints())
+ * 			|canHaveAsActionPoints(getActionPoints())
  * 
  * @author 	Glenn Cools, Mathijs Cuppens
  *	
@@ -39,26 +39,22 @@ public class Worm {
 	 * 			The radius for this new worm (in meters).
 	 * @param 	name
 	 * 			The name for this new worm.
-	 * @post	The looking direction of the new worm is equal to the given
+	 * @effect	The looking direction of the new worm is equal to the given
 	 * 			direction modulo 2*PI.
-	 * 			| new.getDirection() == direction % (Math.PI*2)
-	 * @post	If the given radius is smaller then the lower bound, then the 
+	 * 			| setDirection(direction)
+	 * @effect	If the given radius is smaller then the lower bound, then the 
 	 * 			radius of this new worm is equal to the lower bound. 
 	 * 			Else the radius of this new worm is equal to the given radius.
-	 * 			| if (radius < getMinRadius())
-	 * 			|	then radius == getMinRadius()
-	 * 			| else
-	 * 			|	then radius == radius
+	 * 			| setRadius(radius)
+	 * @effect	If the given name is a valid name, the name of this new worm is
+	 * 			equal to the given name.
+	 * 			| setName(name)
 	 * @post	The mass of this new worm is set to a value calculated like a
 	 * 			sphere density and the given radius.
 	 * 			| new.getMass() == calcMass(radius)
 	 * @post	The action points of this new worm is set the the maximum possible
 	 * 			action points for this new worm in accordance to its mass.
 	 * 			| new.getActionPoints == getMaxActionPoints()
-	 * @post	If the given name is a valid name, the name of this new worm is
-	 * 			equal to the given name.
-	 * 			| if (isValidName(name))
-	 * 			|	then new.getName == name
 	 */
 	@Raw
 	public Worm(double x, double y, double direction, double radius, String name) {
@@ -81,7 +77,7 @@ public class Worm {
 	 * 
 	 * @return	The x-coordinate of the position of this worm.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getXCoordinate() {
 		return xCoordinate;
 	}
@@ -94,6 +90,7 @@ public class Worm {
 	 * @post	The given xCoordinate is the new position of this worm.
 	 * 			| new.getXCoordinate() == xCoordinate
 	 */
+	@Raw
 	private void setXCoordinate(double xCoordinate) {
 		this.xCoordinate = xCoordinate;
 	}
@@ -108,7 +105,7 @@ public class Worm {
 	 * 
 	 * @return	The y-coordinate of the position of this worm.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getYCoordinate() {
 		return yCoordinate;
 	}
@@ -121,6 +118,7 @@ public class Worm {
 	 * @post	The given yCoordinate is the new position of this worm.
 	 * 			| new.getYCoordinate() == yCoordinate
 	 */
+	@Raw
 	private void setYCoordinate(double yCoordinate) {
 		this.yCoordinate = yCoordinate;
 	}
@@ -139,6 +137,7 @@ public class Worm {
 	 * 			0 and 2*PI
 	 * 			|(direction > 0) && (direction < Math.PI*2)
 	 */
+	@Raw
 	public static boolean isValidDirection(double direction){
 		return (direction >= 0) && (direction < Math.PI*2);
 	}
@@ -167,6 +166,7 @@ public class Worm {
 	 * 			module 2*PI, the direction of this worm is set to this number.
 	 * 			| new.getDirection() == direction % (Math.PI*2)
 	 */
+	@Raw
 	private void setDirection(double direction) {
 		if (direction % (Math.PI * 2) <0)
 			this.direction = (direction % (Math.PI * 2) + 2*Math.PI);
@@ -193,23 +193,24 @@ public class Worm {
 	 * 
 	 * @param radius
 	 * 			The new radius of this worm.
-	 * @post	If the given radius is valid, then the new radius of this worm is equal
-	 * 			to the given radius.
-	 * 			| if(isValidRadius)
-	 * 			| 	then new.getRadius() = radius
 	 * @effect	The mass of this worm is set to the calculated mass of this worm.
 	 * 			| setMass(calcMass(radius))
 	 * @effect	The action points of this worm are set to the old amount of action points.
 	 * 			|setActionPoints(getActionPoints())
+	 * @post	If the given radius is valid, then the new radius of this worm is equal
+	 * 			to the given radius.
+	 * 			| if(isValidRadius)
+	 * 			| 	then new.getRadius() = radius
 	 * @throws 	IllegalArgumentException
 	 * 			The given radius is an invalid radius.
 	 * 			| !isValidRadius(radius)
 	 */
+	@Raw
 	public void setRadius(double radius) throws IllegalArgumentException {
 		if (!isValidRadius(radius))
 			throw new IllegalArgumentException();
 		this.radius = radius;
-		this.setMass(this.calcMass(radius));
+		this.setMass(Worm.calcMass(radius));
 		this.setActionPoints(this.getActionPoints());
 	}
 	/**
@@ -220,6 +221,7 @@ public class Worm {
 	 * @return	True if the given radius is valid.
 	 * 			| radius >= getMinRadius();
 	 */
+	@Raw
 	public static boolean isValidRadius(double radius) {
 		return radius >= getMinRadius();
 	}
@@ -260,6 +262,7 @@ public class Worm {
 	 * 			The name is an invalid name.
 	 * 			| !isValidName(name)
 	 */
+	@Raw
 	public void setName(String name) throws IllegalArgumentException {
 		if (!isValidName(name))
 			throw new IllegalArgumentException();
@@ -323,7 +326,7 @@ public class Worm {
 	 * 			The radius is an invalid radius.
 	 * 			| !isValidRadius(radius)
 	 */
-	public double calcMass(double radius) throws IllegalArgumentException {
+	public static double calcMass(double radius) throws IllegalArgumentException {
 		final int DENSITY_OF_THE_WORM = 1062;
 
 		if (!isValidRadius(radius))
@@ -347,7 +350,7 @@ public class Worm {
 	 * 			of this worm.
 	 * 			|(actionPoints >=0) && (actionPoints <= getMaxActionPoints())
 	 */
-	public boolean isValidNbActionPoints(int actionPoints){
+	public boolean canHaveAsActionPoints(int actionPoints){
 		return (actionPoints >=0) && (actionPoints <= getMaxActionPoints());
 	}
 
@@ -380,6 +383,7 @@ public class Worm {
 	 * 			| else
 	 * 			|	then new.getActionPoints() == actionPoints
 	 */
+	@Raw
 	private void setActionPoints(int actionPoints) {
 		if (actionPoints < 0)
 			this.actionPoints = 0;
@@ -477,14 +481,13 @@ public class Worm {
 	 * 			This expense is rounded up to an integer.
 	 * 			|new.getActionPoints = this.getActionPoints - (int) Math.ceil(STEPS_IN_X_DIRECTION * 
 	 * 				COST_X + STEPS_IN_Y_DIRECTION * COST_Y)
-	 * @throws	IllegalArgumentException
+	 * @throws	IllegalStateException
 	 * 			This worm cannot move the given steps.
 	 * 			| !canMove(steps)
-	 * 
 	 */
-	public void move(int steps) throws IllegalArgumentException {
+	public void move(int steps) throws IllegalStateException {
 		if (!canMove(steps)) {
-			throw new IllegalArgumentException();
+			throw new IllegalStateException();
 		}
 		setXCoordinate(getXCoordinate() + getRadius() * steps
 				* Math.cos(getDirection()));
@@ -500,7 +503,7 @@ public class Worm {
 	/**
 	 * The constant GRAVITY is used to 	easy manipulate the gravity in the different methods
 	 */
-	final double GRAVITY = 9.80665;
+	public final double GRAVITY = 9.80665;
 
 	/** 
 	 * Calculates the initial velocity this worm has when it jumps.

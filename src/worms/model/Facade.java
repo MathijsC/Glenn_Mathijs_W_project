@@ -45,6 +45,8 @@ public class Facade implements IFacade {
 			worm.move(nbSteps);
 		}catch(IllegalArgumentException exc){
 			throw new ModelException("Illegal argument");
+		}catch(IllegalStateException exc){
+			throw new ModelException("Worm cannot move!");
 		}
 	}
 
