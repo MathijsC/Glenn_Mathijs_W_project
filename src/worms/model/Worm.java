@@ -333,6 +333,22 @@ public class Worm {
 			throw new IllegalArgumentException();
 		return DENSITY_OF_THE_WORM * (4.0 / 3.0) * Math.pow(radius, 3) * Math.PI;
 	}
+	
+	/**
+	 * @return the hitPoints
+	 */
+	public int getHitPoints() {
+		return hitPoints;
+	}
+
+	/**
+	 * @param hitPoints the hitPoints to set
+	 */
+	public void setHitPoints(int hitPoints) {
+		this.hitPoints = hitPoints;
+	}
+
+	private int hitPoints;
 
 	/**
 	 * Variable holding the number of action points of this worm.
