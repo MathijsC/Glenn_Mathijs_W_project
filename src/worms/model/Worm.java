@@ -333,23 +333,68 @@ public class Worm {
 			throw new IllegalArgumentException();
 		return DENSITY_OF_THE_WORM * (4.0 / 3.0) * Math.pow(radius, 3) * Math.PI;
 	}
-	
 	/**
-	 * @return the hitPoints
+	 * Variable holding the number of hitpoints of this worm 
+	 */
+	private int hitPoints;
+	
+	/** returns the current hitpoints of this worm
+	 * @return the hitPoints of this worm
 	 */
 	public int getHitPoints() {
 		return hitPoints;
 	}
 
 	/**
-	 * @param hitPoints the hitPoints to set
+	 * Set the number of hitpoints of this worm to the given number of points.
+	 * 
+	 * @param 	hitPoints
+	 * 			The new number of hitpoints of this worm.
+	 * @post	If the given hitpoints are negative, the hitpoints of
+	 * 			this worm are set to zero.
+	 * 			| if (hitPoints < 0)
+	 * 			|	then new.getHitPoints() == 0
+	 * @post	Else if the given hitpoints are greater then the maximum amount
+	 * 			of hitpoint, the hitpoints of this worm are set to the
+	 * 			maximum amount.
+	 * 			| else if (hitPoints > this.getMaxHitPoints())
+	 * 			| 	then new.getHitPoints() == this.getHitPoints()
+	 * @post	Else the action points of this worm are set to the given 
+	 * 			amount of action points.
+	 * 			| else
+	 * 			|	then new.getHitPoints() == hitPoints
 	 */
-	public void setHitPoints(int hitPoints) {
-		this.hitPoints = hitPoints;
+	@Raw
+	private void setHitPoints(int hitPoints) {
+		if (hitPoints < 0)
+			this.hitPoints = 0;
+		else if (hitPoints > this.getMaxHitPoints())
+			this.hitPoints = this.getMaxHitPoints();
+		else
+			this.hitPoints = hitPoints;
 	}
 
-	private int hitPoints;
-
+	/**
+	 * Return the maximum number of hitpoints of this worm.
+	 * 
+	 * @return	The maximum number of hitpoints of this worm.
+	 * 			|(int) Math.round(getMass());
+	 */
+	public int getMaxHitPoints() {
+		return (int) Math.round(getMass());
+	}
+	
+	/**
+	 * heals this worm for a given amount of hitpoints
+	 * @param amount of hitPoints the worm will heal
+	 * @Post	??? 
+	 * 
+	 */
+	public void heal(int amount){
+		this.setHitPoints(this.getHitPoints()+amount);
+	}
+	
+	
 	/**
 	 * Variable holding the number of action points of this worm.
 	 */
@@ -418,7 +463,14 @@ public class Worm {
 	public int getMaxActionPoints() {
 		return (int) Math.round(getMass());
 	}
-
+	/**
+	 * Replenishes this worms action points to its max
+	 * @post this worm's action points will be set to this worm's maximum action points
+	 * 			|new.getActionPoints()==this.getMaxActionPoints()
+	 */
+	public void replenishActionPoints(){
+		this.setActionPoints(this.getMaxActionPoints());
+	}
 	// Movement
 
 	/**

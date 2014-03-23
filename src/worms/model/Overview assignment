@@ -1,0 +1,48 @@
+class
+-World: 
+height/ width(FINAL,upperbound),								???
+add/remove entities, 											defensive
+spawn worms/food at random locations,							???
+return which entities it contains, singular and grouped,		defensive? 
+(im)passable/adjacent to terrain,								Total
+Start game,finish game, return winning worms
+
+-Worm
+hitpoint (int), action points (int) 							Total	done
+//start turn -> replenish action points, add 10 hitpoints				done
+//end turn when AP or HP =0
+//HP=0 remove from world
+Name (adjust rules)												Defensive
+(turn)															nominally	done
+Move, adjust to terrain	, fall (formal docu), jump				defensive
+select weapon, fire weapon (propulsion)
+
+-Projectile
+trajectory, trajectoryTime, trajectoryStep, stops when hit 		defensive
+terrain or worm or leaves the world => destroy projectile and remove from world
+start position,													defensive
+direction equals worm,											nominally
+mass,density,radius	,											defensive
+*Rifle: 10g force 1.5N,10AP,20HP
+*Bazooka: 300g,2.5-9.5N(propulsion),50AP,80HP
+
+-Food
+positions														defensive
+radius(min:0.2m)												???
+eaten when overlaps with worms at any time						???
+=> worms radius increases 10%, destroyed and removed from world
+
+-Team(max: 10 teams in a world, friendly fire!)					defensive
+assign worm,
+a team can win the game
+name(rules)
+query the live worms of a team
+
+-
+
+
+
+
+
+
+
