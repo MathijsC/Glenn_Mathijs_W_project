@@ -38,6 +38,8 @@ public class Facade implements IFacade {
 	 * The new worm may (but isn't required to) have joined a team.
 	 */
 	public void addNewWorm(World world){
+		Worm worm = new Worm(0,0,0,1,"James");
+		world.addWorm(worm);
 		
 	}
 
@@ -105,8 +107,7 @@ public class Facade implements IFacade {
 	 */
 	public World createWorld(double width, double height,
 			boolean[][] passableMap, Random random) {
-		World init = null;
-		return init;
+		return new World(width,height,passableMap,random) ;
 	}
 
 
