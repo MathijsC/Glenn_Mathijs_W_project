@@ -1,21 +1,21 @@
 class
 -World: 
-height/ width(FINAL,upperbound),								???
+height/ width(FINAL,upperbound),								Total(gekozen)
 add/remove entities, 											defensive
-spawn worms/food at random locations,							???
+spawn worms/food at random locations,							"
 return which entities it contains, singular and grouped,		defensive? 
 (im)passable/adjacent to terrain,								Total
-Start game,finish game, return winning worms
+Start game,finish game, return winning worms					Total(gekozen)
 
 -Worm
 hitpoint (int), action points (int) 							Total	done
 //start turn -> replenish action points, add 10 hitpoints				done
 //end turn when AP or HP =0
 //HP=0 remove from world
-Name (adjust rules)												Defensive
-(turn)															nominally	done
+Name (adjust rules)												Defensive	
+(turn)															nominally	done?
 Move, adjust to terrain	, fall (formal docu), jump				defensive
-select weapon, fire weapon (propulsion)
+select weapon, fire weapon (propulsion)							
 
 -Projectile
 trajectory, trajectoryTime, trajectoryStep, stops when hit 		defensive
@@ -28,8 +28,8 @@ mass,density,radius	,											defensive
 
 -Food
 positions														defensive
-radius(min:0.2m)												???
-eaten when overlaps with worms at any time						???
+radius(min:0.2m)												"
+eaten when overlaps with worms at any time						"
 => worms radius increases 10%, destroyed and removed from world
 
 -Team(max: 10 teams in a world, friendly fire!)					defensive

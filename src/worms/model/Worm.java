@@ -387,7 +387,7 @@ public class Worm {
 	/**
 	 * heals this worm for a given amount of hitpoints
 	 * @param amount of hitPoints the worm will heal
-	 * @Post	??? 
+	 * @Effect	setHitPoints(getHitpoints() + amount)
 	 * 
 	 */
 	public void heal(int amount){
