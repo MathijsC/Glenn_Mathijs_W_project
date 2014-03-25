@@ -1,6 +1,10 @@
 package worms.model;
 
-import be.kuleuven.cs.som.annotate.*;
+import java.util.Random;
+
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
+import be.kuleuven.cs.som.annotate.Raw;
 
 /**
  * A class for a worm objects containing a x-coordinate, y-coordinate
@@ -62,9 +66,18 @@ public class Worm {
 		setYCoordinate(y);
 		setDirection(direction);
 		setRadius(radius);
-		setMass(calcMass(radius));
 		setActionPoints(getMaxActionPoints());
 		setName(name);
+	}
+	
+	public Worm(World world) {
+		Random seed = world.getSeed();
+		setXCoordinate(seed.nextDouble()*world.getWidth());
+		setYCoordinate(seed.nextDouble()*world.getHeight());
+		setRadius(getMinRadius());
+		setDirection(seed.nextDouble()*2*Math.PI);
+		setActionPoints(getMaxActionPoints());
+		setName("Glenn");
 	}
 
 	/**

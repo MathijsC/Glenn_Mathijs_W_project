@@ -1,7 +1,9 @@
 package worms.model;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Random;
+
+
 
 public class World {
 	private final double width;
@@ -12,6 +14,7 @@ public class World {
 		this.width= width;
 		this.height = height;
 		this.setPassableMap(passableMap);
+		this.seed = random;
 
 	}
 	
@@ -33,12 +36,21 @@ public class World {
 		this.passableMap = passableMap;
 	}
 	
-	private Collection<Worm> worms;
+	private final Random seed;
+	
+	public Random getSeed() {
+		return seed;
+	}
+
+	private ArrayList<Worm> worms = new ArrayList<Worm>();
 	
 	public void addWorm(Worm worm){
 		worms.add(worm);
 		
-		
+	}
+	
+	public ArrayList<Worm> getWorms(){
+		return worms;
 	}
 
 }
