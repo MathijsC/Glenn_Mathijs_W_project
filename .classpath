@@ -6,6 +6,6 @@
 	<classpathentry kind="src" path="tests-private"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/Studies/2°Bach/OO-programmeren/AnnotationsDoclets.jar"/>
+	<classpathentry kind="lib" path="lib/AnnotationsDoclets.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

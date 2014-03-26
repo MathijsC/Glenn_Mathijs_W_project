@@ -77,6 +77,7 @@ public class Worm {
 		setRadius(getMinRadius());
 		setDirection(seed.nextDouble()*2*Math.PI);
 		setActionPoints(getMaxActionPoints());
+		setHitPoints(getMaxHitPoints());
 		setName("Glenn");
 	}
 

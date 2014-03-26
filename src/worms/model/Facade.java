@@ -37,9 +37,8 @@ public class Facade implements IFacade {
 	 * The new worm can have an arbitrary (but valid) radius and direction.
 	 * The new worm may (but isn't required to) have joined a team.
 	 */
-	public void addNewWorm(World world){
-		
-		Worm worm = new Worm(0,0,0,1,"James");
+	public void addNewWorm(World world){		
+		Worm worm = new Worm(world);
 		world.addWorm(worm);
 		
 	}
@@ -368,7 +367,7 @@ public class Facade implements IFacade {
 	 * Returns all the worms in the given world
 	 */
 	public Collection<Worm> getWorms(World world){
-		return world.getWorms();
+		return world.getWorms();		
 				
 	}
 
