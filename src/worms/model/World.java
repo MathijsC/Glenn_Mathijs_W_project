@@ -52,6 +52,47 @@ public class World {
 	public ArrayList<Worm> getWorms(){
 		return worms;
 	}
+	
+	private int currentWormIndex;
+	
+	private int getCurrentWormIndex() {
+		return currentWormIndex;
+	}
+
+	private void setCurrentWormIndex(int currentWormIndex) {
+		this.currentWormIndex = currentWormIndex;
+	}
+	
+	public Worm getCurrentWorm(){
+		return this.worms.get(this.getCurrentWormIndex());
+	}
+	
+	public void startNextTurn(){
+		if (getCurrentWormIndex() >= (worms.size()-1))
+			startNextRound();
+		else
+			setCurrentWormIndex(getCurrentWormIndex()+1);
+			
+	}
+	
+	private void startNextRound(){
+		
+		for (Worm worm: worms){
+			worm.refresh();
+		}
+		setCurrentWormIndex(0);
+		
+	}
+	
+	public void	startGame(){
+		setCurrentWormIndex(0);
+	}
+
+
+	
+	
+	
+	
 
 }
 	

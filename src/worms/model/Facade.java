@@ -159,8 +159,7 @@ public class Facade implements IFacade {
 	 * Returns the active worm in the given world (i.e., the worm whose turn it is).
 	 */
 	public Worm getCurrentWorm(World world){
-		Worm init = null;
-		return init;
+		return world.getCurrentWorm();
 		
 	}
 
@@ -467,7 +466,7 @@ public class Facade implements IFacade {
 	 * Returns whether the given worm is alive
 	 */
 	public boolean isAlive(Worm worm){
-		return false;
+		return worm.getState();
 		
 	}
 
@@ -595,7 +594,7 @@ public class Facade implements IFacade {
 	 * Starts a game in the given world.
 	 */
 	public void startGame(World world){
-		
+		world.startGame();
 	}
 
 
@@ -603,7 +602,7 @@ public class Facade implements IFacade {
 	 * Starts the next turn in the given world
 	 */
 	public void startNextTurn(World world){
-		
+		world.startNextTurn();		
 	}
 
 

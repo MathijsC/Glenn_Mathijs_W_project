@@ -78,9 +78,23 @@ public class Worm {
 		setDirection(seed.nextDouble()*2*Math.PI);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
+		setState(true);
 		setName("Glenn");
-		System.out.println("Hitpoints:");
-		System.out.println(getHitPoints());
+	}
+	
+	private boolean state;
+	
+	public void setState(boolean state){
+		this.state = state;
+	}
+	
+	public boolean getState(){
+		return this.state;
+	}
+	
+	public void refresh(){
+		this.setActionPoints(getMaxActionPoints());
+		this.setHitPoints(getHitPoints()+10);
 	}
 
 	/**
