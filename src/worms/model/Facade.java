@@ -181,7 +181,7 @@ public class Facade implements IFacade {
 	 * Returns the current number of hit points of the given worm.
 	 */
 	public int getHitPoints(Worm worm){
-		return 0;
+		return worm.getHitPoints();
 		
 	}
 
@@ -275,7 +275,7 @@ public class Facade implements IFacade {
 	 * Returns the maximum number of hit points of the given worm.
 	 */
 	public int getMaxHitPoints(Worm worm){
-		return 0;
+		return worm.getMaxHitPoints();
 		
 	}
 

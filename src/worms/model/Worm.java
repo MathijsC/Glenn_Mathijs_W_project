@@ -79,6 +79,8 @@ public class Worm {
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
 		setName("Glenn");
+		System.out.println("Hitpoints:");
+		System.out.println(getHitPoints());
 	}
 
 	/**
