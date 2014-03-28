@@ -62,8 +62,7 @@ public class Worm {
 	 */
 	@Raw
 	public Worm(double x, double y, double direction, double radius, String name) {
-		setXCoordinate(x);
-		setYCoordinate(y);
+		this.position = new Position(x, y);
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
@@ -93,15 +92,12 @@ public class Worm {
 	}
 	
 	public void refresh(){
-		this.setActionPoints(getMaxActionPoints());
-		this.setHitPoints(getHitPoints()+10);
+		int  REGENERATION_OF_HEALTH = 10;
+		this.replenishActionPoints();
+		this.heal(REGENERATION_OF_HEALTH);
 	}
 
-	/**
-	 * Variable registering the x-coordinate of the position of this worm.
-	 */
-	private double xCoordinate;
-
+	private Position position; 
 	/**
 	 * Return the x-coordinate of the position of this worm.
 	 * 
@@ -109,7 +105,7 @@ public class Worm {
 	 */
 	@Basic @Raw
 	public double getXCoordinate() {
-		return xCoordinate;
+		return position.getxCoordinate();
 	}
 
 	/**
@@ -122,13 +118,8 @@ public class Worm {
 	 */
 	@Raw
 	private void setXCoordinate(double xCoordinate) {
-		this.xCoordinate = xCoordinate;
+		position.setxCoordinate(xCoordinate);
 	}
-
-	/**
-	 * Variable registering the y-coordinate of the position of this worm.
-	 */
-	private double yCoordinate;
 
 	/**
 	 * Return the y-coordinate of the position of this worm.
@@ -137,7 +128,7 @@ public class Worm {
 	 */
 	@Basic @Raw
 	public double getYCoordinate() {
-		return yCoordinate;
+		return position.getYcoordinate();
 	}
 
 	/**
@@ -150,7 +141,7 @@ public class Worm {
 	 */
 	@Raw
 	private void setYCoordinate(double yCoordinate) {
-		this.yCoordinate = yCoordinate;
+		position.setYcoordinate(yCoordinate);
 	}
 
 	/**
