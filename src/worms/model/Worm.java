@@ -68,42 +68,44 @@ public class Worm {
 		setActionPoints(getMaxActionPoints());
 		setName(name);
 	}
-	
+
 	public Worm(World world) {
 		Random seed = world.getSeed();
-		setXCoordinate(seed.nextDouble()*world.getWidth());
-		setYCoordinate(seed.nextDouble()*world.getHeight());
+		this.position = new Position(seed.nextDouble() * world.getWidth(),
+				seed.nextDouble() * world.getHeight());
 		setRadius(getMinRadius());
-		setDirection(seed.nextDouble()*2*Math.PI);
+		setDirection(seed.nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
 		setState(true);
 		setName("Glenn");
 	}
-	
+
 	private boolean state;
-	
-	public void setState(boolean state){
+
+	public void setState(boolean state) {
 		this.state = state;
 	}
-	
-	public boolean getState(){
+
+	public boolean getState() {
 		return this.state;
 	}
-	
-	public void refresh(){
-		int  REGENERATION_OF_HEALTH = 10;
+
+	public void refresh() {
+		int REGENERATION_OF_HEALTH = 10;
 		this.replenishActionPoints();
 		this.heal(REGENERATION_OF_HEALTH);
 	}
 
-	private Position position; 
+	private Position position;
+
 	/**
 	 * Return the x-coordinate of the position of this worm.
 	 * 
 	 * @return	The x-coordinate of the position of this worm.
 	 */
-	@Basic @Raw
+	@Basic
+	@Raw
 	public double getXCoordinate() {
 		return position.getxCoordinate();
 	}
@@ -126,7 +128,8 @@ public class Worm {
 	 * 
 	 * @return	The y-coordinate of the position of this worm.
 	 */
-	@Basic @Raw
+	@Basic
+	@Raw
 	public double getYCoordinate() {
 		return position.getYcoordinate();
 	}
@@ -148,7 +151,7 @@ public class Worm {
 	 * Variable to register the looking direction of this worm.
 	 */
 	private double direction;
-	
+
 	/**
 	 * Return true if the given direction is a valid direction
 	 * 
@@ -159,8 +162,8 @@ public class Worm {
 	 * 			|(direction > 0) && (direction < Math.PI*2)
 	 */
 	@Raw
-	public static boolean isValidDirection(double direction){
-		return (direction >= 0) && (direction < Math.PI*2);
+	public static boolean isValidDirection(double direction) {
+		return (direction >= 0) && (direction < Math.PI * 2);
 	}
 
 	/**
@@ -168,7 +171,8 @@ public class Worm {
 	 * 
 	 * @return	The looking direction of this worm.
 	 */
-	@Basic @Raw
+	@Basic
+	@Raw
 	public double getDirection() {
 		return direction;
 	}
@@ -189,8 +193,8 @@ public class Worm {
 	 */
 	@Raw
 	private void setDirection(double direction) {
-		if (direction % (Math.PI * 2) <0)
-			this.direction = (direction % (Math.PI * 2) + 2*Math.PI);
+		if (direction % (Math.PI * 2) < 0)
+			this.direction = (direction % (Math.PI * 2) + 2 * Math.PI);
 		else
 			this.direction = (direction % (Math.PI * 2));
 	}
@@ -205,10 +209,12 @@ public class Worm {
 	 * 
 	 * @return	The radius of this worm.
 	 */
-	@Basic @Raw
+	@Basic
+	@Raw
 	public double getRadius() {
 		return radius;
 	}
+
 	/**
 	 * Set the radius of this worm to the given radius if this given radius is valid.
 	 * 
@@ -234,6 +240,7 @@ public class Worm {
 		this.setMass(Worm.calcMass(radius));
 		this.setActionPoints(this.getActionPoints());
 	}
+
 	/**
 	 * Check if the given radius is a given radius.
 	 * 
@@ -267,7 +274,8 @@ public class Worm {
 	 * 
 	 * @return	The name of this worm.
 	 */
-	@Basic @Raw
+	@Basic
+	@Raw
 	public String getName() {
 		return name;
 	}
@@ -313,7 +321,8 @@ public class Worm {
 	 * 
 	 * @return	The mass of this worm.
 	 */
-	@Basic @Raw
+	@Basic
+	@Raw
 	public double getMass() {
 		return mass;
 	}
@@ -347,18 +356,21 @@ public class Worm {
 	 * 			The radius is an invalid radius.
 	 * 			| !isValidRadius(radius)
 	 */
-	public static double calcMass(double radius) throws IllegalArgumentException {
+	public static double calcMass(double radius)
+			throws IllegalArgumentException {
 		final int DENSITY_OF_THE_WORM = 1062;
 
 		if (!isValidRadius(radius))
 			throw new IllegalArgumentException();
-		return DENSITY_OF_THE_WORM * (4.0 / 3.0) * Math.pow(radius, 3) * Math.PI;
+		return DENSITY_OF_THE_WORM * (4.0 / 3.0) * Math.pow(radius, 3)
+				* Math.PI;
 	}
+
 	/**
 	 * Variable holding the number of hitpoints of this worm 
 	 */
 	private int hitPoints;
-	
+
 	/** returns the current hitpoints of this worm
 	 * @return the hitPoints of this worm
 	 */
@@ -404,23 +416,22 @@ public class Worm {
 	public int getMaxHitPoints() {
 		return (int) Math.round(getMass());
 	}
-	
+
 	/**
 	 * heals this worm for a given amount of hitpoints
 	 * @param amount of hitPoints the worm will heal
 	 * @Effect	setHitPoints(getHitpoints() + amount)
 	 * 
 	 */
-	public void heal(int amount){
-		this.setHitPoints(this.getHitPoints()+amount);
+	public void heal(int amount) {
+		this.setHitPoints(this.getHitPoints() + amount);
 	}
-	
-	
+
 	/**
 	 * Variable holding the number of action points of this worm.
 	 */
 	private int actionPoints;
-	
+
 	/**
 	 * Return true if the given amount of action points if a valid
 	 * amount of action points.
@@ -432,8 +443,8 @@ public class Worm {
 	 * 			of this worm.
 	 * 			|(actionPoints >=0) && (actionPoints <= getMaxActionPoints())
 	 */
-	public boolean canHaveAsActionPoints(int actionPoints){
-		return (actionPoints >=0) && (actionPoints <= getMaxActionPoints());
+	public boolean canHaveAsActionPoints(int actionPoints) {
+		return (actionPoints >= 0) && (actionPoints <= getMaxActionPoints());
 	}
 
 	/**
@@ -441,7 +452,8 @@ public class Worm {
 	 * 
 	 * @return	The number of action points of this worm.
 	 */
-	@Basic @Raw
+	@Basic
+	@Raw
 	public int getActionPoints() {
 		return actionPoints;
 	}
@@ -484,14 +496,16 @@ public class Worm {
 	public int getMaxActionPoints() {
 		return (int) Math.round(getMass());
 	}
+
 	/**
 	 * Replenishes this worms action points to its max
 	 * @post this worm's action points will be set to this worm's maximum action points
 	 * 			|new.getActionPoints()==this.getMaxActionPoints()
 	 */
-	public void replenishActionPoints(){
+	public void replenishActionPoints() {
 		this.setActionPoints(this.getMaxActionPoints());
 	}
+
 	// Movement
 
 	/**
@@ -504,7 +518,8 @@ public class Worm {
 	 * 			|getActionPoints() >= (int) Math.ceil(COST * ANGLE); 
 	 */
 	public boolean canTurn(double angle) {
-		return getActionPoints() >= (int) Math.ceil(60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI)));
+		return getActionPoints() >= (int) Math
+				.ceil(60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI)));
 	}
 
 	/** 
@@ -525,10 +540,11 @@ public class Worm {
 	 * 			|	(int) Math.ceil(COST * ANGLE);
 	 */
 	public void turn(double angle) {
-		assert(this.canTurn(angle));
+		assert (this.canTurn(angle));
 		setDirection(getDirection() + angle);
 		setActionPoints(getActionPoints()
-				- (int) Math.ceil(60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI))));
+				- (int) Math
+						.ceil(60 * ((Math.abs(angle) % (Math.PI * 2)) / (2 * Math.PI))));
 	}
 
 	/** 
@@ -643,6 +659,7 @@ public class Worm {
 		setXCoordinate(getXCoordinate() + dist);
 		setActionPoints(0);
 	}
+
 	/**
 	 * Return the time a jump of this worm would take.
 	 * 
@@ -661,7 +678,7 @@ public class Worm {
 				/ (GRAVITY * Math.cos(getDirection()));
 
 	}
-	
+
 	/**
 	 * Return the position (x-coordinate, y-coordinate) at a certain time 
 	 * during the jump.
@@ -679,14 +696,15 @@ public class Worm {
 	 * 			The worm cannot jump.
 	 * 			| ! canJump()
 	 */
-	public double[] jumpStep(double time) throws IllegalArgumentException,IllegalStateException {
+	public double[] jumpStep(double time) throws IllegalArgumentException,
+			IllegalStateException {
 		if (!canJump()) {
 			throw new IllegalStateException();
 		}
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		if (time > this.jumpTime()){
+		if (time > this.jumpTime()) {
 			throw new IllegalArgumentException();
 		}
 		double X = getXCoordinate() + initialVelocity()
