@@ -17,7 +17,7 @@ Name (adjust rules)												Defensive
 Move, adjust to terrain	, fall (formal docu), jump				defensive
 select weapon, fire weapon (propulsion)							
 
--Projectile
+-Projectile																			~Done
 trajectory, trajectoryTime, trajectoryStep, stops when hit 		defensive
 terrain or worm or leaves the world => destroy projectile and remove from world
 start position,													defensive

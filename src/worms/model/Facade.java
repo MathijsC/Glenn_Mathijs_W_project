@@ -184,7 +184,7 @@ public class Facade implements IFacade {
 		
 	}
 
-
+	//TODO @throws
 	/**
 	 * Returns the location on the jump trajectory of the given projectile after a
 	 * time t.
@@ -193,12 +193,14 @@ public class Facade implements IFacade {
 	 *         x-coordinate and the second element the y-coordinate
 	 */
 	public double[] getJumpStep(Projectile projectile, double t){
-		double[] init = null;
-		return init;
-		
+		try{
+			return projectile.jumpStep(t);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument");
+		}
 	}
 
-
+	//TODO @throws
 	/**
 	 * Returns the location on the jump trajectory of the given worm after a
 	 * time t.
@@ -208,7 +210,7 @@ public class Facade implements IFacade {
 	 *  
 	 * @throws Throws a model exception when the given worm isn't able to jump.
 	 */
-	public double[] getJumpStep(Worm worm, double t) {
+	public double[] getJumpStep(Worm worm, double t) throws ModelException {
 		try{
 			return worm.jumpStep(t);
 		}catch(IllegalArgumentException exc){
@@ -218,6 +220,7 @@ public class Facade implements IFacade {
 		}
 	}
 
+	//TODO timeStep
 	/**
 	 * Determine the time that the given projectile can jump until it hits the terrain, hits a worm, or leaves the world.
 	 * The time should be determined using the given elementary time interval.
@@ -230,7 +233,7 @@ public class Facade implements IFacade {
 	 * @return The time duration of the projectile's jump.
 	 */
 	public double getJumpTime(Projectile projectile, double timeStep){
-		return 0;
+		return projectile.jumpTime();
 		
 	}
 
@@ -315,7 +318,7 @@ public class Facade implements IFacade {
 	 * Returns the radius of the given projectile.
 	 */
 	public double getRadius(Projectile projectile){
-		return 0;
+		return projectile.getRadius();
 		
 	}
 
@@ -386,7 +389,7 @@ public class Facade implements IFacade {
 	 * Returns the x-coordinate of the given projectile.
 	 */
 	public double getX(Projectile projectile){
-		return 0;
+		return projectile.getPosition()[0];
 		
 	}
 
@@ -412,7 +415,7 @@ public class Facade implements IFacade {
 	 * Returns the y-coordinate of the given projectile.
 	 */
 	public double getY(Projectile projectile){
-		return 0;
+		return projectile.getPosition()[1];
 		
 	}
 
@@ -439,7 +442,7 @@ public class Facade implements IFacade {
 	 * Returns whether the given projectile is still alive (active).
 	 */
 	public boolean isActive(Projectile projectile){
-		return false;
+		return projectile.getState();
 		
 	}
 
