@@ -66,7 +66,10 @@ public class Worm {
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
+		setHitPoints(getMaxHitPoints());
+		setState(true);
 		setName(name);
+		
 	}
 	
 	public Worm(World world) {
