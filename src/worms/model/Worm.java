@@ -69,6 +69,7 @@ public class Worm {
 		setName(name);
 	}
 
+	//TODO docu
 	public Worm(World world) {
 		Random seed = world.getSeed();
 		this.position = new Position(seed.nextDouble() * world.getWidth(),
@@ -80,23 +81,32 @@ public class Worm {
 		setState(true);
 		setName("Glenn");
 	}
+	
+	private World world;
+	
+	
 
+	//TODO docu
 	private boolean state;
 
+	//TODO docu
 	public void setState(boolean state) {
 		this.state = state;
 	}
 
+	//TODO docu
 	public boolean getState() {
 		return this.state;
 	}
 
+	//TODO docu
 	public void refresh() {
 		int REGENERATION_OF_HEALTH = 10;
 		this.replenishActionPoints();
 		this.heal(REGENERATION_OF_HEALTH);
 	}
 
+	//TODO docu
 	private Position position;
 
 	/**
