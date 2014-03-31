@@ -115,7 +115,7 @@ public class World {
 	}
 
 	/**
-	 * A list containing all the worms who are curently in this world.
+	 * A list containing all the worms who are currently in this world.
 	 */
 	private ArrayList<Worm> worms = new ArrayList<Worm>();
 	
@@ -225,11 +225,38 @@ public class World {
 	public void	startGame(){
 		setCurrentWormIndex(0);
 	}
-
-
 	
+	/**
+	 * A list containing all the food in this world.
+	 */
+	private ArrayList<Food> foodList = new ArrayList<Food>();
 	
+	/**
+	 * Add a new food to this world.
+	 * 
+	 * @param 	Food
+	 * 			The food to be added to this world.
+	 * @post	The last food added to this world is the given food.
+	 * 			TODO formeel
+	 * 
+	 * 
+	 */
+	public void addFood(Food food) throws IllegalStateException{
+		//TODO food.getWorld()
+		/*if (!(food.getWorld() == this)){
+			throw new IllegalStateException();
+		}*/
+		foodList.add(food);		
+	}
 	
+	/**
+	 * Return a list of the food who in this world.
+	 * 
+	 * @return 	The list of food in this world.
+	 */
+	public ArrayList<Food> getFoodList(){
+		return foodList;
+	}
 	
 
 }

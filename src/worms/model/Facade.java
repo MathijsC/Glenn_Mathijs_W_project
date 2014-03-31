@@ -28,6 +28,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method should have no effect)
 	 */
 	public void addNewFood(World world){
+		new Food(world);
 		
 	}
 
@@ -170,8 +171,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method must always return an empty collection)
 	 */
 	public Collection<Food> getFood(World world){
-		Collection<Food> init = null;
-		return init;
+		return world.getFoodList();
 		
 	}
 
@@ -309,7 +309,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method may return any value)
 	 */
 	public double getRadius(Food food){
-		return 0;
+		return food.getRadius();
 		
 	}
 
@@ -380,7 +380,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method may return any value)
 	 */
 	public double getX(Food food){
-		return 0;
+		return food.getXCoordinate();
 		
 	}
 
@@ -389,7 +389,7 @@ public class Facade implements IFacade {
 	 * Returns the x-coordinate of the given projectile.
 	 */
 	public double getX(Projectile projectile){
-		return projectile.getPosition()[0];
+		return projectile.getXCoordinate();
 		
 	}
 
@@ -407,7 +407,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method may return any value)
 	 */
 	public double getY(Food food){
-		return 0;
+		return food.getYCoordinate();
 		
 	}
 
@@ -415,7 +415,7 @@ public class Facade implements IFacade {
 	 * Returns the y-coordinate of the given projectile.
 	 */
 	public double getY(Projectile projectile){
-		return projectile.getPosition()[1];
+		return projectile.getYCoordinate();
 		
 	}
 
@@ -500,7 +500,7 @@ public class Facade implements IFacade {
 		
 	}
 
-
+	//TODO timestep
 	/**
 	 * Make the given projectile jump to its new location.
 	 * The new location should be determined using the given elementary time interval. 
@@ -511,7 +511,7 @@ public class Facade implements IFacade {
 	 *                 that the projectile will not completely move through a piece of impassable terrain.
 	 */
 	public void jump(Projectile projectile, double timeStep){
-		
+		projectile.jump();
 	}
 
 
