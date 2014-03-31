@@ -1,7 +1,5 @@
 package worms.model;
 
-import java.util.Random;
-
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
@@ -27,7 +25,7 @@ import be.kuleuven.cs.som.annotate.Raw;
  *	
  * @version 1.30
  */
-public class Worm {
+public class Worm extends Entity{
 
 	/**
 	 * Initialize this new worm with a given position (x,y), looking direction,
@@ -62,7 +60,7 @@ public class Worm {
 	 */
 	@Raw
 	public Worm(double x, double y, double direction, double radius, String name) {
-		this.position = new Position(x, y);
+		super(new Position(x,y));
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
@@ -74,11 +72,10 @@ public class Worm {
 
 	//TODO docu
 	public Worm(World world) {
-		Random seed = world.getSeed();
-		this.position = new Position(seed.nextDouble() * world.getWidth(),
-				seed.nextDouble() * world.getHeight());
+		super(new Position(world.getSeed().nextDouble() * world.getWidth(),
+				world.getSeed().nextDouble() * world.getHeight()));
 		setRadius(getMinRadius());
-		setDirection(seed.nextDouble() * 2 * Math.PI);
+		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
 		setState(true);
@@ -154,57 +151,6 @@ public class Worm {
 		int REGENERATION_OF_HEALTH = 10;
 		this.replenishActionPoints();
 		this.heal(REGENERATION_OF_HEALTH);
-	}
-
-	//TODO docu
-	private Position position;
-
-	/**
-	 * Return the x-coordinate of the position of this worm.
-	 * 
-	 * @return	The x-coordinate of the position of this worm.
-	 */
-	@Basic
-	@Raw
-	public double getXCoordinate() {
-		return position.getxCoordinate();
-	}
-
-	/**
-	 * Set the x-coordinate of the position of this worm to the given xCoordinate.
-	 * 
-	 * @param 	xCoordinate
-	 * 			The x-coordinate to be set as the position of this worm
-	 * @post	The given xCoordinate is the new position of this worm.
-	 * 			| new.getXCoordinate() == xCoordinate
-	 */
-	@Raw
-	private void setXCoordinate(double xCoordinate) {
-		position.setxCoordinate(xCoordinate);
-	}
-
-	/**
-	 * Return the y-coordinate of the position of this worm.
-	 * 
-	 * @return	The y-coordinate of the position of this worm.
-	 */
-	@Basic
-	@Raw
-	public double getYCoordinate() {
-		return position.getYcoordinate();
-	}
-
-	/**
-	 * Set the y-coordinate of the position of this worm to the given yCoordinate.
-	 * 
-	 * @param 	yCoordinate
-	 * 			The x-coordinate to be set as the position of this worm
-	 * @post	The given yCoordinate is the new position of this worm.
-	 * 			| new.getYCoordinate() == yCoordinate
-	 */
-	@Raw
-	private void setYCoordinate(double yCoordinate) {
-		position.setYcoordinate(yCoordinate);
 	}
 
 	/**

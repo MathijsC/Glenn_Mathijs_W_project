@@ -6,7 +6,7 @@ import be.kuleuven.cs.som.annotate.Raw;
 public class Position {
 
 	public Position(double xCoordinate, double yCoordinate) {
-		setxCoordinate(xCoordinate);
+		setXCoordinate(xCoordinate);
 		setYcoordinate(yCoordinate);
 	}
 
@@ -22,7 +22,7 @@ public class Position {
 	 */
 	@Basic
 	@Raw
-	public double getxCoordinate() {
+	public double getXCoordinate() {
 		return xCoordinate;
 	}
 
@@ -35,7 +35,7 @@ public class Position {
 	 * 			| new.getXCoordinate() == xCoordinate
 	 */
 	@Raw
-	public void setxCoordinate(double xCoordinate) {
+	public void setXCoordinate(double xCoordinate) {
 		this.xCoordinate = xCoordinate;
 	}
 
@@ -72,7 +72,7 @@ public class Position {
 
 		return Math
 				.sqrt(Math.pow(
-						(this.getxCoordinate() - other.getxCoordinate()), 2)
+						(this.getXCoordinate() - other.getXCoordinate()), 2)
 						+ Math.pow(
 								(this.getYcoordinate() - other.getYcoordinate()),
 								2));

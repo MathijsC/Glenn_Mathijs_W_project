@@ -190,7 +190,7 @@ public class Projectile extends Entity {
 
 		double dist = Math.pow(initialVelocity(), 2)
 				* Math.sin(2 * getDirection()) / GRAVITY;
-		setPosition((getPosition()[0]+dist),getPosition()[1]);
+		setXCoordinate(getXCoordinate()+dist);
 	}
 
 	/**
@@ -228,9 +228,9 @@ public class Projectile extends Entity {
 		if (time > this.jumpTime()) {
 			throw new IllegalArgumentException();
 		}
-		double X = getPosition()[0] + initialVelocity()
+		double X = getXCoordinate() + initialVelocity()
 				* Math.cos(getDirection()) * time;
-		double Y = getPosition()[1] + initialVelocity()
+		double Y = getYCoordinate() + initialVelocity()
 				* Math.sin(getDirection()) * time - 0.5 * GRAVITY
 				* Math.pow(time, 2);
 		double[] coord = { X, Y };
