@@ -4,13 +4,15 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 
-public class Projectile extends Position {
+public class Projectile {
 
-	public Projectile(double xCoordinate, double yCoordinate,double mass_In, double force_In) {
-		super(xCoordinate, yCoordinate);
+	public Projectile(Position position,double mass_In, double force_In) {
+		this.position = position;
 		this.mass = mass_In;
 		this.force = force_In;
 	}
+	
+	Position position; 
 
 	final double mass;
 	
