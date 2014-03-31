@@ -245,7 +245,8 @@ public class World {
 		if (!(team.getWorld() == this)){
 			throw new IllegalStateException();
 		}
-		worms.add(team);		
+		worms.add(team);
+		System.out.println("Added");
 	}
 	
 	/**

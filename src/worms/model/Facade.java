@@ -348,7 +348,9 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement teams, this method should always return null)
 	 */
 	public String getTeamName(Worm worm){
-		return "Red";
+		if (worm.getTeam() == null)
+			return " ";
+		return worm.getTeam().getName();
 		
 	}
 

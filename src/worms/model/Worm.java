@@ -81,8 +81,35 @@ public class Worm extends Entity{
 		setState(true);
 		setName("Glenn");
 		setWorld(world);
+		//if (!world.getTeams().isEmpty()){
+			int rand = world.getSeed().nextInt(world.getTeams().size()+1);
+			System.out.println(rand);
+			if (rand == 0){
+				System.out.println("null");
+				setTeam(null);
+			}
+			else {
+				System.out.println("not null");
+				setTeam(world.getTeams().get(rand-1));
+			}
+				
+		//}
 	}
 	
+	//TODO
+	private Team team;
+	
+	
+	//TODO
+	public Team getTeam() {
+		return team;
+	}
+
+	//TODO
+	public void setTeam(Team team) {
+		this.team = team;
+	}
+
 	/**
 	 * A variable containing the world where this worm is lives.
 	 */
