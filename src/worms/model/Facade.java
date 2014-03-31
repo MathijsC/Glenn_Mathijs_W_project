@@ -18,7 +18,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement teams, this method should have no effect)
 	 */
 	public void addEmptyTeam(World world, String newName){
-		
+		new Team(world,newName);
 	}
 
 	/**

@@ -227,6 +227,37 @@ public class World {
 	}
 	
 	/**
+	 * A list containing all the teams who are curently in this world.
+	 */
+	private ArrayList<Team> teams = new ArrayList<Team>();
+	
+	/**
+	 * Add a new team to this world.
+	 * 
+	 * @param 	team
+	 * 			The team to be added to this world.
+	 * @post	The last team added to this world is the given team.
+	 * 			TODO formeel
+	 * 
+	 * 
+	 */
+	public void addTeam(Worm team) throws IllegalStateException{
+		if (!(team.getWorld() == this)){
+			throw new IllegalStateException();
+		}
+		worms.add(team);		
+	}
+	
+	/**
+	 * Return a list of the teams who are in this world.
+	 * 
+	 * @return 	The list of teams who are in this world.
+	 */
+	public ArrayList<Team> getTeams(){
+		return teams;
+	}
+	
+	/**
 	 * A list containing all the food in this world.
 	 */
 	private ArrayList<Food> foodList = new ArrayList<Food>();
