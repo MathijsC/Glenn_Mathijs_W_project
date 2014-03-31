@@ -80,11 +80,58 @@ public class Worm {
 		setHitPoints(getMaxHitPoints());
 		setState(true);
 		setName("Glenn");
+		setWorld(world);
 	}
 	
-	private World world;
+	/**
+	 * A variable containing the world where this worm is lives.
+	 */
+	private World world;	
 	
+	/**
+	 * Return the world where this worm lives.
+	 * 
+	 * @return The world where this worm lives.
+	 */
+	public World getWorld() {
+		return world;
+	}
+
+	/**
+	 * Set the world where this worm lives to the given world.
+	 * 
+	 * @param 	world
+	 * 			The world where this worm lives in.
+	 * @post	The world of this worm is set to the given world.
+	 * 			| new.getWorld() == world
+	 * @effect	The worm is added the the given world.
+	 * 			| world.addWorm(this)
+	 * @throws	NullPointerException
+	 * 			The given world is null.
+	 * 			| if (world == null) 
+	 */
+	public void setWorld(World world) throws NullPointerException, IllegalStateException{
+		if (world == null) {
+			throw new NullPointerException();
+		}
+		if (Worm.hasWorld(this)){
+			throw new IllegalStateException();
+		}
+		this.world = world;
+		world.addWorm(this);
+	}
 	
+	/**
+	 * Return true if the given worm lives in a world.
+	 * 
+	 * @param 	worm
+	 * 			The worm to check if he lives in a world.			
+	 * @return	True if the given worm lives in a world.
+	 * 			| TODO formeel
+	 */
+	private static boolean hasWorld(Worm worm){
+		return (worm.getWorld() != null);
+	}
 
 	//TODO docu
 	private boolean state;

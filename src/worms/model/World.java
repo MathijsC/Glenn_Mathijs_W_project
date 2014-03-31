@@ -124,32 +124,72 @@ public class World {
 	 * 
 	 * @param 	worm
 	 * 			The worm to be added to this world.
+	 * @post	The last worm added to this world is the given worm.
+	 * 			TODO formeel
 	 * 
 	 * 
 	 */
-	public void addWorm(Worm worm){
-		worms.add(worm);
-		
+	public void addWorm(Worm worm) throws IllegalStateException{
+		if (!(worm.getWorld() == this)){
+			throw new IllegalStateException();
+		}
+		worms.add(worm);		
 	}
 	
+	/**
+	 * Return a list of the worms who live in this world.
+	 * 
+	 * @return 	The list of worms who live in this world.
+	 */
 	public ArrayList<Worm> getWorms(){
 		return worms;
 	}
 	
+	/**
+	 * The index of the worm who is at turn in the list of worms.
+	 */
 	private int currentWormIndex;
 	
+	/**
+	 * Return the index of the worm who is at turn in the list of worms.
+	 * 
+	 * @return 	The index of the worm who is at turn in the list of worms.
+	 */
 	private int getCurrentWormIndex() {
 		return currentWormIndex;
 	}
 
+	/**
+	 * Set the index of the worm who is at turn to the given current index.
+	 * 
+	 * @param 	currentWormIndex
+	 * 			The index to set the current index to.
+	 * @post	The new current index is equal to the given index.
+	 * 			| new.getCurrentWormIndex() == currentWormIndex
+	 */
 	private void setCurrentWormIndex(int currentWormIndex) {
 		this.currentWormIndex = currentWormIndex;
 	}
 	
+	/**
+	 * Get the worm who is currently at turn in this world.
+	 * 
+	 * @return The worm who is currently at turn in this world.
+	 */
 	public Worm getCurrentWorm(){
 		return this.worms.get(this.getCurrentWormIndex());
 	}
 	
+	/**
+	 * Start the turn of the next worm.
+	 * 
+	 * @effect	If the last worm has finished its turn, start a new round.
+	 * 			| if(last worm played)
+	 * 			|	then startNextRound();
+	 * @effect	Else set the next worm to the current worm.
+	 * 			| else
+	 * 			|	then setCurrentWormIndex(next worm index)
+	 */
 	public void startNextTurn(){
 		if (getCurrentWormIndex() >= (worms.size()-1))
 			startNextRound();
@@ -158,6 +198,15 @@ public class World {
 			
 	}
 	
+	/**
+	 * Start a next round of the game.
+	 * 
+	 * TODO check ALL
+	 * @effect	All the worms in the world refresh.
+	 * 			| worm.refresh()
+	 * @post	The current worm is set to the first worm (index = 0) in this world.
+	 * 			| new.getCurrentWormIndex == 0
+	 */
 	private void startNextRound(){
 		
 		for (Worm worm: worms){
@@ -167,6 +216,12 @@ public class World {
 		
 	}
 	
+	/**
+	 * Start a new game.
+	 * 
+	 * @post	The current worm is set to the first worm (index = 0) in this world.
+	 * 			| new.getCurrentWormIndex == 0
+	 */
 	public void	startGame(){
 		setCurrentWormIndex(0);
 	}
