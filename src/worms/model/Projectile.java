@@ -4,10 +4,10 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 
-public class Projectile {
+public class Projectile extends Entity{
 
 	public Projectile(Position position,double mass_In, double force_In) {
-		this.position = position;
+		super(position);
 		this.mass = mass_In;
 		this.force = force_In;
 	}
