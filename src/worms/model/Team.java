@@ -17,11 +17,8 @@ public class Team {
 	 * 			| setWorld(world)
 	 */
 	public Team(World world, String name){
-		System.out.println("Team");
-		System.out.println(name);
 		setName(name);
 		setWorld(world);
-		System.out.println("Created");
 	}
 	
 	/**

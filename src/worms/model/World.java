@@ -289,6 +289,14 @@ public class World {
 		return foodList;
 	}
 	
+	//TODO docu and max values
+	public boolean isPassable(double xCo, double yCo){
+		double boxHeight = this.getHeight()/this.getPassableMap().length;
+		double boxWidth = this.getWidth()/this.getPassableMap()[0].length;
+		int row = (int) (yCo/boxHeight);
+		int column = (int) (xCo/boxWidth);		
+		return this.getPassableMap()[row][column];
+	}
 
 }
 	
