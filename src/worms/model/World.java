@@ -38,6 +38,8 @@ public class World {
 		this.height = height;
 		this.setPassableMap(passableMap);
 		this.seed = random;
+		System.out.println(this.getPassableMap().length);
+		System.out.println(this.getHeight()/this.getPassableMap().length);
 
 	}
 	
@@ -298,5 +300,34 @@ public class World {
 		return this.getPassableMap()[row][column];
 	}
 
+	//TODO docu and max values
+	public boolean isAdjacentTerrain(double radius, double xCo, double yCo){
+		double angle = 0;
+		while (angle < 2*Math.PI) {
+			double circleX = radius*Math.cos(angle)+xCo;
+			double circleY = radius*Math.sin(angle)+yCo;
+			if (!isPassable(circleX,circleY))
+				return true;
+			angle += Math.PI*(1.0/6.0);
+		}
+		return false;
+	}
+	
+	public double[] getRandAdjacentTerrain(double radius){
+		double xCo = getSeed().nextDouble() * getWidth();
+		double yCo = getSeed().nextDouble() * getHeight();
+		
+		if (xCo < getWidth()) {
+			double angleToCenter = Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
+		}
+		else if (xCo-getWidth() == 0){
+			if (yCo-getHeight() >= 0){
+				double angleToCenter = 
+			}
+		}
+		else {
+			double angleToCenter = Math.PI - Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
+		}
+	}
 }
 	
