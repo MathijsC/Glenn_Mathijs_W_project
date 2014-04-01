@@ -133,7 +133,7 @@ public class World {
 		if (!(worm.getWorld() == this)){
 			throw new IllegalStateException();
 		}
-		worms.add(worm);		
+		worms.add(worm);
 	}
 	
 	/**
@@ -238,15 +238,14 @@ public class World {
 	 * 			The team to be added to this world.
 	 * @post	The last team added to this world is the given team.
 	 * 			TODO formeel
-	 * 
+	 * @throws	TODO
 	 * 
 	 */
-	public void addTeam(Worm team) throws IllegalStateException{
+	public void addTeam(Team team) throws IllegalStateException{
 		if (!(team.getWorld() == this)){
 			throw new IllegalStateException();
 		}
-		worms.add(team);
-		System.out.println("Added");
+		teams.add(team);
 	}
 	
 	/**

@@ -81,19 +81,9 @@ public class Worm extends Entity{
 		setState(true);
 		setName("Glenn");
 		setWorld(world);
-		//if (!world.getTeams().isEmpty()){
-			int rand = world.getSeed().nextInt(world.getTeams().size()+1);
-			System.out.println(rand);
-			if (rand == 0){
-				System.out.println("null");
-				setTeam(null);
-			}
-			else {
-				System.out.println("not null");
-				setTeam(world.getTeams().get(rand-1));
-			}
-				
-		//}
+		if (!world.getTeams().isEmpty()){
+			setTeam(world.getTeams().get(world.getTeams().size()-1));
+		}
 	}
 	
 	//TODO
@@ -108,6 +98,7 @@ public class Worm extends Entity{
 	//TODO
 	public void setTeam(Team team) {
 		this.team = team;
+		team.addWorm(this);
 	}
 
 	/**

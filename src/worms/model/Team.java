@@ -1,5 +1,7 @@
 package worms.model;
 
+import java.util.ArrayList;
+
 public class Team {
 	
 	/**
@@ -77,12 +79,36 @@ public class Team {
 	 * Set the world of this team to the given world.
 	 * 
 	 * @param 	world
-	 * 			The world to set as world from this team.
-	 * @post	The new world of this team is equal to world.
+	 * 			The world where this worm lives in.
+	 * @post	The world of this worm is set to the given world.
 	 * 			| new.getWorld() == world
+	 * @effect	The world is added to the given world.
+	 * 			| world.addTeam(this)
+	 * @throws	NullPointerException
+	 * 			The given world is null.
+	 * 			| if (world == null) 
 	 */
-	public void setWorld(World world){
+	public void setWorld(World world) throws NullPointerException, IllegalStateException{
+		if (world == null) {
+			throw new NullPointerException();
+		}
+		if (Team.hasWorld(this)){
+			throw new IllegalStateException();
+		}
 		this.world = world;
+		world.addTeam(this);
+	}
+	
+	/**
+	 * Return true if the given has a world.
+	 * 
+	 * @param 	team
+	 * 			The team to check if he lives in a world.			
+	 * @return	True if the given team has a world.
+	 * 			| TODO formeel
+	 */
+	private static boolean hasWorld(Team team){
+		return (team.getWorld() != null);
 	}
 	
 	/**
@@ -94,6 +120,36 @@ public class Team {
 		return world;
 	}
 	
+	/**
+	 * A list containing all the worms who are currently in this team.
+	 */
+	private ArrayList<Worm> worms = new ArrayList<Worm>();
+	
+	/**
+	 * Add a new worm to this team.
+	 * 
+	 * @param 	worm
+	 * 			The worm to be added to this team.
+	 * @post	The last worm added to thi team is the given worm.
+	 * 			TODO formeel
+	 * 
+	 * 
+	 */
+	public void addWorm(Worm worm) throws IllegalStateException{
+		if (!(worm.getTeam() == this)){
+			throw new IllegalStateException();
+		}
+		worms.add(worm);
+	}
+	
+	/**
+	 * Return a list of the worms who plays in this team.
+	 * 
+	 * @return 	The list of worms who plays in this team.
+	 */
+	public ArrayList<Worm> getWorms(){
+		return worms;
+	}
 	
 
 }
