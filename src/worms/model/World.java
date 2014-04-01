@@ -306,28 +306,83 @@ public class World {
 		while (angle < 2*Math.PI) {
 			double circleX = radius*Math.cos(angle)+xCo;
 			double circleY = radius*Math.sin(angle)+yCo;
-			if (!isPassable(circleX,circleY))
+			if (!isPassable(circleX,circleY)) {
+				System.out.println("adjacent");
 				return true;
+			}
 			angle += Math.PI*(1.0/6.0);
 		}
+		System.out.println("not adjacent");
 		return false;
 	}
 	
 	public double[] getRandAdjacentTerrain(double radius){
-		double xCo = getSeed().nextDouble() * getWidth();
-		double yCo = getSeed().nextDouble() * getHeight();
-		
-		if (xCo < getWidth()) {
-			double angleToCenter = Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
+		//double[] coord = {getSeed().nextDouble() * getWidth(),getSeed().nextDouble() * getHeight()};
+		double[] coord = {16,14};
+		int max = 0;
+		while((max < 2) && (!isAdjacentTerrain(radius, coord[0], coord[1]))){
+			//double[] coord = {getSeed().nextDouble() * getWidth(),getSeed().nextDouble() * getHeight()};
+			coord[0] = 16;
+			coord[0] = 14;
+			System.out.println("Perim number:");
+			System.out.println(max);
+			max += 1;
+			coord = checkPerimeter(radius, coord[0], coord[1]);			
 		}
-		else if (xCo-getWidth() == 0){
-			if (yCo-getHeight() >= 0){
-				double angleToCenter = 
+		return coord;
+	}
+
+	private double[] checkPerimeter(double radius, double xCo, double yCo) {
+		double angleToCenter = getAngleToCenter(xCo, yCo);
+		boolean found = false;		
+		int max = 0;
+		System.out.println("Angle:");
+		System.out.println(angleToCenter);
+		System.out.println("Dist:");
+		System.out.println(Math.abs(getWidth()/2-xCo));
+		System.out.println(Math.abs(getHeight()/2-yCo));
+		while ((0.50 < Math.abs(getWidth()/2-xCo)) && (0.50 < Math.abs(getHeight()/2-yCo)) && (!found) && (max < 100)){
+			System.out.println("Step number:");
+			System.out.println(max);
+			System.out.println("Dist:");
+			System.out.println(Math.abs(getWidth()/2-xCo));
+			System.out.println(Math.abs(getHeight()/2-yCo));
+			max += 1;
+			if (isAdjacentTerrain(radius, xCo, yCo))
+				found = true;
+			else {
+				xCo += 0.1*Math.cos(angleToCenter);
+				yCo += 0.1*Math.sin(angleToCenter);
+				System.out.println("Coords:");
+				System.out.println(xCo);
+				System.out.println(yCo);
+			}
+		}
+		double[] coord = {xCo,yCo};
+		return coord;
+	}
+	
+	//TODO docu
+	private double getAngleToCenter(double xCo, double yCo) {
+		double angleToCenter;
+		if (xCo < getWidth()/2) {
+			System.out.println("1");
+			angleToCenter = Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
+		}
+		else if (xCo-getWidth()/2 == 0){
+			System.out.println("2");
+			if (yCo-getHeight()/2 >= 0){
+				angleToCenter = 1.5*Math.PI;
+			}
+			else {
+				angleToCenter = 0.5*Math.PI;
 			}
 		}
 		else {
-			double angleToCenter = Math.PI - Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
+			System.out.println("3");
+			angleToCenter = Math.PI + Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
 		}
+		return angleToCenter;
 	}
 }
 	

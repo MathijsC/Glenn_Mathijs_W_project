@@ -72,8 +72,8 @@ public class Worm extends Entity{
 
 	//TODO docu
 	public Worm(World world) {
-		super(new Position(world.getSeed().nextDouble() * world.getWidth(),
-				world.getSeed().nextDouble() * world.getHeight()));
+		
+		super(new Position(0,0));
 		setRadius(getMinRadius());
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
@@ -84,6 +84,9 @@ public class Worm extends Entity{
 		if (!world.getTeams().isEmpty()){
 			setTeam(world.getTeams().get(world.getTeams().size()-1));
 		}
+		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
+		this.setPosition(randCoord[0], randCoord[1]);
+		//this.setPosition(15, 13);
 	}
 	
 	//TODO
