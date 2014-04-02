@@ -15,6 +15,57 @@ public class Projectile extends Entity {
 		this.setState(true);
 	}
 	
+	/**
+	 * A variable containing the world where this projectile is in.
+	 */
+	private World world;
+
+	/**
+	 * Return the world where this projectile is in.
+	 * 
+	 * @return The world where this projectile is in.
+	 */
+	public World getWorld() {
+		return world;
+	}
+
+	/**
+	 * Set the world where this projectile is in to the given world.
+	 * 
+	 * @param 	world
+	 * 			The world where this projectile is in.
+	 * @post	The world of this projectile is set to the given world.
+	 * 			| new.getWorld() == world
+	 * @effect	The projectile is added the the given world.
+	 * 			| world.addProjectile(this)
+	 * @throws	NullPointerException
+	 * 			The given world is null.
+	 * 			| if (world == null) 
+	 */
+	public void setWorld(World world) throws NullPointerException,
+			IllegalStateException {
+		if (world == null) {
+			throw new NullPointerException();
+		}
+		if (Projectile.hasWorld(this)) {
+			throw new IllegalStateException();
+		}
+		this.world = world;
+		world.setProjectile(this);
+	}
+
+	/**
+	 * Return true if the given projectile is in a world.
+	 * 
+	 * @param 	projectile
+	 * 			The projectile to check if it is in a world.			
+	 * @return	True if the given projectile is in a world.
+	 * 			| TODO formeel
+	 */
+	private static boolean hasWorld(Projectile projectile) {
+		return (projectile.getWorld() != null);
+	}
+	
 	private boolean state;
 	
 	public void setState(boolean state){

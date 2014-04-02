@@ -275,11 +275,36 @@ public class World {
 	 * 
 	 */
 	public void addFood(Food food) throws IllegalStateException{
-		//TODO food.getWorld()
-		/*if (!(food.getWorld() == this)){
+		if (!(food.getWorld() == this)){
 			throw new IllegalStateException();
-		}*/
+		}
 		foodList.add(food);		
+	}
+	
+	/**
+	 * A variable holding the projectile that is active in this world
+	 */
+	private Projectile projectile;
+	
+	
+	/**
+	 * Return the active projectile in this world
+	 * 
+	 * @return the active projectile in this world
+	 */
+	public Projectile getProjectile() {
+		return this.projectile;
+	}
+	
+	/**
+	 * Sets the active projectile in this world to the given projectile
+	 * 
+	 * @param projectile the new projectile active in this world
+	 * @Post the active projetile in this world is the given projectile
+	 * 			|new.getProjectile() = projectile 
+	 */
+	public void setProjectile(Projectile projectile) {
+		this.projectile = projectile;
 	}
 	
 	/**

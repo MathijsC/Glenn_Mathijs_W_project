@@ -146,13 +146,11 @@ public class Facade implements IFacade {
 		return worm.getActionPoints();
 	}
 
-	//TODO
 	/**
 	 * Returns the active projectile in the world, or null if no active projectile exists.
 	 */
 	public Projectile getActiveProjectile(World world){
-		Projectile init = null;
-		return init;
+		return world.getProjectile();
 		
 	}
 
