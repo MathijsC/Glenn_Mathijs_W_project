@@ -6,14 +6,34 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 public class Food extends Entity {
 	
-	
+	public Food(World world, double x, double y) {
+		super(new Position(x,y));
+		setRadius(getMinRadius());
+		this.setWorld(world);
+		this.setState(true);
+	}
+
 	public Food(World world) {
 		super(new Position(world.getSeed().nextDouble() * world.getWidth(),
 				world.getSeed().nextDouble() * world.getHeight()));
 		setRadius(getMinRadius());
 		this.setWorld(world);
+		this.setState(true);
 	}
-	
+
+	// TODO docu
+	private boolean state;
+
+	// TODO docu
+	public void setState(boolean state) {
+		this.state = state;
+	}
+
+	// TODO docu
+	public boolean getState() {
+		return this.state;
+	}
+
 	/**
 	 * Variable holding the radius of this food
 	 */
@@ -72,12 +92,12 @@ public class Food extends Entity {
 	public static double getMinRadius() {
 		return 0.20;
 	}
-	
+
 	/**
 	 * A variable containing the world where this food is in.
 	 */
-	private World world;	
-	
+	private World world;
+
 	/**
 	 * Return the world where this food is in.
 	 * 
@@ -86,7 +106,7 @@ public class Food extends Entity {
 	public World getWorld() {
 		return world;
 	}
-	
+
 	/**
 	 * Set the world where this food is in to the given world.
 	 * 
@@ -100,17 +120,18 @@ public class Food extends Entity {
 	 * 			The given world is null.
 	 * 			| if (world == null) 
 	 */
-	public void setWorld(World world) throws NullPointerException, IllegalStateException{
+	public void setWorld(World world) throws NullPointerException,
+			IllegalStateException {
 		if (world == null) {
 			throw new NullPointerException();
 		}
-		if (Food.hasWorld(this)){
+		if (Food.hasWorld(this)) {
 			throw new IllegalStateException();
 		}
 		this.world = world;
 		world.addFood(this);
 	}
-	
+
 	/**
 	 * Return true if the given food is in a world.
 	 * 
@@ -119,7 +140,7 @@ public class Food extends Entity {
 	 * @return	True if the given food is in a world.
 	 * 			| TODO formeel
 	 */
-	private static boolean hasWorld(Food food){
+	private static boolean hasWorld(Food food) {
 		return (food.getWorld() != null);
 	}
 

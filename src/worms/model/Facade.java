@@ -5,6 +5,7 @@ import java.util.Random;
 
 public class Facade implements IFacade {
 
+	//TODO
 	/**
 	 * Default constructor
 	 */
@@ -39,12 +40,11 @@ public class Facade implements IFacade {
 	 * The new worm may (but isn't required to) have joined a team.
 	 */
 	public void addNewWorm(World world){		
-		Worm worm = new Worm(world);
-		world.addWorm(worm);
+		new Worm(world);
 		
 	}
 
-
+	//TODO
 	/**
 	 * Returns whether or not the given worm can fall down
 	 */
@@ -81,8 +81,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method should have no effect)
 	 */
 	public Food createFood(World world, double x, double y){
-		Food init = null;
-		return init;		
+		return new Food(world,x,y);
 	}
 
 
@@ -131,6 +130,7 @@ public class Facade implements IFacade {
 		return new Worm(x,y,direction,radius,name);
 	}
 
+	//TODO
 	/**
 	 * Makes the given worm fall down until it rests on impassable terrain again.
 	 */
@@ -146,6 +146,7 @@ public class Facade implements IFacade {
 		return worm.getActionPoints();
 	}
 
+	//TODO
 	/**
 	 * Returns the active projectile in the world, or null if no active projectile exists.
 	 */
@@ -330,7 +331,7 @@ public class Facade implements IFacade {
 		return worm.getRadius();
 	}
 
-	
+	//TODO
 	/**
 	 * Returns the name of the weapon that is currently active for the given worm,
 	 * or null if no weapon is active.
@@ -354,7 +355,7 @@ public class Facade implements IFacade {
 		
 	}
 
-
+	//TODO
 	/**
 	 * Returns the name of a single worm if that worm is the winner, or the name
 	 * of a team if that team is the winner. This method should null if there is no winner.
@@ -435,7 +436,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method should always return false)
 	 */
 	public boolean isActive(Food food){
-		return false;
+		return food.getState();
 		
 	}
 
@@ -448,7 +449,7 @@ public class Facade implements IFacade {
 		
 	}
 
-
+	//TODO
 	/**
 	 * Checks whether the given circular region of the given world,
 	 * defined by the given center coordinates and radius,
@@ -475,7 +476,8 @@ public class Facade implements IFacade {
 		
 	}
 
-
+	
+	//TODO
 	/**
 	 * Returns whether the game in the given world has finished.
 	 */
@@ -484,7 +486,7 @@ public class Facade implements IFacade {
 		
 	}
 
-
+	//TODO
 	/**
 	 * Checks whether the given circular region of the given world,
 	 * defined by the given center coordinates and radius,
@@ -565,6 +567,7 @@ public class Facade implements IFacade {
 		}
 	}
 
+	//TODO
 	/**
 	 * Activates the next weapon for the given worm
 	 */
@@ -586,7 +589,8 @@ public class Facade implements IFacade {
 		}
 		
 	}
-
+	
+	//TODO 
 	/**
 	 * Makes the given worm shoot its active weapon with the given propulsion yield.
 	 */
