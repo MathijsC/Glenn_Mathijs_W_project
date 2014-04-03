@@ -2,6 +2,8 @@ package worms.model;
 
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -9,6 +11,14 @@ import org.junit.Test;
 public class WormTest {
 
 	private static Worm noActionPoints;
+	private static Random random;
+	private static World world;
+	private static boolean[][] passableMap = new boolean[][] {
+			{ false, false, false, false, false }, 
+			{ true, true, true, true, true },
+			{ true, true, false, true,true }, 
+			{ true, true, true, true,true },
+			{ false, false, false, false,false } };
 	/**
 	 * Set up n immutable test fixture.
 	 * 
@@ -18,11 +28,20 @@ public class WormTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		noActionPoints = new Worm(0,0,1,0.5,"No Action Points");
+		world = new World(5.0,5.0, passableMap, random);
+		noActionPoints = new Worm(world,0,0,1,0.5,"No Action Points");
 		noActionPoints.jump();		
 	}
 
 	private Worm testWorm, noDirection;
+	private Random random1;
+	private World world1;
+	private boolean[][] passableMap1 = new boolean[][] {
+			{ false, false, false, false, false }, 
+			{ true, true, true, true, true },
+			{ true, true, false, true,true }, 
+			{ true, true, true, true,true },
+			{ false, false, false, false,false } };
 
 	/**
 	 * Set up a mutable test fixture.
@@ -35,14 +54,15 @@ public class WormTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		testWorm = new Worm(0,0,1,0.5,"Test");
-		noDirection = new Worm(0,0,0,0.5,"No Direction");
+		world1 = new World(5.0,5.0, passableMap1, random1);
+		testWorm = new Worm(world1,0,0,1,0.5,"Test");
+		noDirection = new Worm(world1,0,0,0,0.5,"No Direction");
 	}
 
 
 	@Test
 	public final void constructor_SingleCase() throws Exception{
-		Worm newWorm = new Worm(10,20,Math.PI,0.75,"Jason");
+		Worm newWorm = new Worm(world1,10,20,Math.PI,0.75,"Jason");
 		assertEquals(10, newWorm.getXCoordinate(),0.00001);
 		assertEquals(20, newWorm.getYCoordinate(),0.00001);
 		assertEquals(Math.PI, newWorm.getDirection(),0.00001);

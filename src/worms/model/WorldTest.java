@@ -21,7 +21,7 @@ public class WorldTest {
 	public void setUp() throws Exception {
 		random = new Random(7357);
 		world = new World(5.0,5.0, passableMap, random);
-		worm = new Worm(0,0,1,0.5,"Worm");		
+		worm = new Worm(world,0,0,1,0.5,"Worm");		
 	}
 	
 	@Test

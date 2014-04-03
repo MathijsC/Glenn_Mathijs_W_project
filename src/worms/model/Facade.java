@@ -127,7 +127,7 @@ public class Facade implements IFacade {
 	 * The name of the new worm
 	 */
 	public Worm createWorm(World world,double x, double y, double direction, double radius, String name) {
-		return new Worm(x,y,direction,radius,name);
+		return new Worm(world,x,y,direction,radius,name);
 	}
 
 	//TODO

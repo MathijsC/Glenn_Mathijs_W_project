@@ -59,7 +59,7 @@ public class Worm extends Entity{
 	 * 			| new.getActionPoints == getMaxActionPoints()
 	 */
 	@Raw
-	public Worm(double x, double y, double direction, double radius, String name) {
+	public Worm(World world,double x, double y, double direction, double radius, String name) {
 		super(new Position(x,y));
 		setDirection(direction);
 		setRadius(radius);
@@ -67,6 +67,10 @@ public class Worm extends Entity{
 		setHitPoints(getMaxHitPoints());
 		setState(true);
 		setName(name);
+		setWorld(world);
+		if (!world.getTeams().isEmpty()){
+			setTeam(world.getTeams().get(world.getTeams().size()-1));
+		}
 		
 	}
 
