@@ -38,8 +38,6 @@ public class World {
 		this.height = height;
 		this.setPassableMap(passableMap);
 		this.seed = random;
-		System.out.println(this.getPassableMap().length);
-		System.out.println(this.getHeight()/this.getPassableMap().length);
 
 	}
 	
@@ -318,26 +316,33 @@ public class World {
 	
 	//TODO docu and max values
 	public boolean isPassable(double xCo, double yCo){
+		if ((xCo >= getWidth()) || (yCo >= getHeight()) || (yCo <0) || (xCo <0)){
+			System.out.println("OutOfBounds: "+xCo+" | "+yCo);
+			return false;			
+		}
 		double boxHeight = this.getHeight()/this.getPassableMap().length;
 		double boxWidth = this.getWidth()/this.getPassableMap()[0].length;
 		int row = (int) (yCo/boxHeight);
-		int column = (int) (xCo/boxWidth);		
+		int column = (int) (xCo/boxWidth);
+		System.out.println("isPass: "+xCo+" | "+yCo+ " | "+ column +" | "+ row + " | "+this.getPassableMap()[row][column]);
 		return this.getPassableMap()[row][column];
 	}
 
 	//TODO docu and max values
 	public boolean isAdjacentTerrain(double radius, double xCo, double yCo){
+		if ((xCo >= getWidth()) || (yCo >= getHeight()) || (yCo <0) || (xCo <0)){
+			return false;
+		}
 		double angle = 0;
+		System.out.println("CheckAdj:");
 		while (angle < 2*Math.PI) {
 			double circleX = radius*Math.cos(angle)+xCo;
 			double circleY = radius*Math.sin(angle)+yCo;
 			if (!isPassable(circleX,circleY)) {
-				System.out.println("adjacent");
 				return true;
 			}
 			angle += Math.PI*(1.0/6.0);
 		}
-		System.out.println("not adjacent");
 		return false;
 	}
 	
@@ -357,30 +362,24 @@ public class World {
 		return coord;
 	}
 
-	private double[] checkPerimeter(double radius, double xCo, double yCo) {
+	public double[] checkPerimeter(double radius, double xCo, double yCo) {
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;		
 		int max = 0;
-		System.out.println("Angle:");
-		System.out.println(angleToCenter);
-		System.out.println("Dist:");
-		System.out.println(Math.abs(getWidth()/2-xCo));
-		System.out.println(Math.abs(getHeight()/2-yCo));
-		while ((0.50 < Math.abs(getWidth()/2-xCo)) && (0.50 < Math.abs(getHeight()/2-yCo)) && (!found) && (max < 100)){
-			System.out.println("Step number:");
-			System.out.println(max);
-			System.out.println("Dist:");
-			System.out.println(Math.abs(getWidth()/2-xCo));
-			System.out.println(Math.abs(getHeight()/2-yCo));
+		System.out.println("Angle: "+angleToCenter);
+		System.out.println("Dist: "+Math.abs(getWidth()/2-xCo)+" | "+ Math.abs(getHeight()/2-yCo));
+		while ((0.20 < Math.abs(getWidth()/2-xCo)) && (0.20 < Math.abs(getHeight()/2-yCo)) && (!found) && (max < 100)){
+			System.out.println("Step number: " + max);
+			System.out.println("Dist: "+Math.abs(getWidth()/2-xCo)+" | "+ Math.abs(getHeight()/2-yCo));
 			max += 1;
-			if (isAdjacentTerrain(radius, xCo, yCo))
+			if (isAdjacentTerrain(radius, xCo, yCo)) {
 				found = true;
+				System.out.println("FOUND!");
+			}
 			else {
-				xCo += 0.1*Math.cos(angleToCenter);
-				yCo += 0.1*Math.sin(angleToCenter);
-				System.out.println("Coords:");
-				System.out.println(xCo);
-				System.out.println(yCo);
+				xCo += 0.5*Math.cos(angleToCenter);
+				yCo += 0.5*Math.sin(angleToCenter);
+				System.out.println("New Coords: "+ xCo + " | "+ yCo);
 			}
 		}
 		double[] coord = {xCo,yCo};
@@ -388,14 +387,14 @@ public class World {
 	}
 	
 	//TODO docu
-	private double getAngleToCenter(double xCo, double yCo) {
+	public double getAngleToCenter(double xCo, double yCo) {
 		double angleToCenter;
 		if (xCo < getWidth()/2) {
-			System.out.println("1");
+			System.out.println("left");
 			angleToCenter = Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
 		}
 		else if (xCo-getWidth()/2 == 0){
-			System.out.println("2");
+			System.out.println("mid");
 			if (yCo-getHeight()/2 >= 0){
 				angleToCenter = 1.5*Math.PI;
 			}
@@ -404,7 +403,7 @@ public class World {
 			}
 		}
 		else {
-			System.out.println("3");
+			System.out.println("right");
 			angleToCenter = Math.PI + Math.atan((yCo-getHeight()/2)/(xCo-getWidth()/2));
 		}
 		return angleToCenter;
