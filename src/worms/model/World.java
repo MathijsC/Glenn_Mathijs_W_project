@@ -39,12 +39,12 @@ public class World {
 		this.setPassableMap(passableMap);
 		this.seed = random;
 
-		/*int m = 300;
+		/*int m = 450;
 		int n = passableMap[0].length-1;
 		for (int i = 0; i < m; i++) {
 			System.out.println(i+ "|\t");
 		    for (int j = 0; j < n; j++) {
-		    	if (passableMap[i][j] == false ){
+		    	if (passableMap[i][j] == true ){
 		    		System.out.print("1 ");
 		    	}
 		    	else {
@@ -338,14 +338,15 @@ public class World {
 	public boolean isPassable(double xCo, double yCo) {
 		if ((xCo >= getWidth()) || (yCo >= getHeight()) || (yCo < 0)
 				|| (xCo < 0)) {
-			//System.out.println("OutOfBounds: "+xCo+" | "+yCo);
+			//System.out.println("OutOfBounds: " + xCo + " | " + yCo);
 			return false;
 		}
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
 		int row = (int) ((this.getPassableMap().length) - (yCo / boxHeight));
-		int column = (int) ((this.getPassableMap()[0].length) - (xCo / boxWidth));
-		//System.out.println("isPass: "+xCo+" | "+yCo+ " | "+ column +" | "+ row + " | "+this.getPassableMap()[row][column]);
+		int column = (int) (xCo / boxWidth);
+		//System.out.println("isPass: " + xCo + " | " + yCo + " | " + column
+				//+ " | " + row + " | " + this.getPassableMap()[row][column]);
 		return this.getPassableMap()[row][column];
 	}
 
@@ -355,58 +356,56 @@ public class World {
 				|| (xCo < 0)) {
 			return false;
 		}
-		double angle = 0;
+		if (!isPassable(xCo, yCo)) {
+			return false;
+		}
+		double angle = Math.PI+(Math.PI*(31.0 / 64.0));
 		//System.out.println("CheckAdj:");
-		while (angle < 2 * Math.PI) {
+		while (angle <= (2 * Math.PI -(Math.PI*(31.0 /64.0)))) {
 			double circleX = radius * Math.cos(angle) + xCo;
 			double circleY = radius * Math.sin(angle) + yCo;
 			if (!isPassable(circleX, circleY)) {
 				return true;
 			}
-			angle += Math.PI * (1.0 / 6.0);
+			angle += Math.PI * (1.0 / 64.0);
 		}
 		return false;
 	}
 
 	public double[] getRandAdjacentTerrain(double radius) {
-		//new Worm(this, getWidth() / 2, getHeight() / 2, 0.2, 0.25, "Mid");
-		double[] coord = {getSeed().nextDouble() * getWidth(),getSeed().nextDouble() * getHeight()};
-		//double[] coord = { 16, 14 };
-		new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start");
 		int max = 0;
-		while ((max < 10) && (!isAdjacentTerrain(radius, coord[0], coord[1]))) {
-			new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start");
-			coord[0] = getSeed().nextDouble() * getWidth();
-			coord[1] = getSeed().nextDouble() * getHeight();
-			//coord[0] = 16;
-			//coord[1] = 14;
-			//System.out.println("Perim number: "+max+ "coords: "+ coord[0]+ " | "+ coord[1]);
+		boolean found = false;
+		double[] coord = { 0, 0 };
+		while ((max < 10) && (!found)) {
+			//System.out.println("\nPerim number: " + max + " ->coords: "
+					//+ coord[0] + " | " + coord[1]);
 			max += 1;
+			coord[0] = getSeed().nextDouble() * getWidth() - radius;
+			coord[1] = getSeed().nextDouble() * getHeight() - radius;
+			//new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
+					//+ Integer.toString(max));
 			coord = checkPerimeter(radius, coord[0], coord[1]);
+			if (isAdjacentTerrain(radius, coord[0], coord[1])) {
+				found = true;
+			}
 		}
 		return coord;
 	}
 
-	public double[] checkPerimeter(double radius, double xCo, double yCo) {
+	private double[] checkPerimeter(double radius, double xCo, double yCo) {
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;
 		int max = 0;
-		//System.out.println("Angle: "+angleToCenter);
-		//System.out.println("Dist: "+Math.abs(getWidth()/2-xCo)+" | "+ Math.abs(getHeight()/2-yCo));
-		while ((0.50 < Math.abs(getWidth() / 2 - xCo))
-				&& (0.50 < Math.abs(getHeight() / 2 - yCo)) && (!found)
-				&& (max < 200)) {
+		while ((!found) && (max < 200)) {
 			//System.out.println("Step number: " + max);
-			//System.out.println("Dist: "+Math.abs(getWidth()/2-xCo)+" | "+ Math.abs(getHeight()/2-yCo));
 			max += 1;
 			if (isAdjacentTerrain(radius, xCo, yCo)) {
 				found = true;
 				//System.out.println("FOUND!");
 			} else {
-				xCo += 0.3 * Math.cos(angleToCenter);
-				yCo += 0.3 * Math.sin(angleToCenter);
-				//System.out.println("New Coords: "+ xCo + " | "+ yCo);
-				//new Worm(this,xCo,yCo,0.2,0.25,"Step");
+				xCo += 0.05 * Math.cos(angleToCenter);
+				yCo += 0.05 * Math.sin(angleToCenter);
+				//System.out.println("New Coords: " + xCo + " | " + yCo);
 			}
 		}
 		double[] coord = { xCo, yCo };
@@ -414,7 +413,7 @@ public class World {
 	}
 
 	//TODO docu
-	public double getAngleToCenter(double xCo, double yCo) {
+	private double getAngleToCenter(double xCo, double yCo) {
 		double angleToCenter;
 		if (xCo < getWidth() / 2) {
 			angleToCenter = Math.atan((yCo - getHeight() / 2)

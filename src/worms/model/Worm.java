@@ -78,6 +78,7 @@ public class Worm extends Entity{
 	public Worm(World world) {
 		
 		super(new Position(0,0));
+		System.out.println("NEW WORM");
 		setRadius(getMinRadius());
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
@@ -339,7 +340,7 @@ public class Worm extends Entity{
 	 * 			| name.matches(A regular expression with the allowed characters);
 	 */
 	public static boolean isValidName(String name) {
-		return name.matches("[A-Z][a-zA-Z\'\" ]+");
+		return name.matches("[A-Z][0-9a-zA-Z\'\" ]+");
 	}
 
 	/**
