@@ -1,10 +1,7 @@
 package worms.model;
 
-<<<<<<< HEAD
 import java.util.Arrays;
-=======
 import java.util.ArrayList;
->>>>>>> 870eecc9f02e24dec2803248b54d36c3733b4b6a
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
@@ -83,14 +80,9 @@ public class Worm extends Entity {
 
 	// TODO docu
 	public Worm(World world) {
-<<<<<<< HEAD
 
 		super(new Position(0, 0));
 		System.out.println("NEW WORM");
-=======
-		
-		super(new Position(0,0));
->>>>>>> 870eecc9f02e24dec2803248b54d36c3733b4b6a
 		setRadius(getMinRadius());
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
