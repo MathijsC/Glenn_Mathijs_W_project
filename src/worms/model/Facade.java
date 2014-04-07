@@ -461,7 +461,7 @@ public class Facade implements IFacade {
 	 * @return True if the given region is passable and adjacent to impassable terrain, false otherwise.
 	 */
 	public boolean isAdjacent(World world, double x, double y, double radius){
-		return false;
+		return world.isAdjacentTerrain(radius, x, y);
 		
 	}
 
@@ -498,7 +498,7 @@ public class Facade implements IFacade {
 	 * @return True if the given region is impassable, false otherwise.
 	 */
 	public boolean isImpassable(World world, double x, double y, double radius){
-		return false;
+		return !world.isPassable(x, y);
 		
 	}
 
@@ -544,7 +544,7 @@ public class Facade implements IFacade {
 	 */
 	public void move(Worm worm) throws ModelException{
 		try{
-			worm.move(1);
+			worm.move();
 		}catch(IllegalArgumentException exc){
 			throw new ModelException("Illegal argument");
 		}catch(IllegalStateException exc){
