@@ -345,6 +345,21 @@ public class World {
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
 		int row = (int) ((this.getPassableMap().length) - (yCo / boxHeight));
 		int column = (int) (xCo / boxWidth);
+		//System.out.println("is passable");
+		/**int m = row+2;
+		int n = column+2;
+		for (int i = row-2; i < m; i++) {
+			System.out.print(i+ "| ");
+		    for (int j = column-2; j < n; j++) {
+		    	if (passableMap[i][j] == true ){
+		    		System.out.print("1 ");
+		    	}
+		    	else {
+		    		System.out.print("0 ");
+		    	}
+		    }
+		    System.out.print("\n");
+		}*/
 		//System.out.println("isPass: " + xCo + " | " + yCo + " | " + column
 				//+ " | " + row + " | " + this.getPassableMap()[row][column]);
 		return this.getPassableMap()[row][column];
@@ -362,8 +377,8 @@ public class World {
 		double angle = Math.PI+(Math.PI*(31.0 / 64.0));
 		//System.out.println("CheckAdj:");
 		while (angle <= (2 * Math.PI -(Math.PI*(31.0 /64.0)))) {
-			double circleX = radius * Math.cos(angle) + xCo;
-			double circleY = radius * Math.sin(angle) + yCo;
+			double circleX = radius*0.1 * Math.cos(angle) + xCo;
+			double circleY = radius *0.1* Math.sin(angle) + yCo;
 			if (!isPassable(circleX, circleY)) {
 				return true;
 			}
