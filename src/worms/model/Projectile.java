@@ -1,20 +1,23 @@
 package worms.model;
 
+import java.util.Arrays;
+
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 
 public class Projectile extends Entity {
 
-	public Projectile(Position position, double direction, double mass,
-			double force) {
+	public Projectile(Position position, World world, double direction,
+			double mass, double force) {
 		super(position);
 		this.setDirection(direction);
 		this.mass = mass;
 		this.force = force;
+		this.setWorld(world);
 		this.setState(true);
 	}
-	
+
 	/**
 	 * A variable containing the world where this projectile is in.
 	 */
@@ -65,14 +68,14 @@ public class Projectile extends Entity {
 	private static boolean hasWorld(Projectile projectile) {
 		return (projectile.getWorld() != null);
 	}
-	
+
 	private boolean state;
-	
-	public void setState(boolean state){
+
+	public void setState(boolean state) {
 		this.state = state;
 	}
-	
-	public boolean getState(){
+
+	public boolean getState() {
 		return this.state;
 	}
 
@@ -225,23 +228,23 @@ public class Projectile extends Entity {
 	public double initialVelocity() {
 		return this.getForce() / this.getMass() * 0.5;
 	}
-	
-	//TODO docu formeel
-		/** 
-	 * Let this projectile jump over a distance.
-	 * 
-	 * @post	The new X-coordinate of this projectile is equal to the old X-coordinate added
-	 * 			with the distance moved horizontally based on the gravity of the environment
-	 * 			and the direction of this projectile. The Y-coordinate stays the same.
-	 * 			|new.getXCoordinate() = this.getXCoordinate + DISTANCE_MOVED
-	 * 			|new.getYCoordinate() = this.getYCoordinate()
-	 */
 
-	public void jump() {
+	// TODO docu formeel
+	/** 
+	* Let this projectile jump over a distance.
+	* 
+	* @post	The new X-coordinate of this projectile is equal to the old X-coordinate added
+	* 			with the distance moved horizontally based on the gravity of the environment
+	* 			and the direction of this projectile. The Y-coordinate stays the same.
+	* 			|new.getXCoordinate() = this.getXCoordinate + DISTANCE_MOVED
+	* 			|new.getYCoordinate() = this.getYCoordinate()
+	*/
 
-		double dist = Math.pow(initialVelocity(), 2)
-				* Math.sin(2 * getDirection()) / GRAVITY;
-		setXCoordinate(getXCoordinate()+dist);
+	public void jump(double timeStep) {
+
+		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),0,2);
+		this.setPosition(newPosition[0], newPosition[1]);
+
 	}
 
 	/**
@@ -251,11 +254,31 @@ public class Projectile extends Entity {
 	 * 			based on the direction of this projectile, the gravity
 	 * 			of the environment and the initial velocity.
 	 */
-	public double jumpTime() {
+	public double jumpTime(double timeStep) throws IllegalStateException {
+	
+		return this.possibleJump(timeStep)[2];
+		}
 
-		return this.initialVelocity() * Math.sin(2 * getDirection())
-				/ (GRAVITY * Math.cos(getDirection()));
+	// TODO DOCU
+	public double[] possibleJump(double timeStep) {
+		double[] position = this.getPosition();
+		double time = timeStep;
+		double[] tempPosition;
+		boolean jumping = true;
 
+		while (jumping) {
+			tempPosition = this.jumpStep(time);
+			if (world.isPassable(tempPosition[0], tempPosition[1])) {
+				position = tempPosition;
+				time = time + timeStep;
+			} else {
+				jumping = false;
+			}
+
+		}
+		// x,y,time
+		double[] data = { position[0], position[1], time };
+		return data;
 	}
 
 	/**
@@ -276,9 +299,10 @@ public class Projectile extends Entity {
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		if (time > this.jumpTime()) {
+		//jumpTime vraag een argument dat hier niet gegeven is ... :/
+		/*if (time > this.jumpTime()) {
 			throw new IllegalArgumentException();
-		}
+		}*/
 		double X = getXCoordinate() + initialVelocity()
 				* Math.cos(getDirection()) * time;
 		double Y = getYCoordinate() + initialVelocity()

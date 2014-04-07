@@ -1,5 +1,7 @@
 package worms.model;
 
+import java.util.Arrays;
+
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
@@ -25,7 +27,7 @@ import be.kuleuven.cs.som.annotate.Raw;
  *	
  * @version 1.30
  */
-public class Worm extends Entity{
+public class Worm extends Entity {
 
 	/**
 	 * Initialize this new worm with a given position (x,y), looking direction,
@@ -59,8 +61,9 @@ public class Worm extends Entity{
 	 * 			| new.getActionPoints == getMaxActionPoints()
 	 */
 	@Raw
-	public Worm(World world,double x, double y, double direction, double radius, String name) {
-		super(new Position(x,y));
+	public Worm(World world, double x, double y, double direction,
+			double radius, String name) {
+		super(new Position(x, y));
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
@@ -68,16 +71,16 @@ public class Worm extends Entity{
 		setState(true);
 		setName(name);
 		setWorld(world);
-		if (!world.getTeams().isEmpty()){
-			setTeam(world.getTeams().get(world.getTeams().size()-1));
+		if (!world.getTeams().isEmpty()) {
+			setTeam(world.getTeams().get(world.getTeams().size() - 1));
 		}
-		
+
 	}
 
-	//TODO docu
+	// TODO docu
 	public Worm(World world) {
-		
-		super(new Position(0,0));
+
+		super(new Position(0, 0));
 		System.out.println("NEW WORM");
 		setRadius(getMinRadius());
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
@@ -86,24 +89,23 @@ public class Worm extends Entity{
 		setState(true);
 		setName("Glenn");
 		setWorld(world);
-		if (!world.getTeams().isEmpty()){
-			setTeam(world.getTeams().get(world.getTeams().size()-1));
+		if (!world.getTeams().isEmpty()) {
+			setTeam(world.getTeams().get(world.getTeams().size() - 1));
 		}
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
-		//this.setPosition(15, 13);
+		// this.setPosition(15, 13);
 	}
-	
-	//TODO
+
+	// TODO
 	private Team team;
-	
-	
-	//TODO
+
+	// TODO
 	public Team getTeam() {
 		return team;
 	}
 
-	//TODO
+	// TODO
 	public void setTeam(Team team) {
 		this.team = team;
 		team.addWorm(this);
@@ -112,8 +114,8 @@ public class Worm extends Entity{
 	/**
 	 * A variable containing the world where this worm is lives.
 	 */
-	private World world;	
-	
+	private World world;
+
 	/**
 	 * Return the world where this worm lives.
 	 * 
@@ -136,17 +138,18 @@ public class Worm extends Entity{
 	 * 			The given world is null.
 	 * 			| if (world == null) 
 	 */
-	public void setWorld(World world) throws NullPointerException, IllegalStateException{
+	public void setWorld(World world) throws NullPointerException,
+			IllegalStateException {
 		if (world == null) {
 			throw new NullPointerException();
 		}
-		if (Worm.hasWorld(this)){
+		if (Worm.hasWorld(this)) {
 			throw new IllegalStateException();
 		}
 		this.world = world;
 		world.addWorm(this);
 	}
-	
+
 	/**
 	 * Return true if the given worm lives in a world.
 	 * 
@@ -155,24 +158,24 @@ public class Worm extends Entity{
 	 * @return	True if the given worm lives in a world.
 	 * 			| TODO formeel
 	 */
-	private static boolean hasWorld(Worm worm){
+	private static boolean hasWorld(Worm worm) {
 		return (worm.getWorld() != null);
 	}
 
-	//TODO docu
+	// TODO docu
 	private boolean state;
 
-	//TODO docu
+	// TODO docu
 	public void setState(boolean state) {
 		this.state = state;
 	}
 
-	//TODO docu
+	// TODO docu
 	public boolean getState() {
 		return this.state;
 	}
 
-	//TODO docu
+	// TODO docu
 	public void refresh() {
 		int REGENERATION_OF_HEALTH = 10;
 		this.replenishActionPoints();
@@ -682,13 +685,14 @@ public class Worm extends Entity{
 	 * 			The worm is not able to jump.
 	 * 			| !canJump()
 	 */
-	public void jump() throws IllegalStateException {
+	public void jump(double timeStep) throws IllegalStateException {
 		if (!canJump()) {
 			throw new IllegalStateException();
 		}
-		double dist = Math.pow(initialVelocity(), 2)
-				* Math.sin(2 * getDirection()) / GRAVITY;
-		setXCoordinate(getXCoordinate() + dist);
+
+		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),0,2);
+		this.setPosition(newPosition[0], newPosition[1]);
+
 		setActionPoints(0);
 	}
 
@@ -702,13 +706,35 @@ public class Worm extends Entity{
 	 * 			The worm cannot jump.
 	 * 			| !canjump()
 	 */
-	public double jumpTime() throws IllegalStateException {
+	public double jumpTime(double timeStep) throws IllegalStateException {
 		if (!canJump()) {
 			throw new IllegalStateException();
 		}
-		return this.initialVelocity() * Math.sin(2 * getDirection())
-				/ (GRAVITY * Math.cos(getDirection()));
 
+		return this.possibleJump(timeStep)[2];
+
+	}
+
+	// TODO DOCU
+	public double[] possibleJump(double timeStep) {
+		double[] position = this.getPosition();
+		double time = timeStep;
+		double[] tempPosition;
+		boolean jumping = true;
+
+		while (jumping) {
+			tempPosition = this.jumpStep(time);
+			if (world.isPassable(tempPosition[0], tempPosition[1])) {
+				position = tempPosition;
+				time = time + timeStep;
+			} else {
+				jumping = false;
+			}
+			
+			}
+		// x,y,time
+		double [] data = {position[0],position[1],time};
+		return data;
 	}
 
 	/**
@@ -736,9 +762,10 @@ public class Worm extends Entity{
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		if (time > this.jumpTime()) {
-			throw new IllegalArgumentException();
-		}
+		// jumptime vraagt argument, maar hier niet mee gegeven... :/ 
+		/*
+		 * if (time > this.jumpTime()) { throw new IllegalArgumentException(); }
+		 */
 		double X = getXCoordinate() + initialVelocity()
 				* Math.cos(getDirection()) * time;
 		double Y = getYCoordinate() + initialVelocity()

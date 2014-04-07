@@ -232,7 +232,7 @@ public class Facade implements IFacade {
 	 * @return The time duration of the projectile's jump.
 	 */
 	public double getJumpTime(Projectile projectile, double timeStep){
-		return projectile.jumpTime();
+		return projectile.jumpTime(timeStep);
 		
 	}
 
@@ -252,7 +252,7 @@ public class Facade implements IFacade {
 	 */
 	public double getJumpTime(Worm worm, double timeStep) throws ModelException {
 		try{
-			return worm.jumpTime();
+			return worm.jumpTime(timeStep);
 		}catch(IllegalStateException exc){
 			throw new ModelException("Illegal state");
 		}
@@ -513,7 +513,7 @@ public class Facade implements IFacade {
 	 *                 that the projectile will not completely move through a piece of impassable terrain.
 	 */
 	public void jump(Projectile projectile, double timeStep){
-		projectile.jump();
+		projectile.jump(timeStep);
 	}
 
 
@@ -530,7 +530,7 @@ public class Facade implements IFacade {
 	 */
 	public void jump(Worm worm, double timeStep) throws ModelException {
 		try{
-			worm.jump();
+			worm.jump(timeStep);
 		}catch(IllegalStateException exc){
 			throw new ModelException("Illegal state");
 		}

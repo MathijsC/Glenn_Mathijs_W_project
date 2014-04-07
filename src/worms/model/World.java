@@ -321,7 +321,10 @@ public class World {
 	 * @Post the active projetile in this world is the given projectile
 	 * 			|new.getProjectile() = projectile 
 	 */
-	public void setProjectile(Projectile projectile) {
+	public void setProjectile(Projectile projectile) throws IllegalStateException {
+		if (!(projectile.getWorld() == this)) {
+			throw new IllegalStateException();
+		}
 		this.projectile = projectile;
 	}
 
