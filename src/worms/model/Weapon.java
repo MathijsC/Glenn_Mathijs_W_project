@@ -4,30 +4,32 @@ import be.kuleuven.cs.som.annotate.*;
 
 @Value
 public enum Weapon {
-	
-	Rifle(10,1.5,1.5,10,20),Bazooka(300,2.5,9.5,50,80);
-	
-	private Weapon(double mass, double minForce, double maxForce, double actionPoints, double hitPoints) {
+
+	Rifle(0.010, 1.5, 1.5, 10, 20), Bazooka(0.300, 2.5, 9.5, 50, 80);
+
+	private Weapon(double mass, double minForce, double maxForce,
+			int actionPoints, int hitPoints) {
 		this.setMass(mass);
 		this.setMinForce(minForce);
 		this.setMaxForce(maxForce);
 		this.setActionPoints(actionPoints);
 		this.setHitPoints(hitPoints);
 	}
-	
+
 	/**
 	 * @return the mass
 	 */
 	public double getMass() {
 		return mass;
 	}
+
 	/**
 	 * @param mass the mass to set
 	 */
 	public void setMass(double mass) {
 		this.mass = mass;
 	}
-	
+
 	private double mass;
 
 	/**
@@ -45,7 +47,7 @@ public enum Weapon {
 	}
 
 	private double minForce;
-	
+
 	/**
 	 * @return the maxForce
 	 */
@@ -59,45 +61,57 @@ public enum Weapon {
 	public void setMaxForce(double maxForce) {
 		this.maxForce = maxForce;
 	}
-	
+
 	private double maxForce;
-	
+
 	/**
 	 * @return the actionPoints
 	 */
-	public double getActionPoints() {
+	public int getActionPoints() {
 		return actionPoints;
 	}
 
 	/**
 	 * @param actionPoints the actionPoints to set
 	 */
-	public void setActionPoints(double actionPoints) {
+	public void setActionPoints(int actionPoints) {
 		this.actionPoints = actionPoints;
 	}
-	
-	private double actionPoints;
+
+	private int actionPoints;
 
 	/**
 	 * @return the hitPoints
 	 */
-	public double getHitPoints() {
+	public int getHitPoints() {
 		return hitPoints;
 	}
 
 	/**
 	 * @param hitPoints the hitPoints to set
 	 */
-	public void setHitPoints(double hitPoints) {
+	public void setHitPoints(int hitPoints) {
 		this.hitPoints = hitPoints;
 	}
-	
-	private double hitPoints;
-	
+
+	private int hitPoints;
+
 	public double calcForce(int propulsion) {
-		return (this.getMinForce() + (propulsion * (this.getMaxForce()-this.getMinForce())/100));
+		return (this.getMinForce() + (propulsion
+				* (this.getMaxForce() - this.getMinForce()) / 100));
 	}
 
-	
+	public Position calcStartingPoint(Worm worm) {
+		Position startingPoint = new Position(worm.getXCoordinate()
+				+ Math.cos(worm.getDirection()) * worm.getDirection(),
+				worm.getYCoordinate() + Math.sin(worm.getDirection())
+						* worm.getDirection());
+		return startingPoint;
+	}
 
+	public void shoot(World world, Worm worm, int propulsion) {
+		new Projectile(this.calcStartingPoint(worm), world,
+				worm.getDirection(), this.getMass(), this.calcForce(propulsion));
+
+	}
 }

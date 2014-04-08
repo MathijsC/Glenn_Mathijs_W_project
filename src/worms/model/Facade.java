@@ -335,7 +335,7 @@ public class Facade implements IFacade {
 	 * or null if no weapon is active.
 	 */
 	public String getSelectedWeapon(Worm worm){
-		return "none";
+		return worm.getWeapon().toString();
 		
 	}
 
@@ -502,7 +502,6 @@ public class Facade implements IFacade {
 		
 	}
 
-	//TODO timestep
 	/**
 	 * Make the given projectile jump to its new location.
 	 * The new location should be determined using the given elementary time interval. 
@@ -570,7 +569,7 @@ public class Facade implements IFacade {
 	 * Activates the next weapon for the given worm
 	 */
 	public void selectNextWeapon(Worm worm){
-		
+		worm.selectNextWeapon();
 	}
 
 
@@ -593,7 +592,7 @@ public class Facade implements IFacade {
 	 * Makes the given worm shoot its active weapon with the given propulsion yield.
 	 */
 	public void shoot(Worm worm, int yield){
-		
+		worm.shoot(yield);
 	}
 
 

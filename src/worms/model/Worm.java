@@ -90,6 +90,7 @@ public class Worm extends Entity {
 		setState(true);
 		setName("Glenn");
 		setWorld(world);
+		setWeapon(Weapon.Bazooka);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(world.getTeams().size() - 1));
 		}
@@ -110,6 +111,45 @@ public class Worm extends Entity {
 	public void setTeam(Team team) {
 		this.team = team;
 		team.addWorm(this);
+	}
+
+	/**
+	 * @return the weapon
+	 */
+	public Weapon getWeapon() {
+		return this.weapon;
+	}
+
+	/**
+	 * @param weapon the weapon to set
+	 */
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+	}
+
+	public void selectNextWeapon() {
+		// TODO mss op een beter manier uitwerken?
+		if (this.getWeapon() == Weapon.Bazooka) {
+			setWeapon(Weapon.Rifle);
+		} else if (this.getWeapon() == Weapon.Rifle) {
+			setWeapon(Weapon.Bazooka);
+		}
+
+	}
+
+	private Weapon weapon;
+
+	public void shoot(int propulsion) {
+		if (this.canShoot(this.getWeapon())){
+			this.getWeapon().shoot(this.getWorld(), this, propulsion);
+			this.setActionPoints((this.getActionPoints() - weapon
+					.getActionPoints()));
+		}
+	}
+	
+	public boolean canShoot(Weapon weapon) {
+		
+		return (this.getActionPoints() - weapon.getActionPoints())>0;
 	}
 
 	/**
@@ -628,29 +668,31 @@ public class Worm extends Entity {
 	 * 			| !canMove(steps)
 	 */
 	public void move() throws IllegalStateException {
-		//if (!canMove(1)) {
-			//throw new IllegalStateException();
-		//}		
-		
-		
+		// if (!canMove(1)) {
+		// throw new IllegalStateException();
+		// }
+
 		double angle = -0.75;
 		ArrayList<Double> maxAdjacentDistances = new ArrayList<Double>();
 		ArrayList<Double> maxNotAdjacentDistances = new ArrayList<Double>();
-		while (angle <= 0.75){
-			//System.out.println("Check angle: "+angle);
-			double dist = getFarestDist(getDirection()+angle);
-			double xCo = (getXCoordinate() + dist*Math.cos(getDirection()+angle));
-			double yCo = (getYCoordinate() + dist*Math.sin(getDirection()+angle));
-			//System.out.println("Check adj: "+xCo+" | "+yCo+" Angle: "+(getDirection()+angle)+" Dist: "+dist);
-			if (getWorld().isAdjacentTerrain(getRadius(), xCo, yCo)){
-				//System.out.println("Farest is adjacent");
+		while (angle <= 0.75) {
+			// System.out.println("Check angle: "+angle);
+			double dist = getFarestDist(getDirection() + angle);
+			double xCo = (getXCoordinate() + dist
+					* Math.cos(getDirection() + angle));
+			double yCo = (getYCoordinate() + dist
+					* Math.sin(getDirection() + angle));
+			// System.out.println("Check adj: "+xCo+" | "+yCo+" Angle: "+(getDirection()+angle)+" Dist: "+dist);
+			if (getWorld().isAdjacentTerrain(getRadius(), xCo, yCo)) {
+				// System.out.println("Farest is adjacent");
 				maxAdjacentDistances.add(dist);
 				maxNotAdjacentDistances.add(0.0);
 			} else {
-				//System.out.println("Farest is not adjacent: "+dist);
+				// System.out.println("Farest is not adjacent: "+dist);
 				maxAdjacentDistances.add(0.0);
 				maxNotAdjacentDistances.add(dist);
-				//System.out.println("k: "+k + " Size: "+maxNotAdjacentDistances.size()+" Last: "+maxNotAdjacentDistances.get(k));
+				// System.out.println("k: "+k +
+				// " Size: "+maxNotAdjacentDistances.size()+" Last: "+maxNotAdjacentDistances.get(k));
 			}
 			angle += 0.25;
 		}
@@ -662,58 +704,55 @@ public class Worm extends Entity {
 		System.out.print(data);*/
 		int indexFarest = getIndexBestStep(maxAdjacentDistances);
 		double dist = maxAdjacentDistances.get(indexFarest).doubleValue();
-		if(dist == 0){
-			//System.out.println("best not adj pos");
+		if (dist == 0) {
+			// System.out.println("best not adj pos");
 			indexFarest = getIndexBestStep(maxNotAdjacentDistances);
 			dist = maxNotAdjacentDistances.get(indexFarest).doubleValue();
-		} 		
-		double stepAngle = getDirection()-0.75+0.25*indexFarest;
-		//System.out.println("Best Angle: "+getDirection()+" + "+(-0.75+0.25*indexFarest));
-		//System.out.println("Best dist: "+dist);
-		setXCoordinate(getXCoordinate() + dist
-				* Math.cos(stepAngle));
-		setYCoordinate(getYCoordinate() + dist
-				* Math.sin(stepAngle));
-		//System.out.println("X: "+getPosition()[0]+" Y: "+getPosition()[1]);
+		}
+		double stepAngle = getDirection() - 0.75 + 0.25 * indexFarest;
+		// System.out.println("Best Angle: "+getDirection()+" + "+(-0.75+0.25*indexFarest));
+		// System.out.println("Best dist: "+dist);
+		setXCoordinate(getXCoordinate() + dist * Math.cos(stepAngle));
+		setYCoordinate(getYCoordinate() + dist * Math.sin(stepAngle));
+		// System.out.println("X: "+getPosition()[0]+" Y: "+getPosition()[1]);
 		setActionPoints(getActionPoints()
-				- (int) Math.ceil((dist/getRadius())
-						* (Math.abs(Math.cos(stepAngle)) + 4 * Math
-								.abs(Math.sin(stepAngle)))));
-		 
+				- (int) Math.ceil((dist / getRadius())
+						* (Math.abs(Math.cos(stepAngle)) + 4 * Math.abs(Math
+								.sin(stepAngle)))));
+
 	}
 
-	//TODO docu
+	// TODO docu
 	private double getFarestDist(double angle) {
 		double dist = 0.0;
-		//System.out.println("START:");
+		// System.out.println("START:");
 		double result = 0.0;
-		while (dist <= this.getRadius()){
-			
-			double xCo = (getXCoordinate() + dist*Math.cos(angle));
-			double yCo = (getYCoordinate() + dist*Math.sin(angle));
-			//System.out.println("Check co:"+xCo+" | "+yCo+" Angle: "+angle+" Dist: "+dist);
-			if (!getWorld().isPassable(xCo, yCo)){
-				//System.out.println("imPassable!");
+		while (dist <= this.getRadius()) {
+
+			double xCo = (getXCoordinate() + dist * Math.cos(angle));
+			double yCo = (getYCoordinate() + dist * Math.sin(angle));
+			// System.out.println("Check co:"+xCo+" | "+yCo+" Angle: "+angle+" Dist: "+dist);
+			if (!getWorld().isPassable(xCo, yCo)) {
+				// System.out.println("imPassable!");
 				break;
 			}
 			result = dist;
-			dist +=getRadius()*0.05;
-			if(Math.abs(getRadius()-dist) < getRadius()*0.05){
-					dist = getRadius();
+			dist += getRadius() * 0.05;
+			if (Math.abs(getRadius() - dist) < getRadius() * 0.05) {
+				dist = getRadius();
 			}
 		}
-		
-		if (dist < 0.1){
-			//System.out.println("Dist is: 0.0");
+
+		if (dist < 0.1) {
+			// System.out.println("Dist is: 0.0");
 			result = 0.0;
 		}
 		return result;
-		
+
 	}
-	
-	
-	//TODO docu
-	private int getIndexBestStep(ArrayList<Double> dists){
+
+	// TODO docu
+	private int getIndexBestStep(ArrayList<Double> dists) {
 		/**String data = "dists -> ";
 		for(int i = 0; i < dists.size(); i++) {   
 		    data += dists.get(i)+" ";
@@ -721,20 +760,20 @@ public class Worm extends Entity {
 		} 
 		System.out.print(data);*/
 		int indexBest = 0;
-		for (int i=1;i <= dists.size()-1; i++){
-			//System.out.println(i+" : "+dists.get(i).doubleValue()+" > "+indexBest+" : "+dists.get(indexBest).doubleValue());
-			if (dists.get(i).doubleValue() > dists.get(indexBest).doubleValue()){
+		for (int i = 1; i <= dists.size() - 1; i++) {
+			// System.out.println(i+" : "+dists.get(i).doubleValue()+" > "+indexBest+" : "+dists.get(indexBest).doubleValue());
+			if (dists.get(i).doubleValue() > dists.get(indexBest).doubleValue()) {
 				indexBest = i;
-			} else if (dists.get(i).doubleValue() == dists.get(indexBest).doubleValue()){
-				if (Math.abs((-0.75+0.25*i)) < Math.abs((-0.75+0.25*indexBest))) {
-					indexBest = i;	
+			} else if (dists.get(i).doubleValue() == dists.get(indexBest)
+					.doubleValue()) {
+				if (Math.abs((-0.75 + 0.25 * i)) < Math
+						.abs((-0.75 + 0.25 * indexBest))) {
+					indexBest = i;
 				}
-			} 
+			}
 		}
 		return indexBest;
 	}
-	
-	
 
 	/**
 	 * The constant GRAVITY is used to 	easy manipulate the gravity in the different methods
@@ -786,8 +825,10 @@ public class Worm extends Entity {
 			throw new IllegalStateException();
 		}
 
-		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),0,2);
+		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
+				0, 2);
 		this.setPosition(newPosition[0], newPosition[1]);
+		// System.out.println(timeStep);
 
 		setActionPoints(0);
 	}
@@ -826,10 +867,10 @@ public class Worm extends Entity {
 			} else {
 				jumping = false;
 			}
-			
-			}
+
+		}
 		// x,y,time
-		double [] data = {position[0],position[1],time};
+		double[] data = { position[0], position[1], time };
 		return data;
 	}
 
@@ -858,7 +899,7 @@ public class Worm extends Entity {
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		// jumptime vraagt argument, maar hier niet mee gegeven... :/ 
+		// jumptime vraagt argument, maar hier niet mee gegeven... :/
 		/*
 		 * if (time > this.jumpTime()) { throw new IllegalArgumentException(); }
 		 */
