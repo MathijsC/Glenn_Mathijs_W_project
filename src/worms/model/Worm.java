@@ -82,7 +82,8 @@ public class Worm extends Entity {
 	public Worm(World world) {
 
 		super(new Position(0, 0));
-		System.out.println("NEW WORM");
+		//System.out.println("NEW WORM");
+		//setRadius((1+world.getSeed().nextDouble())*getMinRadius());
 		setRadius(getMinRadius());
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
@@ -90,7 +91,7 @@ public class Worm extends Entity {
 		setState(true);
 		setName("Glenn");
 		setWorld(world);
-		setWeapon(Weapon.Bazooka);
+		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(world.getTeams().size() - 1));
 		}
@@ -140,16 +141,16 @@ public class Worm extends Entity {
 	private Weapon weapon;
 
 	public void shoot(int propulsion) {
-		if (this.canShoot(this.getWeapon())){
+		if (this.canShoot(this.getWeapon())) {
 			this.getWeapon().shoot(this.getWorld(), this, propulsion);
 			this.setActionPoints((this.getActionPoints() - weapon
 					.getActionPoints()));
 		}
 	}
-	
+
 	public boolean canShoot(Weapon weapon) {
-		
-		return (this.getActionPoints() - weapon.getActionPoints())>0;
+
+		return (this.getActionPoints() - weapon.getActionPoints()) > 0;
 	}
 
 	/**
@@ -481,6 +482,10 @@ public class Worm extends Entity {
 			this.hitPoints = this.getMaxHitPoints();
 		else
 			this.hitPoints = hitPoints;
+	}
+	
+	public void dealDamage(int damage) {
+		this.setHitPoints(this.getHitPoints()-damage);
 	}
 
 	/**
@@ -854,14 +859,15 @@ public class Worm extends Entity {
 
 	// TODO DOCU
 	public double[] possibleJump(double timeStep) {
-		double[] position = this.getPosition();
+		Position position = this.getPosition();
 		double time = timeStep;
-		double[] tempPosition;
+		Position tempPosition;
 		boolean jumping = true;
 
 		while (jumping) {
 			tempPosition = this.jumpStep(time);
-			if (world.isPassable(tempPosition[0], tempPosition[1])) {
+			if (world.isPassable(tempPosition.getXCoordinate(),
+					tempPosition.getYCoordinate())) {
 				position = tempPosition;
 				time = time + timeStep;
 			} else {
@@ -870,7 +876,8 @@ public class Worm extends Entity {
 
 		}
 		// x,y,time
-		double[] data = { position[0], position[1], time };
+		double[] data = { position.getXCoordinate(), position.getYCoordinate(),
+				time };
 		return data;
 	}
 
@@ -891,7 +898,7 @@ public class Worm extends Entity {
 	 * 			The worm cannot jump.
 	 * 			| ! canJump()
 	 */
-	public double[] jumpStep(double time) throws IllegalArgumentException,
+	public Position jumpStep(double time) throws IllegalArgumentException,
 			IllegalStateException {
 		if (!canJump()) {
 			throw new IllegalStateException();
@@ -908,7 +915,7 @@ public class Worm extends Entity {
 		double Y = getYCoordinate() + initialVelocity()
 				* Math.sin(getDirection()) * time - 0.5 * GRAVITY
 				* Math.pow(time, 2);
-		double[] coord = { X, Y };
+		Position coord = new Position(X, Y);
 		return coord;
 	}
 

@@ -51,7 +51,7 @@ public class Position {
 	 */
 	@Basic
 	@Raw
-	public double getYcoordinate() {
+	public double getYCoordinate() {
 		return yCoordinate;
 	}
 
@@ -74,7 +74,7 @@ public class Position {
 				.sqrt(Math.pow(
 						(this.getXCoordinate() - other.getXCoordinate()), 2)
 						+ Math.pow(
-								(this.getYcoordinate() - other.getYcoordinate()),
+								(this.getYCoordinate() - other.getYCoordinate()),
 								2));
 	}
 

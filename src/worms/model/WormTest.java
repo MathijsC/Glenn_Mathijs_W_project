@@ -324,9 +324,9 @@ public class WormTest {
 	}*/
 	@Test
 	public final void jumpStep_LegalCase() throws Exception{
-		double[] coords = testWorm.jumpStep(1);
-		assertEquals(3.999883205192991, coords[0],0.00001);
-		assertEquals(1.3261240014849731, coords[1],0.00001);
+		Position coords = testWorm.jumpStep(1);
+		assertEquals(3.999883205192991, coords.getXCoordinate(),0.00001);
+		assertEquals(1.3261240014849731, coords.getYCoordinate(),0.00001);
 	}
 	@Test (expected = IllegalArgumentException.class)
 	public final void jumpStep_AlreadyLanded() throws Exception{

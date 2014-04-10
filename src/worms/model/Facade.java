@@ -5,21 +5,21 @@ import java.util.Random;
 
 public class Facade implements IFacade {
 
-	//TODO
+	// TODO
 	/**
 	 * Default constructor
 	 */
 	public Facade() {
-		
+
 	}
-	
+
 	/**
 	 * Create and add an empty team with the given name to the given world.
 	 * 
 	 * (For single-student groups that do not implement teams, this method should have no effect)
 	 */
-	public void addEmptyTeam(World world, String newName){
-		new Team(world,newName);
+	public void addEmptyTeam(World world, String newName) {
+		new Team(world, newName);
 	}
 
 	/**
@@ -28,9 +28,9 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement food, this method should have no effect)
 	 */
-	public void addNewFood(World world){
+	public void addNewFood(World world) {
 		new Food(world);
-		
+
 	}
 
 	/**
@@ -39,20 +39,19 @@ public class Facade implements IFacade {
 	 * The new worm can have an arbitrary (but valid) radius and direction.
 	 * The new worm may (but isn't required to) have joined a team.
 	 */
-	public void addNewWorm(World world){		
+	public void addNewWorm(World world) {
 		new Worm(world);
-		
+
 	}
 
-	//TODO
+	// TODO
 	/**
 	 * Returns whether or not the given worm can fall down
 	 */
-	public boolean canFall(Worm worm){
+	public boolean canFall(Worm worm) {
 		return false;
-		
-	}
 
+	}
 
 	/**
 	 * Returns whether or not the given worm can move a given number of steps.
@@ -80,10 +79,9 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement food, this method should have no effect)
 	 */
-	public Food createFood(World world, double x, double y){
-		return new Food(world,x,y);
+	public Food createFood(World world, double x, double y) {
+		return new Food(world, x, y);
 	}
-
 
 	/**
 	 * Creates a new world.
@@ -107,9 +105,8 @@ public class Facade implements IFacade {
 	 */
 	public World createWorld(double width, double height,
 			boolean[][] passableMap, Random random) {
-		return new World(width,height,passableMap,random) ;
+		return new World(width, height, passableMap, random);
 	}
-
 
 	/**
 	 * Create a new worm that is positioned at the given location in the given world,
@@ -126,18 +123,18 @@ public class Facade implements IFacade {
 	 * @param name
 	 * The name of the new worm
 	 */
-	public Worm createWorm(World world,double x, double y, double direction, double radius, String name) {
-		return new Worm(world,x,y,direction,radius,name);
+	public Worm createWorm(World world, double x, double y, double direction,
+			double radius, String name) {
+		return new Worm(world, x, y, direction, radius, name);
 	}
 
-	//TODO
+	// TODO
 	/**
 	 * Makes the given worm fall down until it rests on impassable terrain again.
 	 */
-	public void fall(Worm worm){
-		
-	}
+	public void fall(Worm worm) {
 
+	}
 
 	/**
 	 * Returns the current number of action points of the given worm.
@@ -149,41 +146,38 @@ public class Facade implements IFacade {
 	/**
 	 * Returns the active projectile in the world, or null if no active projectile exists.
 	 */
-	public Projectile getActiveProjectile(World world){
+	public Projectile getActiveProjectile(World world) {
 		return world.getProjectile();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the active worm in the given world (i.e., the worm whose turn it is).
 	 */
-	public Worm getCurrentWorm(World world){
+	public Worm getCurrentWorm(World world) {
 		return world.getCurrentWorm();
-		
-	}
 
+	}
 
 	/**
 	 * Returns all the food rations in the world
 	 * 
 	 * (For single-student groups that do not implement food, this method must always return an empty collection)
 	 */
-	public Collection<Food> getFood(World world){
+	public Collection<Food> getFood(World world) {
 		return world.getFoodList();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the current number of hit points of the given worm.
 	 */
-	public int getHitPoints(Worm worm){
+	public int getHitPoints(Worm worm) {
 		return worm.getHitPoints();
-		
+
 	}
 
-	//TODO @throws
+	// TODO @throws
 	/**
 	 * Returns the location on the jump trajectory of the given projectile after a
 	 * time t.
@@ -191,15 +185,20 @@ public class Facade implements IFacade {
 	 * @return An array with two elements, with the first element being the
 	 *         x-coordinate and the second element the y-coordinate
 	 */
-	public double[] getJumpStep(Projectile projectile, double t){
-		try{
-			return projectile.jumpStep(t);
-		}catch(IllegalArgumentException exc){
+	public double[] getJumpStep(Projectile projectile, double t)
+			throws ModelException {
+		try {
+			Position position = projectile.jumpStep(t);
+			return (new double[] { position.getXCoordinate(),
+					position.getYCoordinate() });
+		} catch (IllegalArgumentException exc) {
 			throw new ModelException("Illegal argument");
+		} catch (IllegalStateException exc) {
+			throw new ModelException("Illegal state");
 		}
 	}
 
-	//TODO @throws
+	// TODO @throws
 	/**
 	 * Returns the location on the jump trajectory of the given worm after a
 	 * time t.
@@ -210,16 +209,18 @@ public class Facade implements IFacade {
 	 * @throws Throws a model exception when the given worm isn't able to jump.
 	 */
 	public double[] getJumpStep(Worm worm, double t) throws ModelException {
-		try{
-			return worm.jumpStep(t);
-		}catch(IllegalArgumentException exc){
+		try {
+			Position position = worm.jumpStep(t);
+			return (new double[] { position.getXCoordinate(),
+					position.getYCoordinate() });
+		} catch (IllegalArgumentException exc) {
 			throw new ModelException("Illegal argument");
-		}catch(IllegalStateException exc){
+		} catch (IllegalStateException exc) {
 			throw new ModelException("Illegal state");
 		}
 	}
 
-	//TODO timeStep
+	// TODO timeStep
 	/**
 	 * Determine the time that the given projectile can jump until it hits the terrain, hits a worm, or leaves the world.
 	 * The time should be determined using the given elementary time interval.
@@ -231,11 +232,11 @@ public class Facade implements IFacade {
 	 *                 
 	 * @return The time duration of the projectile's jump.
 	 */
-	public double getJumpTime(Projectile projectile, double timeStep){
-		return projectile.jumpTime(timeStep);
-		
-	}
+	public double getJumpTime(Projectile projectile, double timeStep) {
 
+		return projectile.jumpTime(timeStep);
+
+	}
 
 	/**
 	 * Determine the time that the given worm can jump until it hits the terrain or leaves the world.
@@ -251,9 +252,9 @@ public class Facade implements IFacade {
 	 * @throws Throws a model exception when the given worm isn't able to jump.
 	 */
 	public double getJumpTime(Worm worm, double timeStep) throws ModelException {
-		try{
+		try {
 			return worm.jumpTime(timeStep);
-		}catch(IllegalStateException exc){
+		} catch (IllegalStateException exc) {
 			throw new ModelException("Illegal state");
 		}
 	}
@@ -275,11 +276,10 @@ public class Facade implements IFacade {
 	/**
 	 * Returns the maximum number of hit points of the given worm.
 	 */
-	public int getMaxHitPoints(Worm worm){
+	public int getMaxHitPoints(Worm worm) {
 		return worm.getMaxHitPoints();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the minimal radius of the given worm.
@@ -307,20 +307,18 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement food, this method may return any value)
 	 */
-	public double getRadius(Food food){
+	public double getRadius(Food food) {
 		return food.getRadius();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the radius of the given projectile.
 	 */
-	public double getRadius(Projectile projectile){
+	public double getRadius(Projectile projectile) {
 		return projectile.getRadius();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the radius of the given worm.
@@ -329,16 +327,15 @@ public class Facade implements IFacade {
 		return worm.getRadius();
 	}
 
-	//TODO
+	// TODO
 	/**
 	 * Returns the name of the weapon that is currently active for the given worm,
 	 * or null if no weapon is active.
 	 */
-	public String getSelectedWeapon(Worm worm){
+	public String getSelectedWeapon(Worm worm) {
 		return worm.getWeapon().toString();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the name of the team of the given worm, or returns null if this
@@ -346,54 +343,50 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement teams, this method should always return null)
 	 */
-	public String getTeamName(Worm worm){
+	public String getTeamName(Worm worm) {
 		if (worm.getTeam() == null)
 			return " ";
 		return worm.getTeam().getName();
-		
+
 	}
 
-	//TODO
+	// TODO
 	/**
 	 * Returns the name of a single worm if that worm is the winner, or the name
 	 * of a team if that team is the winner. This method should null if there is no winner.
 	 * 
 	 * (For single-student groups that do not implement teams, this method should always return the name of the winning worm, or null if there is no winner)
 	 */
-	public String getWinner(World world){
+	public String getWinner(World world) {
 		return "Glenn";
-		
-	}
 
+	}
 
 	/**
 	 * Returns all the worms in the given world
 	 */
-	public Collection<Worm> getWorms(World world){
-		return world.getWorms();		
-				
-	}
+	public Collection<Worm> getWorms(World world) {
+		return world.getWorms();
 
+	}
 
 	/**
 	 * Returns the x-coordinate of the given food ration
 	 * 
 	 * (For single-student groups that do not implement food, this method may return any value)
 	 */
-	public double getX(Food food){
+	public double getX(Food food) {
 		return food.getXCoordinate();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the x-coordinate of the given projectile.
 	 */
-	public double getX(Projectile projectile){
+	public double getX(Projectile projectile) {
 		return projectile.getXCoordinate();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the x-coordinate of the current location of the given worm.
@@ -407,19 +400,18 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement food, this method may return any value)
 	 */
-	public double getY(Food food){
+	public double getY(Food food) {
 		return food.getYCoordinate();
-		
+
 	}
 
 	/**
 	 * Returns the y-coordinate of the given projectile.
 	 */
-	public double getY(Projectile projectile){
+	public double getY(Projectile projectile) {
 		return projectile.getYCoordinate();
-		
-	}
 
+	}
 
 	/**
 	 * Returns the y-coordinate of the current location of the given worm.
@@ -433,21 +425,20 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement food, this method should always return false)
 	 */
-	public boolean isActive(Food food){
+	public boolean isActive(Food food) {
 		return food.getState();
-		
+
 	}
 
-	
 	/**
 	 * Returns whether the given projectile is still alive (active).
 	 */
-	public boolean isActive(Projectile projectile){
+	public boolean isActive(Projectile projectile) {
 		return projectile.getState();
-		
+
 	}
 
-	//TODO
+	// TODO
 	/**
 	 * Checks whether the given circular region of the given world,
 	 * defined by the given center coordinates and radius,
@@ -460,31 +451,29 @@ public class Facade implements IFacade {
 	 * 
 	 * @return True if the given region is passable and adjacent to impassable terrain, false otherwise.
 	 */
-	public boolean isAdjacent(World world, double x, double y, double radius){
+	public boolean isAdjacent(World world, double x, double y, double radius) {
 		return world.isAdjacentTerrain(radius, x, y);
-		
-	}
 
+	}
 
 	/**
 	 * Returns whether the given worm is alive
 	 */
-	public boolean isAlive(Worm worm){
+	public boolean isAlive(Worm worm) {
 		return worm.getState();
-		
+
 	}
 
-	
-	//TODO
+	// TODO
 	/**
 	 * Returns whether the game in the given world has finished.
 	 */
-	public boolean isGameFinished(World world){
+	public boolean isGameFinished(World world) {
 		return false;
-		
+
 	}
 
-	//TODO
+	// TODO
 	/**
 	 * Checks whether the given circular region of the given world,
 	 * defined by the given center coordinates and radius,
@@ -497,9 +486,9 @@ public class Facade implements IFacade {
 	 * 
 	 * @return True if the given region is impassable, false otherwise.
 	 */
-	public boolean isImpassable(World world, double x, double y, double radius){
+	public boolean isImpassable(World world, double x, double y, double radius) {
 		return !world.isPassable(x, y);
-		
+
 	}
 
 	/**
@@ -511,10 +500,9 @@ public class Facade implements IFacade {
 	 * @param timeStep An elementary time interval during which you may assume
 	 *                 that the projectile will not completely move through a piece of impassable terrain.
 	 */
-	public void jump(Projectile projectile, double timeStep){
+	public void jump(Projectile projectile, double timeStep) {
 		projectile.jump(timeStep);
 	}
-
 
 	/**
 	 * Make the given worm jump to its new location.
@@ -528,12 +516,12 @@ public class Facade implements IFacade {
 	 * @throws Throws a model exception when the given worm isn't able to jump.
 	 */
 	public void jump(Worm worm, double timeStep) throws ModelException {
-		try{
+		try {
 			worm.jump(timeStep);
-		}catch(IllegalStateException exc){
+		} catch (IllegalStateException exc) {
 			throw new ModelException("Illegal state");
 		}
-		
+
 	}
 
 	/**
@@ -541,12 +529,12 @@ public class Facade implements IFacade {
 	 * 
 	 * @throws Throws a model exception if the given worm can't move the given number of steps.
 	 */
-	public void move(Worm worm) throws ModelException{
-		try{
+	public void move(Worm worm) throws ModelException {
+		try {
 			worm.move();
-		}catch(IllegalArgumentException exc){
+		} catch (IllegalArgumentException exc) {
 			throw new ModelException("Illegal argument");
-		}catch(IllegalStateException exc){
+		} catch (IllegalStateException exc) {
 			throw new ModelException("Worm cannot move!");
 		}
 	}
@@ -556,22 +544,21 @@ public class Facade implements IFacade {
 	 * 
 	 * @throws Throws a model exception when the new name doesn't fit the constraints.
 	 */
-	public void rename(Worm worm, String newName) throws ModelException{
-		try{
+	public void rename(Worm worm, String newName) throws ModelException {
+		try {
 			worm.setName(newName);
-		}catch(IllegalArgumentException exc){
+		} catch (IllegalArgumentException exc) {
 			throw new ModelException("Illegal argument");
 		}
 	}
 
-	//TODO
+	// TODO
 	/**
 	 * Activates the next weapon for the given worm
 	 */
-	public void selectNextWeapon(Worm worm){
+	public void selectNextWeapon(Worm worm) {
 		worm.selectNextWeapon();
 	}
-
 
 	/**
 	 * Sets the radius of the given worm to the given value.
@@ -579,38 +566,35 @@ public class Facade implements IFacade {
 	 * @throws Throws a model exception when the given radius is smaller than the minimum radius.
 	 */
 	public void setRadius(Worm worm, double newRadius) throws ModelException {
-		try{
+		try {
 			worm.setRadius(newRadius);
-		} catch(IllegalArgumentException exc){
+		} catch (IllegalArgumentException exc) {
 			throw new ModelException("Illegal argument!");
 		}
-		
+
 	}
-	
-	//TODO 
+
+	// TODO
 	/**
 	 * Makes the given worm shoot its active weapon with the given propulsion yield.
 	 */
-	public void shoot(Worm worm, int yield){
+	public void shoot(Worm worm, int yield) {
 		worm.shoot(yield);
 	}
-
 
 	/**
 	 * Starts a game in the given world.
 	 */
-	public void startGame(World world){
+	public void startGame(World world) {
 		world.startGame();
 	}
-
 
 	/**
 	 * Starts the next turn in the given world
 	 */
-	public void startNextTurn(World world){
-		world.startNextTurn();		
+	public void startNextTurn(World world) {
+		world.startNextTurn();
 	}
-
 
 	/**
 	 * Turns the given worm by the given angle.
@@ -618,5 +602,5 @@ public class Facade implements IFacade {
 	public void turn(Worm worm, double angle) {
 		worm.turn(angle);
 	}
-	
+
 }

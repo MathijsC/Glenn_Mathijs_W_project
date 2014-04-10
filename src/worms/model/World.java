@@ -39,20 +39,12 @@ public class World {
 		this.setPassableMap(passableMap);
 		this.seed = random;
 
-		/*int m = 450;
-		int n = passableMap[0].length-1;
-		for (int i = 0; i < m; i++) {
-			System.out.println(i+ "|\t");
-		    for (int j = 0; j < n; j++) {
-		    	if (passableMap[i][j] == true ){
-		    		System.out.print("1 ");
-		    	}
-		    	else {
-		    		System.out.print("0 ");
-		    	}
-		    }
-		    System.out.print("\n");
-		}*/
+		/*
+		 * int m = 450; int n = passableMap[0].length-1; for (int i = 0; i < m;
+		 * i++) { System.out.println(i+ "|\t"); for (int j = 0; j < n; j++) { if
+		 * (passableMap[i][j] == true ){ System.out.print("1 "); } else {
+		 * System.out.print("0 "); } } System.out.print("\n"); }
+		 */
 
 	}
 
@@ -164,6 +156,11 @@ public class World {
 	 */
 	public ArrayList<Worm> getWorms() {
 		return worms;
+	}
+
+	// TODO
+	public Worm getWormAtIndex(int index) {
+		return worms.get(index);
 	}
 
 	/**
@@ -311,7 +308,7 @@ public class World {
 	 * @return the active projectile in this world
 	 */
 	public Projectile getProjectile() {
-		return this.projectile;
+			return this.projectile;
 	}
 
 	/**
@@ -321,11 +318,49 @@ public class World {
 	 * @Post the active projetile in this world is the given projectile
 	 * 			|new.getProjectile() = projectile 
 	 */
-	public void setProjectile(Projectile projectile) throws IllegalStateException {
+	public void setProjectile(Projectile projectile)
+			throws IllegalStateException {
 		if (!(projectile.getWorld() == this)) {
 			throw new IllegalStateException();
 		}
 		this.projectile = projectile;
+	}
+
+	// TODO
+	public Worm getWormHit(Projectile projectile) {
+		int i = 0;
+		boolean hit = false;
+		Worm worm = null;
+		while ((i < this.getWorms().size()) && (!hit)) {
+			worm = this.getWormAtIndex(i);
+			if (projectile.getPosition().distanceTo(worm.getPosition()) < projectile
+					.getRadius() + worm.getRadius()) {
+				hit = true;
+			}
+			i++;
+		}
+		if (hit == false) {
+			worm = null;
+		}
+
+		return worm;
+	}
+
+	// TODO
+	public boolean checkProjectileHitWorm(Position position, double radius) {
+		int i = 0;
+		boolean hit = false;
+		Worm worm = null;
+		while ((i < this.getWorms().size()) && (!hit)) {
+			worm = this.getWormAtIndex(i);
+			if ((position.distanceTo(worm.getPosition())) <= (radius + worm
+					.getRadius()) && (worm != this.getCurrentWorm())) {
+				hit = true;
+			}
+			i++;
+		}
+
+		return hit;
 	}
 
 	/**
@@ -337,18 +372,34 @@ public class World {
 		return foodList;
 	}
 
-	//TODO docu and max values
+	// TODO
+	public Food getFoodAtIndex(int index) {
+		return this.foodList.get(index);
+	}
+
+	/*
+	 * // TODO public Food checkWormAteFood(Worm worm) { int i = 0; boolean ate
+	 * = false; Food food = null; while ((i < this.getFoodList().size()) &&
+	 * (!ate)) { food = this.getFoodAtIndex(i); if
+	 * (worm.getPosition().distanceTo(food.getPosition()) < food .getRadius() +
+	 * worm.getRadius()) { ate = true; } i++; } if (i > this.getWorms().size())
+	 * { food = null; }
+	 * 
+	 * return food; }
+	 */
+
+	// TODO docu and max values
 	public boolean isPassable(double xCo, double yCo) {
 		if ((xCo >= getWidth()) || (yCo >= getHeight()) || (yCo < 0)
 				|| (xCo < 0)) {
-			//System.out.println("OutOfBounds: " + xCo + " | " + yCo);
+			// System.out.println("OutOfBounds: " + xCo + " | " + yCo);
 			return false;
 		}
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
 		int row = (int) ((this.getPassableMap().length) - (yCo / boxHeight));
 		int column = (int) (xCo / boxWidth);
-		//System.out.println("is passable");
+		// System.out.println("is passable");
 		/**int m = row+2;
 		int n = column+2;
 		for (int i = row-2; i < m; i++) {
@@ -363,12 +414,12 @@ public class World {
 		    }
 		    System.out.print("\n");
 		}*/
-		//System.out.println("isPass: " + xCo + " | " + yCo + " | " + column
-				//+ " | " + row + " | " + this.getPassableMap()[row][column]);
+		// System.out.println("isPass: " + xCo + " | " + yCo + " | " + column
+		// + " | " + row + " | " + this.getPassableMap()[row][column]);
 		return this.getPassableMap()[row][column];
 	}
 
-	//TODO docu and max values
+	// TODO docu and max values
 	public boolean isAdjacentTerrain(double radius, double xCo, double yCo) {
 		if ((xCo >= getWidth()) || (yCo >= getHeight()) || (yCo < 0)
 				|| (xCo < 0)) {
@@ -377,11 +428,11 @@ public class World {
 		if (!isPassable(xCo, yCo)) {
 			return false;
 		}
-		double angle = Math.PI+(Math.PI*(31.0 / 64.0));
-		//System.out.println("CheckAdj:");
-		while (angle <= (2 * Math.PI -(Math.PI*(31.0 /64.0)))) {
-			double circleX = radius*0.1 * Math.cos(angle) + xCo;
-			double circleY = radius *0.1* Math.sin(angle) + yCo;
+		double angle = Math.PI + (Math.PI * (31.0 / 64.0));
+		// System.out.println("CheckAdj:");
+		while (angle <= (2 * Math.PI - (Math.PI * (31.0 / 64.0)))) {
+			double circleX = radius * 0.1 * Math.cos(angle) + xCo;
+			double circleY = radius * 0.1 * Math.sin(angle) + yCo;
 			if (!isPassable(circleX, circleY)) {
 				return true;
 			}
@@ -395,13 +446,13 @@ public class World {
 		boolean found = false;
 		double[] coord = { 0, 0 };
 		while ((max < 10) && (!found)) {
-			//System.out.println("\nPerim number: " + max + " ->coords: "
-					//+ coord[0] + " | " + coord[1]);
+			// System.out.println("\nPerim number: " + max + " ->coords: "
+			// + coord[0] + " | " + coord[1]);
 			max += 1;
 			coord[0] = getSeed().nextDouble() * getWidth() - radius;
 			coord[1] = getSeed().nextDouble() * getHeight() - radius;
-			//new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
-					//+ Integer.toString(max));
+			// new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
+			// + Integer.toString(max));
 			coord = checkPerimeter(radius, coord[0], coord[1]);
 			if (isAdjacentTerrain(radius, coord[0], coord[1])) {
 				found = true;
@@ -415,22 +466,22 @@ public class World {
 		boolean found = false;
 		int max = 0;
 		while ((!found) && (max < 200)) {
-			//System.out.println("Step number: " + max);
+			// System.out.println("Step number: " + max);
 			max += 1;
 			if (isAdjacentTerrain(radius, xCo, yCo)) {
 				found = true;
-				//System.out.println("FOUND!");
+				// System.out.println("FOUND!");
 			} else {
 				xCo += 0.05 * Math.cos(angleToCenter);
 				yCo += 0.05 * Math.sin(angleToCenter);
-				//System.out.println("New Coords: " + xCo + " | " + yCo);
+				// System.out.println("New Coords: " + xCo + " | " + yCo);
 			}
 		}
 		double[] coord = { xCo, yCo };
 		return coord;
 	}
 
-	//TODO docu
+	// TODO docu
 	private double getAngleToCenter(double xCo, double yCo) {
 		double angleToCenter;
 		if (xCo < getWidth() / 2) {

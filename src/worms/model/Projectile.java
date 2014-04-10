@@ -8,14 +8,15 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 public class Projectile extends Entity {
 
-	public Projectile(Position position, World world, double direction,
-			double mass, double force) {
+	public Projectile(Position position, World world, Weapon weapon,
+			double direction, double mass, double force) {
 		super(position);
 		this.setDirection(direction);
 		this.mass = mass;
 		this.force = force;
 		this.setWorld(world);
 		this.setState(true);
+		this.setWeapon(weapon);
 	}
 
 	/**
@@ -78,6 +79,22 @@ public class Projectile extends Entity {
 	public boolean getState() {
 		return this.state;
 	}
+
+	/**
+	 * @return the weapon
+	 */
+	public Weapon getWeapon() {
+		return weapon;
+	}
+
+	/**
+	 * @param weapon the weapon to set
+	 */
+	private void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+	}
+
+	private Weapon weapon;
 
 	/**
 	 * Variable to register the direction of this projectile.
@@ -241,10 +258,17 @@ public class Projectile extends Entity {
 	*/
 
 	public void jump(double timeStep) {
-
-		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),0,2);
-		this.setPosition(newPosition[0], newPosition[1]);
-
+		if (this.getState()) {
+			double[] newPosition = Arrays.copyOfRange(
+					this.possibleJump(timeStep), 0, 2);
+			this.setPosition(newPosition[0], newPosition[1]);
+			if (this.getWorld().checkProjectileHitWorm(this.getPosition(),
+					this.getRadius())) {
+				Worm wormHit = this.getWorld().getWormHit(this);
+				wormHit.dealDamage(this.getWeapon().getDamage());
+			}
+			this.setState(false);
+		}
 	}
 
 	/**
@@ -254,30 +278,41 @@ public class Projectile extends Entity {
 	 * 			based on the direction of this projectile, the gravity
 	 * 			of the environment and the initial velocity.
 	 */
-	public double jumpTime(double timeStep) throws IllegalStateException {
-	
-		return this.possibleJump(timeStep)[2];
+	public double jumpTime(double timeStep) {
+		if (!this.getState()) {
+			return 0;
 		}
+		return this.possibleJump(timeStep)[2];
+
+	}
 
 	// TODO DOCU
 	public double[] possibleJump(double timeStep) {
-		double[] position = this.getPosition();
+	
+		Position position = this.getPosition();
 		double time = timeStep;
-		double[] tempPosition;
+		Position tempPosition;
 		boolean jumping = true;
+		boolean hit = false;
 
-		while (jumping) {
+		while ((jumping) && (!hit)) {
 			tempPosition = this.jumpStep(time);
-			if (world.isPassable(tempPosition[0], tempPosition[1])) {
+			if (world.isPassable(tempPosition.getXCoordinate(),
+					tempPosition.getYCoordinate())) {
 				position = tempPosition;
 				time = time + timeStep;
+				if (this.getWorld().checkProjectileHitWorm(tempPosition,
+						this.getRadius())) {
+					hit = true;
+				}
 			} else {
 				jumping = false;
 			}
 
 		}
 		// x,y,time
-		double[] data = { position[0], position[1], time };
+		double[] data = { position.getXCoordinate(), position.getYCoordinate(),
+				time };
 		return data;
 	}
 
@@ -295,20 +330,23 @@ public class Projectile extends Entity {
 	 * 			| time <=0
 	 * 			| time > this.jumpTime()
 	 */
-	public double[] jumpStep(double time) throws IllegalArgumentException {
+	public Position jumpStep(double time) throws IllegalArgumentException,IllegalStateException {
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		//jumpTime vraag een argument dat hier niet gegeven is ... :/
-		/*if (time > this.jumpTime()) {
-			throw new IllegalArgumentException();
-		}*/
+		if (!this.getState()) {
+			throw new IllegalStateException();
+		}
+		// jumpTime vraag een argument dat hier niet gegeven is ... :/
+		/*
+		 * if (time > this.jumpTime()) { throw new IllegalArgumentException(); }
+		 */
 		double X = getXCoordinate() + initialVelocity()
 				* Math.cos(getDirection()) * time;
 		double Y = getYCoordinate() + initialVelocity()
 				* Math.sin(getDirection()) * time - 0.5 * GRAVITY
 				* Math.pow(time, 2);
-		double[] coord = { X, Y };
+		Position coord = new Position(X, Y);
 		return coord;
 	}
 

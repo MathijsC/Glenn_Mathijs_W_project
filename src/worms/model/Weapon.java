@@ -8,12 +8,12 @@ public enum Weapon {
 	Rifle(0.010, 1.5, 1.5, 10, 20), Bazooka(0.300, 2.5, 9.5, 50, 80);
 
 	private Weapon(double mass, double minForce, double maxForce,
-			int actionPoints, int hitPoints) {
+			int actionPoints, int damage) {
 		this.setMass(mass);
 		this.setMinForce(minForce);
 		this.setMaxForce(maxForce);
 		this.setActionPoints(actionPoints);
-		this.setHitPoints(hitPoints);
+		this.setDamage(damage);
 	}
 
 	/**
@@ -81,20 +81,20 @@ public enum Weapon {
 	private int actionPoints;
 
 	/**
-	 * @return the hitPoints
+	 * @return the damage the weapon can deal
 	 */
-	public int getHitPoints() {
-		return hitPoints;
+	public int getDamage() {
+		return damage;
 	}
 
 	/**
-	 * @param hitPoints the hitPoints to set
+	 * @param damage the damage to set to
 	 */
-	public void setHitPoints(int hitPoints) {
-		this.hitPoints = hitPoints;
+	public void setDamage(int damage) {
+		this.damage = damage;
 	}
 
-	private int hitPoints;
+	private int damage;
 
 	public double calcForce(int propulsion) {
 		return (this.getMinForce() + (propulsion
@@ -110,8 +110,8 @@ public enum Weapon {
 	}
 
 	public void shoot(World world, Worm worm, int propulsion) {
-		new Projectile(this.calcStartingPoint(worm), world,
-				worm.getDirection(), this.getMass(), this.calcForce(propulsion));
-
+		new Projectile(this.calcStartingPoint(worm),
+				world,this, worm.getDirection(), this.getMass(),
+				this.calcForce(propulsion));
 	}
 }

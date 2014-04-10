@@ -11,8 +11,8 @@ public class Entity {
 
 	private Position position;
 
-	public double[] getPosition() {
-		return (new double[] { position.getXCoordinate(),position.getYcoordinate() });
+	public Position getPosition() {
+		return this.position;
 	}
 	
 	protected void setPosition(double x, double y) {
@@ -52,7 +52,7 @@ public class Entity {
 	@Basic
 	@Raw
 	public double getYCoordinate() {
-		return position.getYcoordinate();
+		return position.getYCoordinate();
 	}
 
 	/**
