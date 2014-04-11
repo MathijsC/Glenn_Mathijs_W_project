@@ -417,18 +417,18 @@ public class World {
 		//System.out.println(boxWidth+ " | "+boxHeight);
 		//System.out.println("Coords: " + xCo + " | " + yCo+" Circlerad: "+radius);
 
-		//String rows = "Rows:";
+		String rows = "Rows:";
 		//String cols = "Cols:";
-		//System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
-				//+ " | " + rightColumn);
-		for (int row = upperRow; row <= lowerRow; row+=5) {
-			//rows = rows+"\n"+Integer.toString(row)+": ";
-			for (int column = leftColumn; column <= rightColumn; column+=5) {
-				//rows = rows+" "+Integer.toString(column);
+		System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
+				+ " | " + rightColumn);
+		for (int row = upperRow; row <= lowerRow; row+=1) {
+			rows = rows+"\n"+Integer.toString(row)+": ";
+			for (int column = leftColumn; column <= rightColumn; column+=1) {
+				rows = rows+" "+Integer.toString(column);
 				if (isBoxInRadius(row, column, xCo, yCo, radius)) {
-					//rows = rows+"X";
+					rows = rows+"X";
 					if (passableMap[row][column] != true) {
-						/*System.out.println("is impassable");
+						System.out.println("is impassable");
 						for (int i = upperRow; i <= lowerRow; i++) {
 							System.out.print(i+ "| ");
 						    for (int j = leftColumn; j <= rightColumn; j++) {
@@ -440,15 +440,15 @@ public class World {
 						    	}
 						    }
 						    System.out.print("\n");
-						}*/
+						}
 						return false;
 					}
-				} /*else {
+				} else {
 					rows = rows+"_";
-					}*/
+					}
 			}
 		}
-		//System.out.println(rows);
+		System.out.println(rows);
 		//System.out.println(cols);
 		/*System.out.println("is passable");
 		for (int i = upperRow; i <= lowerRow; i++) {
@@ -531,8 +531,8 @@ public class World {
 			coord[1] = getSeed().nextDouble() * getHeight() - radius;
 			//coord[0] = 15;
 			//coord[1] = 13;
-			new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
-			+ Integer.toString(max));
+			//new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
+			//+ Integer.toString(max));
 			coord = checkPerimeter(radius, coord[0], coord[1]);
 			if (isAdjacentTerrain(radius, coord[0], coord[1])) {
 				found = true;

@@ -211,6 +211,7 @@ public class Facade implements IFacade {
 	 * @throws Throws a model exception when the given worm isn't able to jump.
 	 */
 	public double[] getJumpStep(Worm worm, double t) throws ModelException {
+		System.out.println("getJumstep: "+t);
 		try {
 			Position position = worm.jumpStep(t);
 			return (new double[] { position.getXCoordinate(),
@@ -220,6 +221,8 @@ public class Facade implements IFacade {
 		} catch (IllegalStateException exc) {
 			throw new ModelException("Illegal state");
 		}
+		/**double[] tata={1.0,1.0};
+		return tata;*/
 	}
 
 	// TODO timeStep
