@@ -24,15 +24,15 @@ public class WorldTest {
 	
 	@Test
 	public void isPassable_TrueCase(){
-		assertTrue(world.isPassable(3, 3));
+		assertTrue(world.isPassable(3, 3,0.25));
 	}
 	@Test
 	public void isPassable_OutOfBounds_Positive(){	
-		assertFalse (world.isPassable(5, 5));
+		assertFalse (world.isPassable(5, 5,0.25));
 	}
 	@Test
 	public void isPassable_OutOfBounds_Negative(){	
-		assertFalse (world.isPassable(-0.00001, -0.00001));
+		assertFalse (world.isPassable(-0.00001, -0.00001,0.25));
 	}
 	@Test
 	public void isAdjacentTerrain_TrueCase(){
@@ -46,5 +46,25 @@ public class WorldTest {
 	public void isAdjacentTerrain_OutOfBounds(){	
 		assertFalse(world.isAdjacentTerrain(1, 5, 5));
 	}
+	
+	@Test
+	public void customTest(){
+		System.out.println("CUSTOM");
+		boolean[][] passableMap = new boolean[][] {
+				{  false , true , true , true , true , true , true , true  },
+				{  true , true , true , true , true , true , true , true  },
+				{  true , true , true , true , true , true , true , true  },
+				{  true , true , true , true , true , true , true , true  },
+				{  true , true , true , true , true , true , true , true  },
+				{  true , true , true , true , true , true , true , true  }};
+		random = new Random(7357);
+		World customWorld = new World(20,10, passableMap, random);
+		boolean result = customWorld.isPassable(6, 5, 4.5);
+		System.out.println("end Custom");
+		assertFalse(result);
+		
+	}
+	
+	
 	
 }

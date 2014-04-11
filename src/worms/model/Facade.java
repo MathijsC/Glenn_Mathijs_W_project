@@ -487,7 +487,7 @@ public class Facade implements IFacade {
 	 * @return True if the given region is impassable, false otherwise.
 	 */
 	public boolean isImpassable(World world, double x, double y, double radius) {
-		return !world.isPassable(x, y);
+		return !world.isPassable(x, y,radius);
 
 	}
 

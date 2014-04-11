@@ -298,7 +298,7 @@ public class Projectile extends Entity {
 		while ((jumping) && (!hit)) {
 			tempPosition = this.jumpStep(time);
 			if (world.isPassable(tempPosition.getXCoordinate(),
-					tempPosition.getYCoordinate())) {
+					tempPosition.getYCoordinate(),this.getRadius())) {
 				position = tempPosition;
 				time = time + timeStep;
 				if (this.getWorld().checkProjectileHitWorm(tempPosition,

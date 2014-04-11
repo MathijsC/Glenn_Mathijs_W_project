@@ -39,6 +39,11 @@ public class World {
 		this.setPassableMap(passableMap);
 		this.seed = random;
 
+		double boxHeight = this.getHeight() / this.getPassableMap().length;
+		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
+		System.out.println(this.getPassableMap()[0].length + " | "
+				+ this.getPassableMap().length);
+		System.out.println(boxWidth + " | " + boxHeight);
 		/*
 		 * int m = 450; int n = passableMap[0].length-1; for (int i = 0; i < m;
 		 * i++) { System.out.println(i+ "|\t"); for (int j = 0; j < n; j++) { if
@@ -308,7 +313,7 @@ public class World {
 	 * @return the active projectile in this world
 	 */
 	public Projectile getProjectile() {
-			return this.projectile;
+		return this.projectile;
 	}
 
 	/**
@@ -389,22 +394,66 @@ public class World {
 	 */
 
 	// TODO docu and max values
-	public boolean isPassable(double xCo, double yCo) {
-		if ((xCo >= getWidth()) || (yCo >= getHeight()) || (yCo < 0)
-				|| (xCo < 0)) {
-			// System.out.println("OutOfBounds: " + xCo + " | " + yCo);
+	public boolean isPassable(double xCo, double yCo, double radius) {
+
+		if (((xCo + radius) >= getWidth()) || ((yCo + radius) >= getHeight())
+				|| ((yCo - radius) <= 0.00000) || ((xCo - radius) <= 0.00000)) {
+			//System.out.println("OutOfBounds: " + xCo + " | " + yCo);
 			return false;
 		}
+
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
-		int row = (int) ((this.getPassableMap().length) - (yCo / boxHeight));
-		int column = (int) (xCo / boxWidth);
-		// System.out.println("is passable");
-		/**int m = row+2;
-		int n = column+2;
-		for (int i = row-2; i < m; i++) {
+		//System.out.println("world: " + this.getPassableMap().length + " | "
+				//+ boxHeight + " | " + boxWidth + " | " + this.getHeight()
+				//+ " | " + this.getWidth());
+		//System.out.println("Passable: " + xCo + " | " + yCo + " | " + radius);
+		int upperRow = (int) ((this.getPassableMap().length) - ((yCo + radius) / boxHeight));
+		int lowerRow = (int) ((this.getPassableMap().length) - ((yCo - radius) / boxHeight));
+		int leftColumn = (int) ((xCo - radius) / boxWidth);
+		int rightColumn = (int) ((xCo + radius) / boxWidth);
+		//System.out.println("CheckPassable:");
+		//System.out.println(this.getPassableMap()[0].length+ " | "+this.getPassableMap().length);
+		//System.out.println(boxWidth+ " | "+boxHeight);
+		//System.out.println("Coords: " + xCo + " | " + yCo+" Circlerad: "+radius);
+
+		//String rows = "Rows:";
+		//String cols = "Cols:";
+		//System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
+				//+ " | " + rightColumn);
+		for (int row = upperRow; row <= lowerRow; row+=5) {
+			//rows = rows+"\n"+Integer.toString(row)+": ";
+			for (int column = leftColumn; column <= rightColumn; column+=5) {
+				//rows = rows+" "+Integer.toString(column);
+				if (isBoxInRadius(row, column, xCo, yCo, radius)) {
+					//rows = rows+"X";
+					if (passableMap[row][column] != true) {
+						/*System.out.println("is impassable");
+						for (int i = upperRow; i <= lowerRow; i++) {
+							System.out.print(i+ "| ");
+						    for (int j = leftColumn; j <= rightColumn; j++) {
+						    	if (passableMap[i][j] == true ){
+						    		System.out.print("1 ");
+						    	}
+						    	else {
+						    		System.out.print("0 ");
+						    	}
+						    }
+						    System.out.print("\n");
+						}*/
+						return false;
+					}
+				} /*else {
+					rows = rows+"_";
+					}*/
+			}
+		}
+		//System.out.println(rows);
+		//System.out.println(cols);
+		/*System.out.println("is passable");
+		for (int i = upperRow; i <= lowerRow; i++) {
 			System.out.print(i+ "| ");
-		    for (int j = column-2; j < n; j++) {
+		    for (int j = leftColumn; j <= rightColumn; j++) {
 		    	if (passableMap[i][j] == true ){
 		    		System.out.print("1 ");
 		    	}
@@ -416,7 +465,32 @@ public class World {
 		}*/
 		// System.out.println("isPass: " + xCo + " | " + yCo + " | " + column
 		// + " | " + row + " | " + this.getPassableMap()[row][column]);
-		return this.getPassableMap()[row][column];
+		//return this.getPassableMap()[row][column];
+
+		return true;
+	}
+
+	public boolean isBoxInRadius(double row, double column, double xCo,
+			double yCo, double radius) {
+		double boxHeight = this.getHeight() / this.getPassableMap().length;
+		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
+		double[] leftTopCorner = { column * boxWidth,
+				this.getHeight() - row * boxHeight };
+		double[] rightTopCorner = { (column + 0.99) * boxWidth,
+				this.getHeight() - row * boxHeight };
+		double[] leftBottomCorner = { column * boxWidth,
+				this.getHeight() - (row + 0.99) * boxHeight };
+		double[] rightBottomCorner = { (column + 0.99) * boxWidth,
+				this.getHeight() - (row + 0.99) * boxHeight };
+		boolean result = (((Math.pow(leftTopCorner[0] - xCo, 2) + Math.pow(
+				leftTopCorner[1] - yCo, 2)) < Math.pow(radius, 2))
+				|| ((Math.pow(rightTopCorner[0] - xCo, 2) + Math.pow(
+						rightTopCorner[1] - yCo, 2)) < Math.pow(radius, 2))
+				|| ((Math.pow(leftBottomCorner[0] - xCo, 2) + Math.pow(
+						leftBottomCorner[1] - yCo, 2)) < Math.pow(radius, 2)) || ((Math
+				.pow(rightBottomCorner[0] - xCo, 2) + Math.pow(
+				rightBottomCorner[1] - yCo, 2)) < Math.pow(radius, 2)));
+		return result;
 	}
 
 	// TODO docu and max values
@@ -425,19 +499,23 @@ public class World {
 				|| (xCo < 0)) {
 			return false;
 		}
-		if (!isPassable(xCo, yCo)) {
+		//System.out.println("CheckAdj->first");
+		if (!isPassable(xCo, yCo, radius)) {
 			return false;
 		}
-		double angle = Math.PI + (Math.PI * (31.0 / 64.0));
-		// System.out.println("CheckAdj:");
-		while (angle <= (2 * Math.PI - (Math.PI * (31.0 / 64.0)))) {
+		double angle = Math.PI + (Math.PI * (127.0 / 256.0));
+		//System.out.println("CheckAdj:");
+		while (angle <= (2 * Math.PI - (Math.PI * (127.0 / 256.0)))) {
 			double circleX = radius * 0.1 * Math.cos(angle) + xCo;
 			double circleY = radius * 0.1 * Math.sin(angle) + yCo;
-			if (!isPassable(circleX, circleY)) {
+			//System.out.println("CheckAdj->passable:");
+			if (!isPassable(circleX, circleY, radius)) {
+				//System.out.println("Adj");
 				return true;
 			}
-			angle += Math.PI * (1.0 / 64.0);
+			angle += Math.PI * (1.0 / 256.0);
 		}
+		//System.out.println("NotAdj");
 		return false;
 	}
 
@@ -446,16 +524,19 @@ public class World {
 		boolean found = false;
 		double[] coord = { 0, 0 };
 		while ((max < 10) && (!found)) {
-			// System.out.println("\nPerim number: " + max + " ->coords: "
+			//System.out.println("\nPerim number: " + max + " ->coords: "
 			// + coord[0] + " | " + coord[1]);
 			max += 1;
 			coord[0] = getSeed().nextDouble() * getWidth() - radius;
 			coord[1] = getSeed().nextDouble() * getHeight() - radius;
-			// new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
-			// + Integer.toString(max));
+			//coord[0] = 15;
+			//coord[1] = 13;
+			//new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
+			//+ Integer.toString(max));
 			coord = checkPerimeter(radius, coord[0], coord[1]);
 			if (isAdjacentTerrain(radius, coord[0], coord[1])) {
 				found = true;
+				System.out.println("Found2");
 			}
 		}
 		return coord;
@@ -465,15 +546,15 @@ public class World {
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;
 		int max = 0;
-		while ((!found) && (max < 200)) {
+		while ((!found) && (max < 100)) {
 			// System.out.println("Step number: " + max);
 			max += 1;
 			if (isAdjacentTerrain(radius, xCo, yCo)) {
 				found = true;
-				// System.out.println("FOUND!");
+				System.out.println("FOUND!");
 			} else {
-				xCo += 0.05 * Math.cos(angleToCenter);
-				yCo += 0.05 * Math.sin(angleToCenter);
+				xCo += 0.02 * Math.cos(angleToCenter);
+				yCo += 0.02 * Math.sin(angleToCenter);
 				// System.out.println("New Coords: " + xCo + " | " + yCo);
 			}
 		}

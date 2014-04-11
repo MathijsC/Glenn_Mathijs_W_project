@@ -737,7 +737,7 @@ public class Worm extends Entity {
 			double xCo = (getXCoordinate() + dist * Math.cos(angle));
 			double yCo = (getYCoordinate() + dist * Math.sin(angle));
 			// System.out.println("Check co:"+xCo+" | "+yCo+" Angle: "+angle+" Dist: "+dist);
-			if (!getWorld().isPassable(xCo, yCo)) {
+			if (!getWorld().isPassable(xCo, yCo,this.getRadius())) {
 				// System.out.println("imPassable!");
 				break;
 			}
@@ -867,7 +867,7 @@ public class Worm extends Entity {
 		while (jumping) {
 			tempPosition = this.jumpStep(time);
 			if (world.isPassable(tempPosition.getXCoordinate(),
-					tempPosition.getYCoordinate())) {
+					tempPosition.getYCoordinate(),this.getRadius())) {
 				position = tempPosition;
 				time = time + timeStep;
 			} else {
