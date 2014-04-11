@@ -779,6 +779,22 @@ public class Worm extends Entity {
 		}
 		return indexBest;
 	}
+	
+	//TODO docu
+	public boolean canFall(){
+		return !getWorld().isAdjacentTerrain(getRadius(), getXCoordinate(), getYCoordinate());
+	}
+	
+	//TODO docu
+	public void fall(){
+		Position pos = new Position(this.getXCoordinate(),this.getYCoordinate());
+		while ((!getWorld().isAdjacentTerrain(getRadius(), pos.getXCoordinate(), pos.getYCoordinate())) && (pos.getYCoordinate()+getRadius() > 0)){
+			pos.setYcoordinate(pos.getYCoordinate()-0.01);
+		}
+		this.heal((int) (3*(pos.getYCoordinate()-this.getYCoordinate())));
+		this.setXCoordinate(pos.getXCoordinate());
+		this.setYCoordinate(pos.getYCoordinate());
+	}
 
 	/**
 	 * The constant GRAVITY is used to 	easy manipulate the gravity in the different methods
@@ -865,6 +881,7 @@ public class Worm extends Entity {
 		boolean jumping = true;
 
 		while (jumping) {
+			//System.out.println("test");
 			tempPosition = this.jumpStep(time);
 			if (world.isPassable(tempPosition.getXCoordinate(),
 					tempPosition.getYCoordinate(),this.getRadius())) {
@@ -873,6 +890,7 @@ public class Worm extends Entity {
 			} else {
 				jumping = false;
 			}
+			//System.out.println("end");
 
 		}
 		// x,y,time

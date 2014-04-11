@@ -531,8 +531,8 @@ public class World {
 			coord[1] = getSeed().nextDouble() * getHeight() - radius;
 			//coord[0] = 15;
 			//coord[1] = 13;
-			//new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
-			//+ Integer.toString(max));
+			new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
+			+ Integer.toString(max));
 			coord = checkPerimeter(radius, coord[0], coord[1]);
 			if (isAdjacentTerrain(radius, coord[0], coord[1])) {
 				found = true;
@@ -546,7 +546,7 @@ public class World {
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;
 		int max = 0;
-		while ((!found) && (max < 100)) {
+		while ((!found) && (max < 1000)) {
 			// System.out.println("Step number: " + max);
 			max += 1;
 			if (isAdjacentTerrain(radius, xCo, yCo)) {

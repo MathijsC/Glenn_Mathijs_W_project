@@ -49,7 +49,8 @@ public class Facade implements IFacade {
 	 * Returns whether or not the given worm can fall down
 	 */
 	public boolean canFall(Worm worm) {
-		return false;
+		System.out.println("canfall"+worm.canFall());
+		return worm.canFall();
 
 	}
 
@@ -133,7 +134,8 @@ public class Facade implements IFacade {
 	 * Makes the given worm fall down until it rests on impassable terrain again.
 	 */
 	public void fall(Worm worm) {
-
+		System.out.println("fall");
+		worm.fall();
 	}
 
 	/**
