@@ -38,19 +38,6 @@ public class World {
 		this.height = height;
 		this.setPassableMap(passableMap);
 		this.seed = random;
-
-		double boxHeight = this.getHeight() / this.getPassableMap().length;
-		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
-		System.out.println(this.getPassableMap()[0].length + " | "
-				+ this.getPassableMap().length);
-		System.out.println(boxWidth + " | " + boxHeight);
-		/*
-		 * int m = 450; int n = passableMap[0].length-1; for (int i = 0; i < m;
-		 * i++) { System.out.println(i+ "|\t"); for (int j = 0; j < n; j++) { if
-		 * (passableMap[i][j] == true ){ System.out.print("1 "); } else {
-		 * System.out.print("0 "); } } System.out.print("\n"); }
-		 */
-
 	}
 
 	/**
@@ -392,22 +379,50 @@ public class World {
 	 * 
 	 * return food; }
 	 */
-
-	// TODO docu and max values
+	
+	
+	//TODO docu
+	// This version of isPassable is incomplete, but it is a faster one
+	// to prevent lags during the gameplay.
 	public boolean isPassable(double xCo, double yCo, double radius) {
+		if (((xCo + radius) >= getWidth()) || ((yCo + radius) >= getHeight())
+				|| ((yCo - radius) <= 0.00000) || ((xCo - radius) <= 0.00000)) {
+			return false;
+		}
+		double boxHeight = this.getHeight() / this.getPassableMap().length;
+		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
+		
+		double angle = 0;
+		while (angle<2*Math.PI){
+			double circleX = radius * Math.cos(angle) + xCo;
+			double circleY = radius * Math.sin(angle) + yCo;
+			
+			int row = (int) ((this.getPassableMap().length) - ((circleY) / boxHeight));
+			int column = (int) ((circleX) / boxWidth);
+			
+			if (passableMap[row][column] != true) {
+				return false;
+			}
+			
+			angle += (1.0/4.0*Math.PI);
+		}
+		int row = (int) ((this.getPassableMap().length) - ((yCo) / boxHeight));
+		int column = (int) ((xCo) / boxWidth);
+		return passableMap[row][column];		
+	}
+	
+	// TODO docu and max values
+	// This version of isPassable is complete, but it takes to long to run so
+	// the game isn't playable due to the lags this function creates.
+	public boolean isPassableCorrect(double xCo, double yCo, double radius) {
 
 		if (((xCo + radius) >= getWidth()) || ((yCo + radius) >= getHeight())
 				|| ((yCo - radius) <= 0.00000) || ((xCo - radius) <= 0.00000)) {
-			//System.out.println("OutOfBounds: " + xCo + " | " + yCo);
 			return false;
 		}
 
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
-		//System.out.println("world: " + this.getPassableMap().length + " | "
-				//+ boxHeight + " | " + boxWidth + " | " + this.getHeight()
-				//+ " | " + this.getWidth());
-		//System.out.println("Passable: " + xCo + " | " + yCo + " | " + radius);
 		int upperRow = (int) ((this.getPassableMap().length) - ((yCo + radius) / boxHeight));
 		int lowerRow = (int) ((this.getPassableMap().length) - ((yCo - radius) / boxHeight));
 		int leftColumn = (int) ((xCo - radius) / boxWidth);
@@ -417,18 +432,18 @@ public class World {
 		//System.out.println(boxWidth+ " | "+boxHeight);
 		//System.out.println("Coords: " + xCo + " | " + yCo+" Circlerad: "+radius);
 
-		String rows = "Rows:";
+		//String rows = "Rows:";
 		//String cols = "Cols:";
-		System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
-				+ " | " + rightColumn);
+		//System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
+				//+ " | " + rightColumn);
 		for (int row = upperRow; row <= lowerRow; row+=1) {
-			rows = rows+"\n"+Integer.toString(row)+": ";
+			//rows = rows+"\n"+Integer.toString(row)+": ";
 			for (int column = leftColumn; column <= rightColumn; column+=1) {
-				rows = rows+" "+Integer.toString(column);
+				//rows = rows+" "+Integer.toString(column);
 				if (isBoxInRadius(row, column, xCo, yCo, radius)) {
-					rows = rows+"X";
+					//rows = rows+"X";
 					if (passableMap[row][column] != true) {
-						System.out.println("is impassable");
+						/**System.out.println("is impassable");
 						for (int i = upperRow; i <= lowerRow; i++) {
 							System.out.print(i+ "| ");
 						    for (int j = leftColumn; j <= rightColumn; j++) {
@@ -440,15 +455,15 @@ public class World {
 						    	}
 						    }
 						    System.out.print("\n");
-						}
+						}*/
 						return false;
 					}
-				} else {
+				} /**else {
 					rows = rows+"_";
-					}
+					}*/
 			}
 		}
-		System.out.println(rows);
+		//System.out.println(rows);
 		//System.out.println(cols);
 		/*System.out.println("is passable");
 		for (int i = upperRow; i <= lowerRow; i++) {
@@ -499,23 +514,18 @@ public class World {
 				|| (xCo < 0)) {
 			return false;
 		}
-		//System.out.println("CheckAdj->first");
 		if (!isPassable(xCo, yCo, radius)) {
 			return false;
 		}
 		double angle = Math.PI + (Math.PI * (127.0 / 256.0));
-		//System.out.println("CheckAdj:");
 		while (angle <= (2 * Math.PI - (Math.PI * (127.0 / 256.0)))) {
 			double circleX = radius * 0.1 * Math.cos(angle) + xCo;
 			double circleY = radius * 0.1 * Math.sin(angle) + yCo;
-			//System.out.println("CheckAdj->passable:");
 			if (!isPassable(circleX, circleY, radius)) {
-				//System.out.println("Adj");
 				return true;
 			}
 			angle += Math.PI * (1.0 / 256.0);
 		}
-		//System.out.println("NotAdj");
 		return false;
 	}
 
@@ -524,19 +534,12 @@ public class World {
 		boolean found = false;
 		double[] coord = { 0, 0 };
 		while ((max < 10) && (!found)) {
-			//System.out.println("\nPerim number: " + max + " ->coords: "
-			// + coord[0] + " | " + coord[1]);
 			max += 1;
 			coord[0] = getSeed().nextDouble() * getWidth() - radius;
 			coord[1] = getSeed().nextDouble() * getHeight() - radius;
-			//coord[0] = 15;
-			//coord[1] = 13;
-			//new Worm(this, coord[0], coord[1], 0.2, 0.25, "Start"
-			//+ Integer.toString(max));
 			coord = checkPerimeter(radius, coord[0], coord[1]);
 			if (isAdjacentTerrain(radius, coord[0], coord[1])) {
 				found = true;
-				System.out.println("Found2");
 			}
 		}
 		return coord;
@@ -547,15 +550,12 @@ public class World {
 		boolean found = false;
 		int max = 0;
 		while ((!found) && (max < 1000)) {
-			// System.out.println("Step number: " + max);
 			max += 1;
 			if (isAdjacentTerrain(radius, xCo, yCo)) {
 				found = true;
-				System.out.println("FOUND!");
 			} else {
 				xCo += 0.02 * Math.cos(angleToCenter);
 				yCo += 0.02 * Math.sin(angleToCenter);
-				// System.out.println("New Coords: " + xCo + " | " + yCo);
 			}
 		}
 		double[] coord = { xCo, yCo };

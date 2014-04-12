@@ -82,9 +82,7 @@ public class Worm extends Entity {
 	public Worm(World world) {
 
 		super(new Position(0, 0));
-		//System.out.println("NEW WORM");
-		//setRadius((1+world.getSeed().nextDouble())*getMinRadius());
-		setRadius(getMinRadius());
+		setRadius((0.25+(world.getSeed().nextDouble())*getMinRadius()));
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
@@ -97,7 +95,6 @@ public class Worm extends Entity {
 		}
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
-		// this.setPosition(15, 13);
 	}
 
 	// TODO

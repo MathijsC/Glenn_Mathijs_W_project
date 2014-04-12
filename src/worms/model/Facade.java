@@ -49,7 +49,6 @@ public class Facade implements IFacade {
 	 * Returns whether or not the given worm can fall down
 	 */
 	public boolean canFall(Worm worm) {
-		System.out.println("canfall"+worm.canFall());
 		return worm.canFall();
 
 	}
@@ -134,7 +133,6 @@ public class Facade implements IFacade {
 	 * Makes the given worm fall down until it rests on impassable terrain again.
 	 */
 	public void fall(Worm worm) {
-		System.out.println("fall");
 		worm.fall();
 	}
 
@@ -211,7 +209,6 @@ public class Facade implements IFacade {
 	 * @throws Throws a model exception when the given worm isn't able to jump.
 	 */
 	public double[] getJumpStep(Worm worm, double t) throws ModelException {
-		System.out.println("getJumstep: "+t);
 		try {
 			Position position = worm.jumpStep(t);
 			return (new double[] { position.getXCoordinate(),
