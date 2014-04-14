@@ -5,7 +5,6 @@ import java.util.Random;
 
 public class Facade implements IFacade {
 
-	// TODO
 	/**
 	 * Default constructor
 	 */
@@ -44,7 +43,6 @@ public class Facade implements IFacade {
 
 	}
 
-	// TODO
 	/**
 	 * Returns whether or not the given worm can fall down
 	 */
@@ -128,7 +126,6 @@ public class Facade implements IFacade {
 		return new Worm(world, x, y, direction, radius, name);
 	}
 
-	// TODO
 	/**
 	 * Makes the given worm fall down until it rests on impassable terrain again.
 	 */
@@ -352,7 +349,7 @@ public class Facade implements IFacade {
 
 	}
 
-	// TODO
+	// TODO what means 'This methode should null if....' in desc???
 	/**
 	 * Returns the name of a single worm if that worm is the winner, or the name
 	 * of a team if that team is the winner. This method should null if there is no winner.
@@ -360,7 +357,11 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement teams, this method should always return the name of the winning worm, or null if there is no winner)
 	 */
 	public String getWinner(World world) {
-		return "Glenn";
+		if (world.isGameFinished()){
+			return world.getWinnerName();
+		} else {
+			return "No Winner Yet";
+		}
 
 	}
 

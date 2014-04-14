@@ -34,10 +34,29 @@ public class World {
 	 */
 	public World(double width, double height, boolean[][] passableMap,
 			Random random) {
+		setTerminated(false);
 		this.width = width;
 		this.height = height;
 		this.setPassableMap(passableMap);
 		this.seed = random;
+	}
+	
+	//TODO
+	private boolean terminated;
+	
+	//TODO
+	private void setTerminated(boolean terminated){
+		this.terminated = terminated;
+	}
+	
+	//TODO
+	private boolean isTerminated(){
+		return terminated;
+	}
+	
+	//TODO
+	private void terminate(){
+		setTerminated(true);
 	}
 
 	/**
@@ -297,6 +316,15 @@ public class World {
 			return false;
 		}
 		return true;
+	}
+	
+	public String getWinnerName(){
+		if (getWorms().size() == 1){
+			return getWormAtIndex(0).getName();
+		} else {
+			return getWormAtIndex(0).getTeam().getName();
+		}
+		
 	}
 
 	//TEAMS

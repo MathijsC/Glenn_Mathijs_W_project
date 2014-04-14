@@ -78,7 +78,6 @@ public class Worm extends Entity {
 
 	// TODO docu
 	public Worm(World world) {
-
 		super(new Position(0, 0),world);
 		setRadius((0.25+(world.getSeed().nextDouble())*getMinRadius()));
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
