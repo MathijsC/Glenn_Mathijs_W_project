@@ -119,32 +119,50 @@ public class World {
 		return seed;
 	}
 
+	//OBJECTS
+	
 	/**
 	 * A list containing all the worms who are currently in this world.
 	 */
 	private ArrayList<Worm> worms = new ArrayList<Worm>();
-
+	
 	/**
-	 * Add a new worm to this world.
-	 * 
-	 * @param 	worm
-	 * 			The worm to be added to this world.
-	 * @post	The last worm added to this world is the given worm.
-	 * 			TODO formeel
-	 * 
-	 * 
+	 * A variable holding the projectile that is active in this world
 	 */
-	public void addWorm(Worm worm) throws IllegalStateException {
-		if (!(worm.getWorld() == this)) {
+	private Projectile projectile;
+	
+	/**
+	 * A list containing all the food in this world.
+	 */
+	private ArrayList<Food> foodList = new ArrayList<Food>();
+
+	//TODO
+	public void addEntity(Entity entity) throws IllegalStateException,IllegalArgumentException {
+		if (!(entity.getWorld() == this)) {
 			throw new IllegalStateException();
 		}
-		worms.add(worm);
+		if (entity instanceof Worm){
+			worms.add((Worm)entity);
+		} else if (entity instanceof Projectile){
+			this.projectile = (Projectile)entity;
+		} else if (entity instanceof Food){
+			foodList.add((Food)entity);
+		} else {
+			throw new IllegalArgumentException();
+		}		
 	}
 	
 	// TODO
-	public void removeAsWorm(Worm worm){
-		setCurrentWormIndex(getCurrentWormIndex()-1);
-		worms.remove(worm);
+	public void removeEntity(Entity entity){
+		if (entity instanceof Worm){
+			worms.remove(entity);
+		} else if (entity instanceof Projectile){
+			this.projectile = null;
+		} else if (entity instanceof Food){
+			foodList.remove(entity);
+		} else {
+			throw new IllegalArgumentException();
+		}		
 	}
 
 	/**
@@ -155,12 +173,37 @@ public class World {
 	public ArrayList<Worm> getWorms() {
 		return worms;
 	}
+	
+	/**
+	 * Return the active projectile in this world
+	 * 
+	 * @return the active projectile in this world
+	 */
+	public Projectile getProjectile() {
+		return this.projectile;
+	}
+	
+	/**
+	 * Return a list of the food who in this world.
+	 * 
+	 * @return 	The list of food in this world.
+	 */
+	public ArrayList<Food> getFoodList() {
+		return foodList;
+	}
+
+	// TODO
+	public Food getFoodAtIndex(int index) {
+		return this.foodList.get(index);
+	}
 
 	// TODO
 	public Worm getWormAtIndex(int index) {
 		return worms.get(index);
 	}
 
+	
+	//GAMEPLAY
 	/**
 	 * The index of the worm who is at turn in the list of worms.
 	 */
@@ -242,6 +285,7 @@ public class World {
 		setCurrentWormIndex(0);
 	}
 	
+	//TODO
 	public boolean isGameFinished() {
 		Team teamFirstWorm = getWormAtIndex(0).getTeam();
 		for (Worm worm:worms){
@@ -255,6 +299,7 @@ public class World {
 		return true;
 	}
 
+	//TEAMS
 	/**
 	 * A list containing all the teams who are curently in this world.
 	 */
@@ -284,36 +329,6 @@ public class World {
 	 */
 	public ArrayList<Team> getTeams() {
 		return teams;
-	}
-
-
-	/**
-	 * A variable holding the projectile that is active in this world
-	 */
-	private Projectile projectile;
-
-	/**
-	 * Return the active projectile in this world
-	 * 
-	 * @return the active projectile in this world
-	 */
-	public Projectile getProjectile() {
-		return this.projectile;
-	}
-
-	/**
-	 * Sets the active projectile in this world to the given projectile
-	 * 
-	 * @param projectile the new projectile active in this world
-	 * @Post the active projetile in this world is the given projectile
-	 * 			|new.getProjectile() = projectile 
-	 */
-	public void setProjectile(Projectile projectile)
-			throws IllegalStateException {
-		if (!(projectile.getWorld() == this)) {
-			throw new IllegalStateException();
-		}
-		this.projectile = projectile;
 	}
 
 	// TODO
@@ -352,42 +367,7 @@ public class World {
 
 		return hit;
 	}
-
-	/**
-	 * A list containing all the food in this world.
-	 */
-	private ArrayList<Food> foodList = new ArrayList<Food>();
-
-	/**
-	 * Add a new food to this world.
-	 * 
-	 * @param 	Food
-	 * 			The food to be added to this world.
-	 * @post	The last food added to this world is the given food.
-	 * 			TODO formeel
-	 * 
-	 * 
-	 */
-	public void addFood(Food food) throws IllegalStateException {
-		if (!(food.getWorld() == this)) {
-			throw new IllegalStateException();
-		}
-		foodList.add(food);
-	}
 	
-	/**
-	 * Return a list of the food who in this world.
-	 * 
-	 * @return 	The list of food in this world.
-	 */
-	public ArrayList<Food> getFoodList() {
-		return foodList;
-	}
-
-	// TODO
-	public Food getFoodAtIndex(int index) {
-		return this.foodList.get(index);
-	}
 
 	// TODO
 	public Food getFoodEatenBy(Worm worm) {

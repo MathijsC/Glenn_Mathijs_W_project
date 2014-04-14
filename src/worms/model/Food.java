@@ -7,33 +7,17 @@ import be.kuleuven.cs.som.annotate.Raw;
 public class Food extends Entity {
 	
 	public Food(World world, double x, double y) {
-		super(new Position(x,y));
+		super(new Position(x,y),world);
 		setRadius(getMinRadius());
-		this.setWorld(world);
-		this.setState(true);
 	}
 
 	public Food(World world) {
-		super(new Position(0, 0));
+		super(new Position(0, 0),world);
 		setRadius(getMinRadius());
-		this.setWorld(world);
-		this.setState(true);
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
 	}
 
-	// TODO docu
-	private boolean state;
-
-	// TODO docu
-	public void setState(boolean state) {
-		this.state = state;
-	}
-
-	// TODO docu
-	public boolean getState() {
-		return this.state;
-	}
 
 	/**
 	 * Variable holding the radius of this food
@@ -94,60 +78,10 @@ public class Food extends Entity {
 		return 0.20;
 	}
 
-	/**
-	 * A variable containing the world where this food is in.
-	 */
-	private World world;
-
-	/**
-	 * Return the world where this food is in.
-	 * 
-	 * @return The world where this food is in.
-	 */
-	public World getWorld() {
-		return world;
-	}
-
-	/**
-	 * Set the world where this food is in to the given world.
-	 * 
-	 * @param 	world
-	 * 			The world where this food is in.
-	 * @post	The world of this food is set to the given world.
-	 * 			| new.getWorld() == world
-	 * @effect	The food is added the the given world.
-	 * 			| world.addFood(this)
-	 * @throws	NullPointerException
-	 * 			The given world is null.
-	 * 			| if (world == null) 
-	 */
-	public void setWorld(World world) throws NullPointerException,
-			IllegalStateException {
-		if (world == null) {
-			throw new NullPointerException();
-		}
-		if (Food.hasWorld(this)) {
-			throw new IllegalStateException();
-		}
-		this.world = world;
-		world.addFood(this);
-	}
-
-	/**
-	 * Return true if the given food is in a world.
-	 * 
-	 * @param 	food
-	 * 			The food to check if it is in a world.			
-	 * @return	True if the given food is in a world.
-	 * 			| TODO formeel
-	 */
-	private static boolean hasWorld(Food food) {
-		return (food.getWorld() != null);
-	}
 	
 	public void getEatenBy(Worm worm){
-		setState(false);
 		worm.setRadius(worm.getRadius()*1.1);
+		terminate();
 	}
 
 }

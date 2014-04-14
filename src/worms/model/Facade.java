@@ -428,7 +428,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement food, this method should always return false)
 	 */
 	public boolean isActive(Food food) {
-		return food.getState();
+		return !food.isTerminated();
 
 	}
 
@@ -436,7 +436,7 @@ public class Facade implements IFacade {
 	 * Returns whether the given projectile is still alive (active).
 	 */
 	public boolean isActive(Projectile projectile) {
-		return projectile.getState();
+		return !projectile.isTerminated();
 
 	}
 
@@ -462,7 +462,7 @@ public class Facade implements IFacade {
 	 * Returns whether the given worm is alive
 	 */
 	public boolean isAlive(Worm worm) {
-		return worm.getState();
+		return !worm.isTerminated();
 	}
 
 	// TODO

@@ -6,11 +6,12 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 public class IllegalWorldException extends RuntimeException {
 
+	//TODO check all docu
     /**
      * Initialize this new illegal world exception with given worm
      * and given world.
      *
-     * @param   worm
+     * @param   entity
      *          The worm for this new illegal world exception.
      * @param   world
      *          The world for this new illegal world exception.
@@ -22,8 +23,8 @@ public class IllegalWorldException extends RuntimeException {
      *        | new.getWorld() == world
      */
     @Raw
-    public IllegalWorldException(Worm worm, World world) {
-        this.worm = worm;
+    public IllegalWorldException(Entity entity, World world) {
+        this.entity = entity;
         this.world = world;
     }
 
@@ -32,21 +33,21 @@ public class IllegalWorldException extends RuntimeException {
      */
     @Basic
     @Immutable
-    public Worm getOwner() {
-        return this.worm;
+    public Entity getEntity() {
+        return this.entity;
     }
 
     /**
      * Variable registering the worm of this illegal world exception.
      */
-    private final Worm worm;
+    private final Entity entity;
 
     /**
      * Return the world of this illegal world exception.
      */
     @Basic
     @Immutable
-    public World getOwnable() {
+    public World getWorld() {
         return this.world;
     }
 

@@ -10,75 +10,13 @@ public class Projectile extends Entity {
 
 	public Projectile(Position position, World world, Weapon weapon,
 			double direction, double mass, double force) {
-		super(position);
+		super(position,world);
 		this.setDirection(direction);
 		this.mass = mass;
 		this.force = force;
-		this.setWorld(world);
-		this.setState(true);
 		this.setWeapon(weapon);
 	}
 
-	/**
-	 * A variable containing the world where this projectile is in.
-	 */
-	private World world;
-
-	/**
-	 * Return the world where this projectile is in.
-	 * 
-	 * @return The world where this projectile is in.
-	 */
-	public World getWorld() {
-		return world;
-	}
-
-	/**
-	 * Set the world where this projectile is in to the given world.
-	 * 
-	 * @param 	world
-	 * 			The world where this projectile is in.
-	 * @post	The world of this projectile is set to the given world.
-	 * 			| new.getWorld() == world
-	 * @effect	The projectile is added the the given world.
-	 * 			| world.addProjectile(this)
-	 * @throws	NullPointerException
-	 * 			The given world is null.
-	 * 			| if (world == null) 
-	 */
-	public void setWorld(World world) throws NullPointerException,
-			IllegalStateException {
-		if (world == null) {
-			throw new NullPointerException();
-		}
-		if (Projectile.hasWorld(this)) {
-			throw new IllegalStateException();
-		}
-		this.world = world;
-		world.setProjectile(this);
-	}
-
-	/**
-	 * Return true if the given projectile is in a world.
-	 * 
-	 * @param 	projectile
-	 * 			The projectile to check if it is in a world.			
-	 * @return	True if the given projectile is in a world.
-	 * 			| TODO formeel
-	 */
-	private static boolean hasWorld(Projectile projectile) {
-		return (projectile.getWorld() != null);
-	}
-
-	private boolean state;
-
-	public void setState(boolean state) {
-		this.state = state;
-	}
-
-	public boolean getState() {
-		return this.state;
-	}
 
 	/**
 	 * @return the weapon
@@ -258,7 +196,7 @@ public class Projectile extends Entity {
 	*/
 
 	public void jump(double timeStep) {
-		if (this.getState()) {
+		if (!isTerminated()) {
 			double[] newPosition = Arrays.copyOfRange(
 					this.possibleJump(timeStep), 0, 2);
 			this.setPosition(newPosition[0], newPosition[1]);
@@ -267,7 +205,7 @@ public class Projectile extends Entity {
 				Worm wormHit = this.getWorld().getWormHit(this);
 				wormHit.dealDamage(this.getWeapon().getDamage());
 			}
-			this.setState(false);
+			terminate();
 		}
 	}
 
@@ -279,9 +217,6 @@ public class Projectile extends Entity {
 	 * 			of the environment and the initial velocity.
 	 */
 	public double jumpTime(double timeStep) {
-		if (!this.getState()) {
-			return 0;
-		}
 		return this.possibleJump(timeStep)[2];
 
 	}
@@ -297,7 +232,7 @@ public class Projectile extends Entity {
 
 		while ((jumping) && (!hit)) {
 			tempPosition = this.jumpStep(time);
-			if (world.isPassable(tempPosition.getXCoordinate(),
+			if (getWorld().isPassable(tempPosition.getXCoordinate(),
 					tempPosition.getYCoordinate(),this.getRadius())) {
 				position = tempPosition;				
 				time = time + timeStep;
@@ -333,7 +268,7 @@ public class Projectile extends Entity {
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		if (!this.getState()) {
+		if (isTerminated()) {
 			throw new IllegalStateException();
 		}
 		// jumpTime vraag een argument dat hier niet gegeven is ... :/

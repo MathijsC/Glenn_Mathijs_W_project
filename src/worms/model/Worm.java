@@ -64,14 +64,12 @@ public class Worm extends Entity {
 	@Raw
 	public Worm(World world, double x, double y, double direction,
 			double radius, String name) {
-		super(new Position(x, y));
+		super(new Position(x, y),world);
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
-		setState(true);
 		setName(name);
-		setWorldTo(world);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(world.getTeams().size() - 1));
 		}
@@ -81,15 +79,12 @@ public class Worm extends Entity {
 	// TODO docu
 	public Worm(World world) {
 
-		super(new Position(0, 0));
+		super(new Position(0, 0),world);
 		setRadius((0.25+(world.getSeed().nextDouble())*getMinRadius()));
-		//setRadius(0.58);
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
-		setState(true);
 		setName("Glenn");
-		setWorldTo(world);
 		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(world.getTeams().size() - 1));
@@ -151,85 +146,8 @@ public class Worm extends Entity {
 		return (this.getActionPoints() - weapon.getActionPoints()) > 0;
 	}
 
-	/**
-	 * A variable containing the world where this worm is lives.
-	 */
-	private World world;
 
-	/**
-	 * Return the world where this worm lives.
-	 * 
-	 * @return The world where this worm lives.
-	 */
-	public World getWorld() {
-		return world;
-	}
 
-	/**
-	 * Set the world where this worm lives to the given world.
-	 * 
-	 * @param 	world
-	 * 			The world where this worm lives in.
-	 * @post	The world of this worm is set to the given world.
-	 * 			| new.getWorld() == world
-	 * @effect	The worm is added the the given world.
-	 * 			| world.addWorm(this)
-	 * @throws	IllegalWorldException
-	 * 			The given world is illegal.
-	 * 			| if (!canHaveAsWorld(world)) 
-	 */
-	public void setWorldTo(World world) throws IllegalWorldException,
-			IllegalStateException {
-		if (!canHaveAsWorld(world)) {
-			throw new IllegalWorldException(this, world);
-		}
-		if (Worm.hasWorld(this)) {
-			throw new IllegalStateException();
-		}
-		this.world = world;
-		world.addWorm(this);
-	}
-	
-	@Raw
-	public void setWorld(World world){
-		if (!canHaveAsWorld(world)) {
-			throw new IllegalWorldException(this, world);
-		}
-		this.world = world;
-	}
-	
-	// TODO
-	public boolean canHaveAsWorld(World world){
-		if (isTerminated()){
-			return world == null;
-		}
-		return (world != null);
-	}
-
-	/**
-	 * Return true if the given worm lives in a world.
-	 * 
-	 * @param 	worm
-	 * 			The worm to check if he lives in a world.			
-	 * @return	True if the given worm lives in a world.
-	 * 			| TODO formeel
-	 */
-	private static boolean hasWorld(Worm worm) {
-		return (worm.getWorld() != null);
-	}
-
-	// TODO docu
-	private boolean state;
-
-	// TODO docu
-	public void setState(boolean state) {
-		this.state = state;
-	}
-
-	// TODO docu
-	public boolean getState() {
-		return this.state;
-	}
 
 	// TODO docu
 	public void refresh() {
@@ -526,24 +444,7 @@ public class Worm extends Entity {
 		this.setHitPoints(this.getHitPoints() + amount);
 	}
 	
-	//TODO
-	public void terminate(){
-		setState(false);
-		unsetWorld();
-	}
 	
-	public boolean isTerminated(){
-		return !this.getState();
-	}
-	
-	//TODO
-	public void unsetWorld(){
-		if (hasWorld(this)){
-			World oldWorld = getWorld();
-			setWorld(null);
-			oldWorld.removeAsWorm(this);
-		}
-	}
 
 	/**
 	 * Variable holding the number of action points of this worm.
@@ -904,7 +805,7 @@ public class Worm extends Entity {
 
 		while (jumping) {
 			tempPosition = this.jumpStep(time);
-			if (world.isPassable(tempPosition.getXCoordinate(),
+			if (getWorld().isPassable(tempPosition.getXCoordinate(),
 					tempPosition.getYCoordinate(),this.getRadius())) {
 				position = tempPosition;
 				time = time + timeStep;
