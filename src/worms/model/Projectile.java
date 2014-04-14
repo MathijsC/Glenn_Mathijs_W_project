@@ -299,7 +299,7 @@ public class Projectile extends Entity {
 			tempPosition = this.jumpStep(time);
 			if (world.isPassable(tempPosition.getXCoordinate(),
 					tempPosition.getYCoordinate(),this.getRadius())) {
-				position = tempPosition;
+				position = tempPosition;				
 				time = time + timeStep;
 				if (this.getWorld().checkProjectileHitWorm(tempPosition,
 						this.getRadius())) {
@@ -310,7 +310,6 @@ public class Projectile extends Entity {
 			}
 
 		}
-		// x,y,time
 		double[] data = { position.getXCoordinate(), position.getYCoordinate(),
 				time };
 		return data;

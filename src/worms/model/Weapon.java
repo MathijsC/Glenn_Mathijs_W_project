@@ -103,9 +103,9 @@ public enum Weapon {
 
 	public Position calcStartingPoint(Worm worm) {
 		Position startingPoint = new Position(worm.getXCoordinate()
-				+ Math.cos(worm.getDirection()) * worm.getDirection(),
+				+ Math.cos(worm.getDirection()) * worm.getRadius(),
 				worm.getYCoordinate() + Math.sin(worm.getDirection())
-						* worm.getDirection());
+						* worm.getRadius());
 		return startingPoint;
 	}
 

@@ -515,14 +515,14 @@ public class World {
 		if (!isPassable(xCo, yCo, radius)) {
 			return false;
 		}
-		double angle = Math.PI + (Math.PI * (127.0 / 256.0));
-		while (angle <= (2 * Math.PI - (Math.PI * (127.0 / 256.0)))) {
+		double angle = 0;
+		while (angle <= (2 * Math.PI )) {
 			double circleX = radius * 0.1 * Math.cos(angle) + xCo;
 			double circleY = radius * 0.1 * Math.sin(angle) + yCo;
 			if (!isPassable(circleX, circleY, radius)) {
 				return true;
 			}
-			angle += Math.PI * (1.0 / 256.0);
+			angle += Math.PI * (1.0 / 8.0);
 		}
 		return false;
 	}

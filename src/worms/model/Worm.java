@@ -852,7 +852,6 @@ public class Worm extends Entity {
 		boolean jumping = true;
 
 		while (jumping) {
-			//System.out.println("test");
 			tempPosition = this.jumpStep(time);
 			if (world.isPassable(tempPosition.getXCoordinate(),
 					tempPosition.getYCoordinate(),this.getRadius())) {
@@ -861,10 +860,8 @@ public class Worm extends Entity {
 			} else {
 				jumping = false;
 			}
-			//System.out.println("end");
 
 		}
-		// x,y,time
 		double[] data = { position.getXCoordinate(), position.getYCoordinate(),
 				time };
 		return data;
