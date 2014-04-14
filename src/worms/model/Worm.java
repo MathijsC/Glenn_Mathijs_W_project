@@ -706,6 +706,9 @@ public class Worm extends Entity {
 				- (int) Math.ceil((dist / getRadius())
 						* (Math.abs(Math.cos(stepAngle)) + 4 * Math.abs(Math
 								.sin(stepAngle)))));
+		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
+			getWorld().getFoodEatenBy(this).getEatenBy(this);
+		}
 
 	}
 
@@ -759,12 +762,15 @@ public class Worm extends Entity {
 	public void fall(){
 		
 		Position pos = new Position(this.getXCoordinate(),this.getYCoordinate());
-		while ((!getWorld().isAdjacentTerrain(getRadius(), pos.getXCoordinate(), pos.getYCoordinate())) && (pos.getYCoordinate()+3*getRadius() > 0)){
+		while ((!getWorld().isAdjacentTerrain(getRadius(), pos.getXCoordinate(), pos.getYCoordinate())) && (getWorld().isPassable(pos.getXCoordinate(), pos.getYCoordinate(),getRadius())) && (pos.getYCoordinate()+3*getRadius() > 0)){
 			pos.setYcoordinate(pos.getYCoordinate()-0.01);
 		}
 		this.heal((int) (3*(pos.getYCoordinate()-this.getYCoordinate())));
 		this.setXCoordinate(pos.getXCoordinate());
 		this.setYCoordinate(pos.getYCoordinate());
+		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
+			getWorld().getFoodEatenBy(this).getEatenBy(this);
+		}
 	}
 
 	/**
@@ -823,6 +829,9 @@ public class Worm extends Entity {
 		// System.out.println(timeStep);
 
 		setActionPoints(0);
+		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
+			getWorld().getFoodEatenBy(this).getEatenBy(this);
+		}
 	}
 
 	/**

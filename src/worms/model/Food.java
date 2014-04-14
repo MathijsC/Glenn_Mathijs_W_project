@@ -14,11 +14,12 @@ public class Food extends Entity {
 	}
 
 	public Food(World world) {
-		super(new Position(world.getSeed().nextDouble() * world.getWidth(),
-				world.getSeed().nextDouble() * world.getHeight()));
+		super(new Position(0, 0));
 		setRadius(getMinRadius());
 		this.setWorld(world);
 		this.setState(true);
+		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
+		this.setPosition(randCoord[0], randCoord[1]);
 	}
 
 	// TODO docu
@@ -142,6 +143,11 @@ public class Food extends Entity {
 	 */
 	private static boolean hasWorld(Food food) {
 		return (food.getWorld() != null);
+	}
+	
+	public void getEatenBy(Worm worm){
+		setState(false);
+		worm.setRadius(worm.getRadius()*1.1);
 	}
 
 }

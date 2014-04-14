@@ -267,27 +267,6 @@ public class World {
 		return teams;
 	}
 
-	/**
-	 * A list containing all the food in this world.
-	 */
-	private ArrayList<Food> foodList = new ArrayList<Food>();
-
-	/**
-	 * Add a new food to this world.
-	 * 
-	 * @param 	Food
-	 * 			The food to be added to this world.
-	 * @post	The last food added to this world is the given food.
-	 * 			TODO formeel
-	 * 
-	 * 
-	 */
-	public void addFood(Food food) throws IllegalStateException {
-		if (!(food.getWorld() == this)) {
-			throw new IllegalStateException();
-		}
-		foodList.add(food);
-	}
 
 	/**
 	 * A variable holding the projectile that is active in this world
@@ -356,6 +335,28 @@ public class World {
 	}
 
 	/**
+	 * A list containing all the food in this world.
+	 */
+	private ArrayList<Food> foodList = new ArrayList<Food>();
+
+	/**
+	 * Add a new food to this world.
+	 * 
+	 * @param 	Food
+	 * 			The food to be added to this world.
+	 * @post	The last food added to this world is the given food.
+	 * 			TODO formeel
+	 * 
+	 * 
+	 */
+	public void addFood(Food food) throws IllegalStateException {
+		if (!(food.getWorld() == this)) {
+			throw new IllegalStateException();
+		}
+		foodList.add(food);
+	}
+	
+	/**
 	 * Return a list of the food who in this world.
 	 * 
 	 * @return 	The list of food in this world.
@@ -369,16 +370,42 @@ public class World {
 		return this.foodList.get(index);
 	}
 
-	/*
-	 * // TODO public Food checkWormAteFood(Worm worm) { int i = 0; boolean ate
-	 * = false; Food food = null; while ((i < this.getFoodList().size()) &&
-	 * (!ate)) { food = this.getFoodAtIndex(i); if
-	 * (worm.getPosition().distanceTo(food.getPosition()) < food .getRadius() +
-	 * worm.getRadius()) { ate = true; } i++; } if (i > this.getWorms().size())
-	 * { food = null; }
-	 * 
-	 * return food; }
-	 */
+	// TODO
+	public Food getFoodEatenBy(Worm worm) {
+		int i = 0;
+		boolean eat = false;
+		Food food = null;
+		while ((i < this.getFoodList().size()) && (!eat)) {
+			food = this.getFoodAtIndex(i);
+			if (food.getPosition().distanceTo(worm.getPosition()) < worm
+					.getRadius() + food.getRadius()) {
+				eat = true;
+			}
+			i++;
+		}
+		if (eat == false) {
+			food = null;
+		}
+
+		return food;
+	}
+	
+	// TODO
+		public boolean checkWormEatFood(Position position, double wormRadius) {
+			int i = 0;
+			boolean eat = false;
+			Food food = null;
+			while ((i < this.getFoodList().size()) && (!eat)) {
+				food = this.getFoodAtIndex(i);
+				if ((position.distanceTo(food.getPosition())) <= (wormRadius + food
+						.getRadius())) {
+					eat = true;
+				}
+				i++;
+			}
+
+			return eat;
+		}
 	
 	
 	//TODO docu
