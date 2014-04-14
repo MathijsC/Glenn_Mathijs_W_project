@@ -385,9 +385,9 @@ public class World {
 	// This version of isPassable is incomplete, but it is a faster one
 	// to prevent lags during the gameplay.
 	public boolean isPassable(double xCo, double yCo, double radius) {
-		if (((xCo + radius) >= getWidth()) || ((yCo + radius) >= getHeight())
-				|| ((yCo - radius) <= 0.00000) || ((xCo - radius) <= 0.00000)) {
-			return false;
+		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
+				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {
+			return true;
 		}
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
@@ -400,15 +400,17 @@ public class World {
 			int row = (int) ((this.getPassableMap().length) - ((circleY) / boxHeight));
 			int column = (int) ((circleX) / boxWidth);
 			
-			if (passableMap[row][column] != true) {
-				return false;
-			}
-			
+			if ((row >= 0) && (row < getPassableMap().length) && (column >= 0) && (column < getPassableMap()[0].length) && (passableMap[row][column] != true)){
+					return false;
+			}			
 			angle += (1.0/4.0*Math.PI);
 		}
 		int row = (int) ((this.getPassableMap().length) - ((yCo) / boxHeight));
 		int column = (int) ((xCo) / boxWidth);
-		return passableMap[row][column];		
+		if ((row >= 0) && (row < getPassableMap().length) && (column >= 0) && (column < getPassableMap()[0].length) && (passableMap[row][column])){
+			return true;
+		}
+		return false;
 	}
 	
 	// TODO docu and max values
@@ -416,9 +418,9 @@ public class World {
 	// the game isn't playable due to the lags this function creates.
 	public boolean isPassableCorrect(double xCo, double yCo, double radius) {
 
-		if (((xCo + radius) >= getWidth()) || ((yCo + radius) >= getHeight())
-				|| ((yCo - radius) <= 0.00000) || ((xCo - radius) <= 0.00000)) {
-			return false;
+		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
+				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {
+			return true;
 		}
 
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
@@ -440,7 +442,7 @@ public class World {
 			//rows = rows+"\n"+Integer.toString(row)+": ";
 			for (int column = leftColumn; column <= rightColumn; column+=1) {
 				//rows = rows+" "+Integer.toString(column);
-				if (isBoxInRadius(row, column, xCo, yCo, radius)) {
+				if ((row >= 0) && (row < getPassableMap().length) && (column >= 0) && (column < getPassableMap()[0].length) && (isBoxInRadius(row, column, xCo, yCo, radius))) {
 					//rows = rows+"X";
 					if (passableMap[row][column] != true) {
 						/**System.out.println("is impassable");
@@ -510,10 +512,6 @@ public class World {
 
 	// TODO docu and max values
 	public boolean isAdjacentTerrain(double radius, double xCo, double yCo) {
-		if ((xCo >= getWidth()) || (yCo >= getHeight()) || (yCo < 0)
-				|| (xCo < 0)) {
-			return false;
-		}
 		if (!isPassable(xCo, yCo, radius)) {
 			return false;
 		}

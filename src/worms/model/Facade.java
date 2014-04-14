@@ -463,7 +463,6 @@ public class Facade implements IFacade {
 	 */
 	public boolean isAlive(Worm worm) {
 		return worm.getState();
-
 	}
 
 	// TODO
