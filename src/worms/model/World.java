@@ -140,6 +140,12 @@ public class World {
 		}
 		worms.add(worm);
 	}
+	
+	// TODO
+	public void removeAsWorm(Worm worm){
+		setCurrentWormIndex(getCurrentWormIndex()-1);
+		worms.remove(worm);
+	}
 
 	/**
 	 * Return a list of the worms who live in this world.
@@ -234,6 +240,19 @@ public class World {
 	 */
 	public void startGame() {
 		setCurrentWormIndex(0);
+	}
+	
+	public boolean isGameFinished() {
+		Team teamFirstWorm = getWormAtIndex(0).getTeam();
+		for (Worm worm:worms){
+			if ((worm.getTeam() != teamFirstWorm)){
+				return false;
+			}
+		}
+		if ((teamFirstWorm == null) && (getWorms().size() > 1)){
+			return false;
+		}
+		return true;
 	}
 
 	/**

@@ -470,7 +470,7 @@ public class Facade implements IFacade {
 	 * Returns whether the game in the given world has finished.
 	 */
 	public boolean isGameFinished(World world) {
-		return false;
+		return world.isGameFinished();
 
 	}
 

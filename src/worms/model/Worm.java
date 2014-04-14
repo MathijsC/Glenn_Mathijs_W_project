@@ -71,7 +71,7 @@ public class Worm extends Entity {
 		setHitPoints(getMaxHitPoints());
 		setState(true);
 		setName(name);
-		setWorld(world);
+		setWorldTo(world);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(world.getTeams().size() - 1));
 		}
@@ -89,7 +89,7 @@ public class Worm extends Entity {
 		setHitPoints(getMaxHitPoints());
 		setState(true);
 		setName("Glenn");
-		setWorld(world);
+		setWorldTo(world);
 		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(world.getTeams().size() - 1));
@@ -174,20 +174,36 @@ public class Worm extends Entity {
 	 * 			| new.getWorld() == world
 	 * @effect	The worm is added the the given world.
 	 * 			| world.addWorm(this)
-	 * @throws	NullPointerException
-	 * 			The given world is null.
-	 * 			| if (world == null) 
+	 * @throws	IllegalWorldException
+	 * 			The given world is illegal.
+	 * 			| if (!canHaveAsWorld(world)) 
 	 */
-	public void setWorld(World world) throws NullPointerException,
+	public void setWorldTo(World world) throws IllegalWorldException,
 			IllegalStateException {
-		if (world == null) {
-			throw new NullPointerException();
+		if (!canHaveAsWorld(world)) {
+			throw new IllegalWorldException(this, world);
 		}
 		if (Worm.hasWorld(this)) {
 			throw new IllegalStateException();
 		}
 		this.world = world;
 		world.addWorm(this);
+	}
+	
+	@Raw
+	public void setWorld(World world){
+		if (!canHaveAsWorld(world)) {
+			throw new IllegalWorldException(this, world);
+		}
+		this.world = world;
+	}
+	
+	// TODO
+	public boolean canHaveAsWorld(World world){
+		if (isTerminated()){
+			return world == null;
+		}
+		return (world != null);
 	}
 
 	/**
@@ -452,6 +468,8 @@ public class Worm extends Entity {
 	public int getHitPoints() {
 		return hitPoints;
 	}
+	
+	//TODO recheck
 
 	/**
 	 * Set the number of hitpoints of this worm to the given number of points.
@@ -474,12 +492,14 @@ public class Worm extends Entity {
 	 */
 	@Raw
 	private void setHitPoints(int hitPoints) {
-		if (hitPoints < 0)
+		if (hitPoints < 0) {
 			this.hitPoints = 0;
-		else if (hitPoints > this.getMaxHitPoints())
+			this.terminate();
+		} else if (hitPoints > this.getMaxHitPoints()) {
 			this.hitPoints = this.getMaxHitPoints();
-		else
+		} else {
 			this.hitPoints = hitPoints;
+		}
 	}
 	
 	public void dealDamage(int damage) {
@@ -504,6 +524,25 @@ public class Worm extends Entity {
 	 */
 	public void heal(int amount) {
 		this.setHitPoints(this.getHitPoints() + amount);
+	}
+	
+	//TODO
+	public void terminate(){
+		setState(false);
+		unsetWorld();
+	}
+	
+	public boolean isTerminated(){
+		return !this.getState();
+	}
+	
+	//TODO
+	public void unsetWorld(){
+		if (hasWorld(this)){
+			World oldWorld = getWorld();
+			setWorld(null);
+			oldWorld.removeAsWorm(this);
+		}
 	}
 
 	/**
@@ -762,7 +801,7 @@ public class Worm extends Entity {
 	public void fall(){
 		
 		Position pos = new Position(this.getXCoordinate(),this.getYCoordinate());
-		while ((!getWorld().isAdjacentTerrain(getRadius(), pos.getXCoordinate(), pos.getYCoordinate())) && (getWorld().isPassable(pos.getXCoordinate(), pos.getYCoordinate(),getRadius())) && (pos.getYCoordinate()+3*getRadius() > 0)){
+		while ((!getWorld().isAdjacentTerrain(getRadius(), pos.getXCoordinate(), pos.getYCoordinate())) && (getWorld().isPassable(pos.getXCoordinate(), pos.getYCoordinate(),getRadius())) && (pos.getYCoordinate()-getRadius() > 0)){
 			pos.setYcoordinate(pos.getYCoordinate()-0.01);
 		}
 		this.heal((int) (3*(pos.getYCoordinate()-this.getYCoordinate())));
@@ -770,6 +809,9 @@ public class Worm extends Entity {
 		this.setYCoordinate(pos.getYCoordinate());
 		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
+		}
+		if (getYCoordinate()-getRadius() < 0){
+			terminate();
 		}
 	}
 
