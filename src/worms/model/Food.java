@@ -6,14 +6,18 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 public class Food extends Entity {
 	
+	//TODO docu Constructor
+	//TODO Class Invar
+	//TODO DOCU check
+	
 	public Food(World world, double x, double y) {
 		super(new Position(x,y),world);
-		setRadius(getMinRadius());
+		setRadius(getMinRadius()*(1+world.getSeed().nextDouble()));
 	}
 
 	public Food(World world) {
 		super(new Position(0, 0),world);
-		setRadius(getMinRadius());
+		setRadius(getMinRadius()*(1+world.getSeed().nextDouble()));
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
 	}
@@ -78,7 +82,12 @@ public class Food extends Entity {
 		return 0.20;
 	}
 
-	
+	/** The worm consumes this food to grow by 10% in radius
+	 *  
+	 * @param worm the worm that eats this food
+	 * @post	this food will be destroyed
+	 * 			|terminate()
+	 */
 	public void getEatenBy(Worm worm){
 		worm.setRadius(worm.getRadius()*1.1);
 		terminate();

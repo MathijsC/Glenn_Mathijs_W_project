@@ -5,6 +5,10 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 public class Position {
 
+	//TODO docu Constructor
+	//TODO Class Invar
+	//TODO DOCU check
+
 	public Position(double xCoordinate, double yCoordinate) {
 		setXCoordinate(xCoordinate);
 		setYcoordinate(yCoordinate);
@@ -67,7 +71,12 @@ public class Position {
 	public void setYcoordinate(double yCoordinate) {
 		this.yCoordinate = yCoordinate;
 	}
-
+	
+	/** calculates the distance between this position and the other position
+	 * 
+	 * @param other The other position where the distance to will be determined
+	 * @return The distance between this position and the other position
+	 */
 	public double distanceTo(Position other) {
 
 		return Math
