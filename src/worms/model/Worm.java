@@ -152,7 +152,7 @@ public class Worm extends Entity {
 	public void refresh() {
 		int REGENERATION_OF_HEALTH = 10;
 		this.replenishActionPoints();
-		this.heal(REGENERATION_OF_HEALTH);
+		this.changeHealt(REGENERATION_OF_HEALTH);
 	}
 
 	/**
@@ -419,9 +419,6 @@ public class Worm extends Entity {
 		}
 	}
 	
-	public void dealDamage(int damage) {
-		this.setHitPoints(this.getHitPoints()-damage);
-	}
 
 	/**
 	 * Return the maximum number of hitpoints of this worm.
@@ -433,13 +430,17 @@ public class Worm extends Entity {
 		return (int) Math.round(getMass());
 	}
 
+	
 	/**
-	 * heals this worm for a given amount of hitpoints
-	 * @param amount of hitPoints the worm will heal
+	 * changes the hitpoints of this worm for a given amount of hitpoints
+	 * Positive: the worm heals
+	 * Negative: the worm receives damage
+	 * 
+	 * @param amount of hitPoints the worm will change hitpoints in
 	 * @Effect	setHitPoints(getHitpoints() + amount)
 	 * 
-	 */
-	public void heal(int amount) {
+	 */	
+	public void changeHealt(int amount) {
 		this.setHitPoints(this.getHitPoints() + amount);
 	}
 	
@@ -704,7 +705,7 @@ public class Worm extends Entity {
 		while ((!getWorld().isAdjacentTerrain(getRadius(), pos.getXCoordinate(), pos.getYCoordinate())) && (getWorld().isPassable(pos.getXCoordinate(), pos.getYCoordinate(),getRadius())) && (pos.getYCoordinate()-getRadius() > 0)){
 			pos.setYcoordinate(pos.getYCoordinate()-0.01);
 		}
-		this.heal((int) (3*(pos.getYCoordinate()-this.getYCoordinate())));
+		this.changeHealt((int) (3*(pos.getYCoordinate()-this.getYCoordinate())));
 		this.setXCoordinate(pos.getXCoordinate());
 		this.setYCoordinate(pos.getYCoordinate());
 		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
