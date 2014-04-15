@@ -162,16 +162,40 @@ public class Worm extends Entity {
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 	}
+	
+	/**
+	 * An arrayList holding all the possible weapons of this worm.
+	 */
+	private ArrayList<Weapon> weaponTypeList = new ArrayList<Weapon>(Arrays.asList(Weapon.Rifle, Weapon.Bazooka));
 
-	//TODO docu
-	public void selectNextWeapon() {
-		// TODO mss op een beter manier uitwerken?
-		if (this.getWeapon() == Weapon.Bazooka) {
-			setWeapon(Weapon.Rifle);
-		} else if (this.getWeapon() == Weapon.Rifle) {
-			setWeapon(Weapon.Bazooka);
+	/**
+	 * A variable holding the index of the current weapon of this worm.
+	 */
+	private int	currentWeaponIndex = 0;
+	
+	/**
+	 * Set the next weapon of weaponTypeList as weapon of this worm.
+	 * 
+	 * @effect	If the current weapon is the last weapon in weaponTypeList,
+	 * 			select the first weapon of that list as weapon for this worm
+	 * 			and set the currentWeaponIndex to zero.
+	 * 			|if ((currentWeaponIndex+1) >= weaponTypeList.size())
+	 * 			|	then setWeapon(weaponTypeList.get(0))
+	 * 			|		 currentWeaponIndex = 0
+	 * @effect	The next weapon in weaponTypeList, select the first weapon of 
+	 * 			that list as weapon for this worm and add 1 to the currentWeaponIndex.
+	 * 			|else
+	 * 			|	then setWeapon(weaponTypeList.get(currentWeaponIndex+1))
+	 * 			|		 currentWeaponIndex += 1
+	 */
+	public void selectNextWeapon() {		
+		if ((currentWeaponIndex+1) >= weaponTypeList.size()){
+			setWeapon(weaponTypeList.get(0));
+			currentWeaponIndex = 0;
+		} else {
+			setWeapon(weaponTypeList.get(currentWeaponIndex+1));
+			currentWeaponIndex += 1;
 		}
-
 	}
 
 	/**
@@ -736,7 +760,7 @@ public class Worm extends Entity {
 				- (int) Math.ceil((dist / getRadius())
 						* (Math.abs(Math.cos(stepAngle)) + 4 * Math.abs(Math
 								.sin(stepAngle)))));
-		if (getWorld().checkWormEatFood(getPosition(), getRadius())) {
+		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 
@@ -783,15 +807,40 @@ public class Worm extends Entity {
 		return indexBest;
 	}
 
-	// TODO docu
+	/**
+	 * Checks if a worm can fall or not.
+	 * 
+	 * @return	True if the position of this worm is not adjacent
+	 * 			to any passable terrain.
+	 * 			|!getWorld().isAdjacentTerrain(getRadius(), getXCoordinate(),
+				|	getYCoordinate()) 			
+	 */
 	public boolean canFall() {
 		return !getWorld().isAdjacentTerrain(getRadius(), getXCoordinate(),
 				getYCoordinate());
 	}
 
-	// TODO docu
+	/**
+	 * Let this worm fall. After falling the worm gets hit an certain amount of
+	 * hit points calculated with the meters he fell down. If this worm is able to
+	 * eat foot at his new position, this worm will eat the food. If this worm ends 
+	 * outside the world, the worm gets terminated.
+	 * 
+	 * @effect	Set the new position of this worm to a new position under the
+	 * 			current position of this worm.
+	 * 			|setPosition(NEW X, NEW Y)
+	 * @effect	Add a negative amount of hit points to this worm according to
+	 * 			the meters this worm fell down.
+	 * 			|addHealth(CONTANT * METERS FELL DOWN)
+	 * @effect	If this worm can eat food at its new position, let the worm eat
+	 * 			the food.
+	 * 			|if (getWorld().checkWormCanEatFood(getPosition(),...)
+	 * 			|	then getWorld().getFoodEatenBy(this).getEatenBy(this)
+	 * @effect	If this worm falls out of the world, get it terminated.
+	 * 			|if (getYCoordinate() - getRadius() < 0)
+	 * 			|	then terminate()
+	 */
 	public void fall() {
-
 		Position pos = new Position(this.getXCoordinate(),
 				this.getYCoordinate());
 		while ((!getWorld().isAdjacentTerrain(getRadius(),
@@ -804,7 +853,7 @@ public class Worm extends Entity {
 		this.addHealt((int) (3 * (pos.getYCoordinate() - this
 				.getYCoordinate())));
 		setPosition(pos.getXCoordinate(), pos.getYCoordinate());
-		if (getWorld().checkWormEatFood(getPosition(), getRadius())) {
+		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 		if (getYCoordinate() - getRadius() < 0) {
@@ -846,13 +895,10 @@ public class Worm extends Entity {
 	/** 
 	 * Let this worm jump over a distance and consumes all action points left.
 	 * 
-	 * @post	The new X-coordinate of this worm is equal to the old X-coordinate added
-	 * 			with the distance moved horizontally based on the gravity of the environment
-	 * 			and the direction of this worm. The Y-coordinate stays the same.
-	 * 			|new.getXCoordinate() = this.getXCoordinate + DISTANCE_MOVED
-	 * 			|new.getYCoordinate() = this.getYCoordinate()
-	 * @post	The new amount of action points is equal to zero.
-	 * 			|new.getActionPoints = 0
+	 * @effect	The position of this worm is calculated and set as new position
+	 * 			|setPosition(NEW X COORDINATE, NEW Y COORDINATE)
+	 * @effect	The new amount of action points is equal to zero.
+	 * 			|setActionPoints(0)
 	 * @throws	IllegalStateException
 	 * 			The worm is not able to jump.
 	 * 			| !canJump()
@@ -865,10 +911,9 @@ public class Worm extends Entity {
 		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
 				0, 2);
 		this.setPosition(newPosition[0], newPosition[1]);
-		// System.out.println(timeStep);
 
 		setActionPoints(0);
-		if (getWorld().checkWormEatFood(getPosition(), getRadius())) {
+		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 	}
@@ -876,9 +921,13 @@ public class Worm extends Entity {
 	/**
 	 * Return the time a jump of this worm would take.
 	 * 
+	 * @param	timeStep
+	 * 			An elementary time interval used to calculate the jumptime.
+	 * @effect 	A theoretical jump will be performed to get the time it takes to jump.
+	 * 			|possibleJump(timeStep)
 	 * @return	Return the time a jump of this worm would take
 	 * 			based on the direction of this worm, the gravity
-	 * 			of the environment and the initial velocity.
+	 * 			of the environment, the initial velocity and the world of this worm.
 	 * @throws 	IllegalStateException
 	 * 			The worm cannot jump.
 	 * 			| !canjump()
@@ -892,8 +941,25 @@ public class Worm extends Entity {
 
 	}
 
-	// TODO DOCU
-	public double[] possibleJump(double timeStep) {
+	/** 
+	 * A theoretical jump will be performed to determine the position where this
+	 * worm will end his jump. The theoretical jump also calculates the time 
+	 * it will take to perform that jump. The calculated position and time will be
+	 * returned.
+	 * 
+	 * @param 	timeStep 
+	 * 			An elementary time interval used to calculate the jumptime.
+	 * @return	The position where the jump of this worm will end (by reaching terrain
+	 * 			that is impassable) and the time it will take to perform that jump.
+	 */
+	private double[] possibleJump(double timeStep) {
+		
+		 // The function will calculate step by step the next position on the jump of this worm
+		 // and will check if the position is passable.
+		 // If so, the function will stop and will return the final position and time of the jump. 
+		 // If not, the new position will be stored in a local variable and the next position
+		 // will be calculated.	
+		
 		Position position = this.getPosition();
 		double time = timeStep;
 		Position tempPosition;
@@ -917,13 +983,13 @@ public class Worm extends Entity {
 
 	/**
 	 * Return the position (x-coordinate, y-coordinate) at a certain time 
-	 * during the jump.
+	 * during the jump of this worm.
 	 * 
 	 * @param 	time
 	 * 			The time during the jump where you want to know the position of this worm.
-	 * @return	Return the position of this worm at the given time of 
-	 * 			the jump based on the old coordinates of this worm, the initial velocity
-	 * 			the direction of this worm and de gravity of the environment.
+	 * @return	The position of this worm at the given time of the jump based on the old 
+	 * 			coordinates of this worm, the initial velocity the direction of this worm, 
+	 * 			the gravity of the environment and the world of this worm.
 	 * @throws 	IllegalArgumentException
 	 * 			The given time is not during the jump.
 	 * 			| time <=0
@@ -940,7 +1006,7 @@ public class Worm extends Entity {
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		// jumptime vraagt argument, maar hier niet mee gegeven... :/
+		// TODO jumptime vraagt argument, maar hier niet mee gegeven... :/
 		/*
 		 * if (time > this.jumpTime()) { throw new IllegalArgumentException(); }
 		 */

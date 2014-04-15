@@ -9,3 +9,6 @@
 7) formeel @effect constructor worm rand positie.
 8) constructor subklass moet @effect super(...)?
 9) Adjacent terrein ook ondersteboven?
+10) Hoe moesten we clone nu weer gebruiken?
+11) Hoe moet de documentatie van move/jump/fall. (hoe doet ge docu met een while in? met correctheidsbewijs?)
+12) Mag je naar private methodes verwijzen in @effect?

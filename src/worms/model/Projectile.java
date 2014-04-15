@@ -319,11 +319,13 @@ public class Projectile extends Entity {
 	/**
 	 * Return the time a jump of this projectile would take.
 	 * 
-	 * @effect A theoretical jump will be performed to get the time it takes to jump
-	 * 
+	 * @param	timeStep
+	 * 			An elementary time interval used to calculate the jumptime.
+	 * @effect 	A theoretical jump will be performed to get the time it takes to jump.
+	 * 			|possibleJump(timeStep)
 	 * @return	Return the time a jump of this projectile would take
 	 * 			based on the direction of this projectile, the gravity
-	 * 			of the environment and the initial velocity.
+	 * 			of the environment and the initial velocity and the world of this worm.
 	 */
 	public double jumpTime(double timeStep) {
 		return this.possibleJump(timeStep)[2];
@@ -331,21 +333,24 @@ public class Projectile extends Entity {
 	}
 
 	/** 
-	 * A theoretical jump will be performed to determine the location where it will hit something
-	 * and to calculate the time it will take to perform that jump
-	 * 
-	 * The function will calculate step by step the next location on the trajectory of this projectile
-	 * and will check if the location is passable or if the projectile will hit a worm
-	 * at that location, 
-	 * if so the function will stop and will return the final location of the jump, 
-	 * if not the new position will be stored in a local variable and the next position
-	 * will be calculated.
+	 * A theoretical jump will be performed to determine the position where this
+	 * projectile will hit something. The theoretical jump also calculates the time 
+	 * it will take to perform that jump. The calculated position and time will be
+	 * returned.
 	 * 
 	 * @param 	timeStep 
-	 * 			An elementary time interval during which you may assume that this projectile will not completely move through a piece of impassable terrain.
-	 * @return	Returns The location where the jump will end (by hitting anything) and the time it will take to perform that jump
+	 * 			An elementary time interval used to calculate the jumptime.
+	 * @return	The position where the jump of this projectile will end (by hitting anything) 
+	 * 			and the time it will take to perform that jump.
 	 */
-	public double[] possibleJump(double timeStep) {
+	private double[] possibleJump(double timeStep) {
+		
+		 // The function will calculate step by step the next position on the trajectory of this projectile
+		 // and will check if the location is passable or if the projectile will hit a worm
+		 // at that position. 
+		 // If so, the function will stop and will return the final position of the jump. 
+		 // If not, the new position will be stored in a local variable and the next position
+		 // will be calculated.		
 
 		Position position = this.getPosition();
 		double time = timeStep;
@@ -375,13 +380,13 @@ public class Projectile extends Entity {
 
 	/**
 	 * Return the position (x-coordinate, y-coordinate) at a certain time 
-	 * during the jump.
+	 * during the jump of this projectile.
 	 * 
 	 * @param 	time
 	 * 			The time during the jump where you want to know the position of this projectile
-	 * @return	Return the position of this projectile at the given time of 
-	 * 			the jump based on the old coordinates of this projectile, the initial velocity
-	 * 			the direction of this projectile and the gravity of the environment.
+	 * @return	The position of this projectile at the given time of the jump based on the old 
+	 * 			coordinates of this projectile, the initial velocity the direction of this projectile, 
+	 * 			the gravity of the environment and the world of this projectile.
 	 * @throws 	IllegalArgumentException
 	 * 			The given time is not during the jump.
 	 * 			| time <=0
