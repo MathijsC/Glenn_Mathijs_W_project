@@ -17,8 +17,18 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement teams, this method should have no effect)
 	 */
-	public void addEmptyTeam(World world, String newName) {
-		new Team(world, newName);
+	public void addEmptyTeam(World world, String newName) throws ModelException {
+		try {
+			new Team(world, newName);
+		} catch (NullPointerException exc) {
+			throw new ModelException("Illegal World");
+		} catch (IllegalArgumentException exc) {
+			throw new ModelException("Illegal Name");
+		} catch (IllegalStateException exc) {
+			throw new ModelException("Illegal State");
+		} catch (IllegalWorldException exc) {
+			throw new ModelException("Illegal World");
+		}
 	}
 
 	/**
@@ -27,8 +37,14 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement food, this method should have no effect)
 	 */
-	public void addNewFood(World world) {
-		new Food(world);
+	public void addNewFood(World world) throws ModelException {
+		try {
+			new Food(world);
+		} catch (IllegalStateException exc) {
+			throw new ModelException("Illegal State");
+		} catch (IllegalWorldException exc) {
+			throw new ModelException("Illegal World");
+		}
 
 	}
 
@@ -39,7 +55,13 @@ public class Facade implements IFacade {
 	 * The new worm may (but isn't required to) have joined a team.
 	 */
 	public void addNewWorm(World world) {
-		new Worm(world);
+		try {
+			new Worm(world);
+		} catch (IllegalStateException exc) {
+			throw new ModelException("Illegal State");
+		} catch (IllegalWorldException exc) {
+			throw new ModelException("Illegal World");
+		}
 
 	}
 
@@ -357,7 +379,7 @@ public class Facade implements IFacade {
 	 * (For single-student groups that do not implement teams, this method should always return the name of the winning worm, or null if there is no winner)
 	 */
 	public String getWinner(World world) {
-		if (world.isGameFinished()){
+		if (world.isGameFinished()) {
 			return world.getWinnerName();
 		} else {
 			return "No Winner Yet";
@@ -489,7 +511,7 @@ public class Facade implements IFacade {
 	 * @return True if the given region is impassable, false otherwise.
 	 */
 	public boolean isImpassable(World world, double x, double y, double radius) {
-		return !world.isPassable(x, y,radius);
+		return !world.isPassable(x, y, radius);
 
 	}
 
