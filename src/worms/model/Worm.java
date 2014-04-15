@@ -2,6 +2,7 @@ package worms.model;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
@@ -71,7 +72,8 @@ public class Worm extends Entity {
 		setHitPoints(getMaxHitPoints());
 		setName(name);
 		if (!world.getTeams().isEmpty()) {
-			setTeam(world.getTeams().get(world.getSeed().nextInt(world.getTeams().size())));
+			setTeam(world.getTeams().get(
+					world.getSeed().nextInt(world.getTeams().size())));
 		}
 
 	}
@@ -83,7 +85,8 @@ public class Worm extends Entity {
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
-		setName("Glenn");
+		final String[] wormNames = {"Glenn","Mathijs","Siri","Bernd","Tom","Nick","Toon","Lieven","Joeri","Syd"};
+		setName(wormNames[world.getSeed().nextInt(wormNames.length)]);
 		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(world.getSeed().nextInt(world.getTeams().size())));
