@@ -37,9 +37,15 @@ public class Position {
 	 * 			The x-coordinate to be set as the new x-coordinate of this position
 	 * @post	The given xCoordinate is the new xCoordinate of this position
 	 * 			| new.getXCoordinate() == xCoordinate
+	 * @throw	IllegalArgumentException
+	 * 			The given xCoordinate is not a number
+	 * 			|xCoordinate == Double.NaN
 	 */
 	@Raw
-	public void setXCoordinate(double xCoordinate) {
+	public void setXCoordinate(double xCoordinate) throws IllegalArgumentException{
+		if (xCoordinate == Double.NaN) {
+			throw new IllegalArgumentException();
+		}
 		this.xCoordinate = xCoordinate;
 	}
 
@@ -66,9 +72,15 @@ public class Position {
 	 * 			The y-coordinate to be set as the new y-coordinate of this position.
 	 * @post	The given yCoordinate is the new yCoordinate of this position.
 	 * 			| new.getYCoordinate() == yCoordinate
+	 * @throw	IllegalArgumentException
+	 * 			The given yCoordinate is not a number
+	 * 			|yCoordinate == Double.NaN
 	 */
 	@Raw
-	public void setYcoordinate(double yCoordinate) {
+	public void setYcoordinate(double yCoordinate) throws IllegalArgumentException{
+		if (yCoordinate == Double.NaN) {
+			throw new IllegalArgumentException();
+		}
 		this.yCoordinate = yCoordinate;
 	}
 	
