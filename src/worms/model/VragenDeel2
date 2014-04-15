@@ -7,3 +7,5 @@
 5) Moeten terminated objects nog voldoen aan invar?
 6) Random is niet altijd random.
 7) formeel @effect constructor worm rand positie.
+8) constructor subklass moet @effect super(...)?
+9) Adjacent terrein ook ondersteboven?

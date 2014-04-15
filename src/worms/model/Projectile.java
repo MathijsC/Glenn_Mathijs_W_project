@@ -310,7 +310,7 @@ public class Projectile extends Entity {
 			if (this.getWorld().checkProjectileHitWorm(this.getPosition(),
 					this.getRadius())) {
 				Worm wormHit = this.getWorld().getWormHit(this);
-				wormHit.changeHealt(this.getWeapon().getDamage());
+				wormHit.addHealt(this.getWeapon().getDamage());
 			}
 			terminate();
 		}

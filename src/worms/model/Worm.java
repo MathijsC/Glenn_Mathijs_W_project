@@ -10,8 +10,8 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 /**
  * A class for a worm objects containing a x-coordinate, y-coordinate
- * looking direction, radius, name and action points of this worm.
- * The class also implements methods to jump, turn and move this worm.
+ * looking direction, radius, name, action points and hit points of this worm.
+ * The class also implements methods to shoot, fall, heal/hit, jump, turn and move.
  * 
  * @invar	The direction of this worm should be a valid direction at all time.
  * 			|isValidDirection(getDirection())
@@ -28,15 +28,16 @@ import be.kuleuven.cs.som.annotate.Raw;
  * 			|canHaveAsHitPoints(getHitPoints())
  * 
  * @author 	Glenn Cools, Mathijs Cuppens
- *	s
- * @version 1.30
+ * @version 1.33
  */
 public class Worm extends Entity {
 
 	/**
-	 * Initialize this new worm with a given position (x,y), looking direction,
-	 * radius and name.
+	 * Initialize this new worm with a given position (x- and y-coordinate), looking direction,
+	 * radius and name and with calculated mass, action points, hit points and random team and a weapon.
 	 * 
+	 * @param	world
+	 * 			The world of this new worm.
 	 * @param 	x
 	 * 			The x-coordinate of the position for this new worm (in meters).
 	 * @param 	y
@@ -47,22 +48,30 @@ public class Worm extends Entity {
 	 * 			The radius for this new worm (in meters).
 	 * @param 	name
 	 * 			The name for this new worm.
+	 * @effect	This new worm is initialized as a subobject of the class entity
+	 * 			with the given world and position (x- and y-coordinate).
+	 * 			|super(new Position(x, y), world)
 	 * @effect	The looking direction of the new worm is equal to the given
 	 * 			direction modulo 2*PI.
-	 * 			| setDirection(direction)
-	 * @effect	If the given radius is smaller then the lower bound, then the 
-	 * 			radius of this new worm is equal to the lower bound. 
-	 * 			Else the radius of this new worm is equal to the given radius.
-	 * 			| setRadius(radius)
+	 * 			|setDirection(direction)
+	 * @effect	The radius of this new worm is set to the given radius. The mass
+	 * 			of this new worm is also set.
+	 * 			|setRadius(radius)
 	 * @effect	If the given name is a valid name, the name of this new worm is
 	 * 			equal to the given name.
-	 * 			| setName(name)
-	 * @post	The mass of this new worm is set to a value calculated like a
-	 * 			sphere density and the given radius.
-	 * 			| new.getMass() == calcMass(radius)
-	 * @post	The action points of this new worm is set the the maximum possible
+	 * 			|setName(name)
+	 * @effect	The action points of this new worm is set the the maximum possible
 	 * 			action points for this new worm in accordance to its mass.
-	 * 			| new.getActionPoints == getMaxActionPoints()
+	 * 			|setActionPoints(getMaxActionPoints())
+	 * @effect	The hit points of this new worm is set the the maximum possible
+	 * 			hit points for this new worm in accordance to its mass.
+	 * 			|setActionPoints(getMaxActionPoints())
+	 * @effect	The weapon of this new worm is set to a starting weapon.
+	 * 			|setWeapon(STARTING WEAPON)
+	 * @effect	If there is a team in the given world, the team of this new worm
+	 * 			is set to a ramdomly chosen team.
+	 * 			|if (!world.getTeams().isEmpty())
+	 * 			|	then setTeam(RANDOM TEAM)
 	 */
 	@Raw
 	public Worm(World world, double x, double y, double direction,
@@ -71,8 +80,9 @@ public class Worm extends Entity {
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
-		setHitPoints(getMaxHitPoints());
+		setActionPoints(getMaxActionPoints());
 		setName(name);
+		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(
 					world.getSeed().nextInt(world.getTeams().size())));
@@ -80,51 +90,80 @@ public class Worm extends Entity {
 
 	}
 
-	// TODO docu
+	/**
+	 * Initialize this new worm with a given world and a random position (x- and y-coordinate), looking direction,
+	 * radius name and with calculated mass, action points, hit points and random team and a weapon.
+	 *
+	 * @param	world
+	 * 			The world of this new worm.
+	 * @effect	Initialize this new worm with the given world, a dummy position (x- and y-coordinate),
+	 * 			random direction,random radius and a dummy name.
+	 * 			|this(world,0.0,0.0,RANDOM DIRECTION, RANDOM RADIUS,"Dummyname")
+	 * @effect	Set the name of this new worm to a random name.
+	 * 			|setName(RANDOM NAME)
+	 * @effect	Set the position of this new worm to a random position in the given world.
+	 * 			|setPosition(RANDOM X,RANDOM Y)
+	 * 			
+	 */
 	public Worm(World world) {
-		super(new Position(0, 0), world);
-		setRadius((1 + (world.getSeed().nextDouble())) * getMinRadius());
-		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
-		setActionPoints(getMaxActionPoints());
-		setHitPoints(getMaxHitPoints());
+		this(world,0.0,0.0,world.getSeed().nextDouble() * 2 * Math.PI,(1 + (world.getSeed().nextDouble())) * getMinRadius(),"Dummyname");
 		final String[] wormNames = {"Glenn","Mathijs","Siri","Bernd","Tom","Nick","Toon","Lieven","Joeri","Syd"};
 		setName(wormNames[world.getSeed().nextInt(wormNames.length)]);
-		setWeapon(Weapon.Rifle);
-		if (!world.getTeams().isEmpty()) {
-			setTeam(world.getTeams().get(world.getSeed().nextInt(world.getTeams().size())));
-		}
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
-		this.setPosition(randCoord[0], randCoord[1]);
+		this.setPosition(randCoord[0], randCoord[1]);		
 	}
 
-	// TODO
+	/**
+	 * A variable holding the team of this worm.
+	 */
 	private Team team;
 
-	// TODO
+	/**
+	 * Return the team of this worm.
+	 * 
+	 * @return	The team of this worm.
+	 */
 	public Team getTeam() {
 		return team;
 	}
 
-	// TODO
+	/**
+	 * Add this worm to the given team.
+	 * 
+	 * @param	team
+	 * 			The team where to add this worm to.
+	 * @post	The new team of this worm is equal to the given team.
+	 * 			|new.getTeam() == team
+	 * @effect	This worm is added to the given team.
+	 * 			|team.addWorm(this)
+	 */
 	private void setTeam(Team team) {
 		this.team = team;
 		team.addWorm(this);
 	}
 
-	/** // TODO docu
-	 * @return the weapon
+	/**
+	 * Return the weapon of this worm.
+	 * 
+	 * @return The weapon of this worm.
 	 */
 	public Weapon getWeapon() {
 		return this.weapon;
 	}
 
-	/** // TODO docu
-	 * @param weapon the weapon to set
+	/**
+	 * Set the weapon of this worm to the given weapon.
+	 * 
+	 * @param 	weapon
+	 * 			The weapon to set as weapon of this worm.
+	 * @post	The given weapon is equal to the new weapon of this worm.
+	 * 			|new.getWeapon() == weapon
 	 */
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 	}
 
+	//TODO docu
 	public void selectNextWeapon() {
 		// TODO mss op een beter manier uitwerken?
 		if (this.getWeapon() == Weapon.Bazooka) {
@@ -134,10 +173,26 @@ public class Worm extends Entity {
 		}
 
 	}
-	// TODO docu
+
+	/**
+	 * A variable holding the weapon of this worm.
+	 */
 	private Weapon weapon;
 	
-	// TODO docu
+	/**
+	 * Make this worm shoot with his weapon and the given propulsion at
+	 * the cost of action points.
+	 * 
+	 * @param 	propulsion
+	 * 			This worm shoots his weapon with the given propulsion.
+	 * @effect	If the this worm can shoot, shoot the weapon with the
+	 * 			given propulsion.
+	 * 			|if (canShoot(getWeapon))
+	 * 			|	then getWeapon.shoot(getWorld(), this worm, propulsion)
+	 * @effect	If the this worm can shoot, remove the action points needed 
+	 * 			to fire this weapon.
+	 * 			|	then setActionPoints(ACTION POINTS NEEDED)
+	 */
 	public void shoot(int propulsion) {
 		if (this.canShoot(this.getWeapon())) {
 			this.getWeapon().shoot(this.getWorld(), this, propulsion);
@@ -146,22 +201,31 @@ public class Worm extends Entity {
 		}
 	}
 	
-	// TODO docu
+	/**
+	 * Check if this worm can shoot with the given weapon.
+	 * 
+	 * @param 	weapon
+	 * 			The weapon to check if this worm can shoot it.
+	 * @return	True if this worm has enough action points to shoot.
+	 * 			|(getActionPoints() - ACTION POINTS NEEDED) >= 0
+	 */
 	public boolean canShoot(Weapon weapon) {
-
-		return (this.getActionPoints() - weapon.getActionPoints()) > 0;
+		return (this.getActionPoints() - weapon.getActionPoints()) >= 0;
 	}
 
-	// TODO docu
 	/**
-	 * Replenishes this worms action points to its max
-	 * @effect this worm's action points will be set to this worm's maximum action points
-	 * 			|new.getActionPoints()==this.getMaxActionPoints()
+	 * Refresh this worm to start a new round by replenishing this worms action points to
+	 * its max value and regenerate a certain amount of hit points.
+	 * 
+	 * @effect 	This worm's action points will be set to this worm's maximum action points
+	 * 			|setActionPoints(getMaxActionPoints())
+	 * @effect	Add a certain amount of hit points to the hit points of this worm.
+	 * 			|addHealt(AMOUNT)
 	 */
 	protected void refresh() {
 		int REGENERATION_OF_HEALTH = 10;
 		this.setActionPoints(this.getMaxActionPoints());
-		this.changeHealt(REGENERATION_OF_HEALTH);
+		this.addHealt(REGENERATION_OF_HEALTH);
 	}
 
 	/**
@@ -395,10 +459,10 @@ public class Worm extends Entity {
 		return hitPoints;
 	}
 
-	// TODO recheck
 
 	/**
-	 * Set the number of hitpoints of this worm to the given number of points.
+	 * Set the number of hitpoints of this worm to the given number of points and
+	 * terminate this worm if he has zero hit points.
 	 * 
 	 * @param 	hitPoints
 	 * 			The new number of hitpoints of this worm.
@@ -415,47 +479,55 @@ public class Worm extends Entity {
 	 * 			amount of action points.
 	 * 			| else
 	 * 			|	then new.getHitPoints() == hitPoints
+	 * @effect	If (after changing) the hit points of this worm are zero, terminate
+	 * 			this worm.
+	 * 			|if (getHitpoints() <= 0)
+	 * 			|	then terminate()
 	 */
-	@Raw
 	private void setHitPoints(int hitPoints) {
 		if (hitPoints < 0) {
 			this.hitPoints = 0;
-			this.terminate();
 		} else if (hitPoints > this.getMaxHitPoints()) {
 			this.hitPoints = this.getMaxHitPoints();
 		} else {
 			this.hitPoints = hitPoints;
 		}
+		if (getHitPoints() <= 0){
+			terminate();
+		}
 	}
 
 	/**
-	 * Return the maximum number of hitpoints of this worm.
+	 * Return the maximum number of hit points of this worm.
 	 * 
-	 * @return	The maximum number of hitpoints of this worm.
-	 * 			|(int) Math.round(getMass());
+	 * @return	The maximum number of hit points of this worm.
+	 * 			|round(getMass())
 	 */
 	public int getMaxHitPoints() {
 		return (int) Math.round(getMass());
 	}
 
 	/**
-	 * changes the hitpoints of this worm for a given amount of hitpoints
-	 * Positive: the worm heals
-	 * Negative: the worm receives damage
+	 * Add a given amount to the hit points of this worm. If the given
+	 * amount is less than zero the worm ends with less hit points as
+	 * before.
 	 * 
-	 * @param amount of hitPoints the worm will change hitpoints in
-	 * @Effect	setHitPoints(getHitpoints() + amount)
+	 * @param 	amount 
+	 * 			The amount of hit points to add to this worms hit points.
+	 * @Effect	Add the given amount of hit points to the hit points of this
+	 * 			worm.
+	 * 			|setHitPoints(getHitpoints() + amount)
 	 * 
 	 */
-	protected void changeHealt(int amount) {
+	protected void addHealt(int amount) {
 		this.setHitPoints(this.getHitPoints() + amount);
 	}
 	
 	/**
-	 Return true if the given amount of hit points is a valid
+	 * Return true if the given amount of hit points is a valid
 	 * amount of action points.
 	 * 
-	 * @param 	hitpoints
+	 * @param 	hitPoints
 	 * 			The amount of hit points to check whether it is a valid amount.
 	 * @return	Return true if the given amount of hit points is not
 	 * 			negative and less or equal to the maximum amount of hit points
@@ -499,6 +571,8 @@ public class Worm extends Entity {
 
 	/**
 	 * Set the number of action points of this worm to the given number of points.
+	 * If this worm ends with zero action points, the turn of this worm ends and
+	 * the turn of the next worm in the world starts.
 	 * 
 	 * @param 	actionPoints
 	 * 			The new number of action points of this worm.
@@ -515,23 +589,29 @@ public class Worm extends Entity {
 	 * 			amount of action points.
 	 * 			| else
 	 * 			|	then new.getActionPoints() == actionPoints
+	 * @effect	If (after changing) the action points of this worm are zero, the
+	 * 			next worm starts its turn and this worms turn ends.
+	 * 			|if (getHitpoints() <= 0)
+	 * 			|	then getWorld().startNextTurn()
 	 */
 	@Raw
 	private void setActionPoints(int actionPoints) {
 		if (actionPoints < 0) {
 			this.actionPoints = 0;
-			this.getWorld().startNextTurn();
 		} else if (actionPoints > this.getMaxActionPoints()) {
 			this.actionPoints = this.getMaxActionPoints();
 		} else
 			this.actionPoints = actionPoints;
+		if (getActionPoints() <= 0){
+			getWorld().startNextTurn();
+		}
 	}
 
 	/**
 	 * Return the maximum number of action points of this worm.
 	 * 
 	 * @return	The maximum number of action points of this worm.
-	 * 			|(int) Math.round(getMass());
+	 * 			|round(getMass())
 	 */
 	public int getMaxActionPoints() {
 		return (int) Math.round(getMass());
@@ -546,7 +626,7 @@ public class Worm extends Entity {
 	 * 			based on its action points, the given angle and the cost
 	 * 			to turn a little. The expense of action points is rounded up
 	 * 			to an integer.
-	 * 			|getActionPoints() >= (int) Math.ceil(COST * ANGLE); 
+	 * 			|getActionPoints() >= roundUp(COST * ANGLE) 
 	 */
 	public boolean canTurn(double angle) {
 		return getActionPoints() >= (int) Math
@@ -567,8 +647,7 @@ public class Worm extends Entity {
 	 * @post	The amount of action points of this worm is decreased by an amount
 	 * 			of action points based on the given angle and the cost to turn a little.
 	 * 			This amount is rounded up to an integer. 
-	 * 			|new.getActionPoints() = this.getActionPoints() - 
-	 * 			|	(int) Math.ceil(COST * ANGLE);
+	 * 			|new.getActionPoints() = this.getActionPoints() - roundUp(COST * ANGLE)
 	 */
 	public void turn(double angle) {
 		assert (this.canTurn(angle));
@@ -587,7 +666,7 @@ public class Worm extends Entity {
 				based on its action points, the given amount of steps and the cost
 	 * 			to move one step in the direction of this worm.	The amount of action points
 	 * 			is rounded up to an integer.	
-	 * 			|getActionPoints() >= (int) Math.ceil(steps * COST)
+	 * 			|getActionPoints() >= roundUp(steps * COST)
 	 * @throws	IllegalArgumentException
 	 * 			The steps are negative.
 	 * 			| steps <0
@@ -722,7 +801,7 @@ public class Worm extends Entity {
 				&& (pos.getYCoordinate() - getRadius() > 0)) {
 			pos.setYcoordinate(pos.getYCoordinate() - 0.01);
 		}
-		this.changeHealt((int) (3 * (pos.getYCoordinate() - this
+		this.addHealt((int) (3 * (pos.getYCoordinate() - this
 				.getYCoordinate())));
 		setPosition(pos.getXCoordinate(), pos.getYCoordinate());
 		if (getWorld().checkWormEatFood(getPosition(), getRadius())) {
