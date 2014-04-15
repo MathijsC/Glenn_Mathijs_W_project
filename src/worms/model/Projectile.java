@@ -7,6 +7,10 @@ import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 
 public class Projectile extends Entity {
+	
+	//TODO docu Constructor
+	//TODO Class Invar
+	//TODO DOCU check
 
 	public Projectile(Position position, World world, Weapon weapon,
 			double direction, double mass, double force) {
@@ -18,20 +22,23 @@ public class Projectile extends Entity {
 	}
 
 
-	/**
+	/** Returns the weapon that created this projectile
 	 * @return the weapon
 	 */
 	public Weapon getWeapon() {
 		return weapon;
 	}
 
-	/**
+	/** Sets the weapon that created this projectile
 	 * @param weapon the weapon to set
 	 */
 	private void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 	}
 
+	/**
+	 * Variablie to register the weapon that created this projectile
+	 */
 	private Weapon weapon;
 
 	/**
@@ -85,7 +92,10 @@ public class Projectile extends Entity {
 		else
 			this.direction = (direction % (Math.PI * 2));
 	}
-
+	
+	/**
+	 *  Variable to register the mass of this projectile
+	 */
 	final double mass;
 
 	/**
@@ -98,7 +108,10 @@ public class Projectile extends Entity {
 	public double getMass() {
 		return this.mass;
 	}
-
+	
+	/**
+	 * Variable to register the force exerted on this projectile
+	 */
 	final double force;
 
 	/**
@@ -111,7 +124,10 @@ public class Projectile extends Entity {
 	public double getForce() {
 		return force;
 	}
-
+	
+	/**
+	 * Variable to register the radius of this projectile
+	 */
 	final double radius = calcRadius();
 
 	/**
@@ -148,14 +164,14 @@ public class Projectile extends Entity {
 		return radius >= getMinRadius();
 	}
 
-	// TODO formele uitleg
 	/** 
 	 * Calculates the radius of this projectile based on its density and mass.
 	 * 
 	 * @param	Mass
 	 * 			The mass of this projectile to calculate the radius of this projectile.
 	 * @return	Returns the radius of this projectile based on its density and mass.
-	 * 			| MASS/DENSITY;
+	 * 			| VOLUME = MASS/DENSITY
+	 * 			| VOLUME = 4/3*PI*R^3
 	 * @throws	IllegalArgumentException
 	 * 			The radius is an invalid radius.
 	 * 			| !isValidRadius(radius)
@@ -169,7 +185,7 @@ public class Projectile extends Entity {
 	}
 
 	/**
-	 * The constant GRAVITY is used to 	easy manipulate the gravity in the different methods
+	 * The constant GRAVITY is used to easy manipulate the gravity in the different methods
 	 */
 	public final double GRAVITY = 9.80665;
 
@@ -184,15 +200,23 @@ public class Projectile extends Entity {
 		return this.getForce() / this.getMass() * 0.5;
 	}
 
-	// TODO docu formeel
 	/** 
 	* Let this projectile jump over a distance.
 	* 
-	* @post	The new X-coordinate of this projectile is equal to the old X-coordinate added
-	* 			with the distance moved horizontally based on the gravity of the environment
-	* 			and the direction of this projectile. The Y-coordinate stays the same.
-	* 			|new.getXCoordinate() = this.getXCoordinate + DISTANCE_MOVED
-	* 			|new.getYCoordinate() = this.getYCoordinate()
+	* If the projectile is still alive:
+	* @effect A theoretical jump will be calculated to get the location where it will hit something (worm or terrain)
+	* 			and the projectile's location will be set to the new location
+	* 			| new.getPosition = possibleJump()
+	* @effect  If the new location is on a worm the projectile will deal damage to that worm
+	* 			and it will be destroyed
+	* 				| if(wormHit)
+	* 				| then dealDamage() and terminate()
+	* 
+	* @post If the projectile doesn't hit a worm it will be destroyed
+	* 				| if(!wormHit)
+	* 				| then terminate()
+	* If the projectile is already terminate:
+	* @Post nothing happens
 	*/
 
 	public void jump(double timeStep) {
@@ -212,6 +236,8 @@ public class Projectile extends Entity {
 	/**
 	 * Return the time a jump of this projectile would take.
 	 * 
+	 * @effect A theoretical jump will be performed to get the time it takes to jump
+	 * 
 	 * @return	Return the time a jump of this projectile would take
 	 * 			based on the direction of this projectile, the gravity
 	 * 			of the environment and the initial velocity.
@@ -221,7 +247,21 @@ public class Projectile extends Entity {
 
 	}
 
-	// TODO DOCU
+	/** A theoretical jump will be performed to determine the location where it will hit something
+	 * 			and to calculate the time it will take to perform that jump
+	 * 
+	 * The function will calc step by step the next location on the trajectory of this projectile
+	 * 				and will check if the location is passable or if the projectile will hit a worm
+	 * 				at that location, 
+	 * 				if so the function will stop and will return the final location of the jump, 
+	 * 				if not the new position will be stored in a local variable and the next position
+	 * 				will be calculated
+	 * 
+	 * @param timeStep An elementary time interval during which you may assume
+	 *                 that the projectile will not completely move through a piece of impassable terrain.
+	 * @return	Returns The location where the jump will end (by hitting anything)
+	 * 					 and the time it will take to perform that jump
+	 */
 	public double[] possibleJump(double timeStep) {
 	
 		Position position = this.getPosition();
@@ -236,7 +276,7 @@ public class Projectile extends Entity {
 					tempPosition.getYCoordinate(),this.getRadius())) {
 				position = tempPosition;				
 				time = time + timeStep;
-				if (this.getWorld().checkProjectileHitWorm(tempPosition,
+				if (this.getWorld().checkProjectileHitWorm(position,
 						this.getRadius())) {
 					hit = true;
 				}
