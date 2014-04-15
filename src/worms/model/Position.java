@@ -3,12 +3,28 @@ package worms.model;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 
+/**
+ * A class of positions used in the game of worms with a x- and y-coordinate.
+ * The class also implements a method to get the distance between two positions.
+ * 
+ * @author 	Glenn Cools & Mathijs Cuppens
+ * @version	1.2
+ *
+ */
 public class Position {
 
-	//TODO docu Constructor
-	//TODO Class Invar
-	//TODO DOCU check
-
+	/**
+	 * Initialize a new position with the given xCoordinate and yCoordinate.
+	 * 
+	 * @param 	xCoordinate
+	 * 			The x-coordinate of this new position.
+	 * @param 	yCoordinate
+	 * 			The y-coordinate of this new position.
+	 * @effect	Set the given xCoordinate to this new position.
+	 * 			|setXCoordinate(xCoordinate)
+	 * @effect	Set the given yCoordinate to this new position.
+	 * 			|setYCoordinate(yCoordinate)
+	 */
 	public Position(double xCoordinate, double yCoordinate) {
 		setXCoordinate(xCoordinate);
 		setYcoordinate(yCoordinate);

@@ -422,7 +422,7 @@ public class World {
 	}
 	
 	// TODO
-		public boolean checkWormEatFood(Position position, double wormRadius) {
+		public boolean checkWormCanEatFood(Position position, double wormRadius) {
 			int i = 0;
 			boolean eat = false;
 			Food food = null;
