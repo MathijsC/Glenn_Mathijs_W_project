@@ -71,7 +71,7 @@ public class Worm extends Entity {
 		setHitPoints(getMaxHitPoints());
 		setName(name);
 		if (!world.getTeams().isEmpty()) {
-			setTeam(world.getTeams().get(world.getTeams().size() - 1));
+			setTeam(world.getTeams().get(world.getSeed().nextInt(world.getTeams().size())));
 		}
 
 	}
@@ -86,7 +86,7 @@ public class Worm extends Entity {
 		setName("Glenn");
 		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
-			setTeam(world.getTeams().get(world.getTeams().size() - 1));
+			setTeam(world.getTeams().get(world.getSeed().nextInt(world.getTeams().size())));
 		}
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
