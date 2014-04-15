@@ -24,9 +24,11 @@ import be.kuleuven.cs.som.annotate.Raw;
  * 			|getMass() == calcMass(getRadius())
  * @invar	The amount of action points of this worm should be a valid amount at all time.
  * 			|canHaveAsActionPoints(getActionPoints())
+ * @invar	The amount of hit points of this worm should be a valid amount at all time.
+ * 			|canHaveAsHitPoints(getHitPoints())
  * 
  * @author 	Glenn Cools, Mathijs Cuppens
- *	
+ *	s
  * @version 1.30
  */
 public class Worm extends Entity {
@@ -104,19 +106,19 @@ public class Worm extends Entity {
 	}
 
 	// TODO
-	public void setTeam(Team team) {
+	private void setTeam(Team team) {
 		this.team = team;
 		team.addWorm(this);
 	}
 
-	/**
+	/** // TODO docu
 	 * @return the weapon
 	 */
 	public Weapon getWeapon() {
 		return this.weapon;
 	}
 
-	/**
+	/** // TODO docu
 	 * @param weapon the weapon to set
 	 */
 	public void setWeapon(Weapon weapon) {
@@ -132,9 +134,10 @@ public class Worm extends Entity {
 		}
 
 	}
-
+	// TODO docu
 	private Weapon weapon;
-
+	
+	// TODO docu
 	public void shoot(int propulsion) {
 		if (this.canShoot(this.getWeapon())) {
 			this.getWeapon().shoot(this.getWorld(), this, propulsion);
@@ -142,16 +145,22 @@ public class Worm extends Entity {
 					.getActionPoints()));
 		}
 	}
-
+	
+	// TODO docu
 	public boolean canShoot(Weapon weapon) {
 
 		return (this.getActionPoints() - weapon.getActionPoints()) > 0;
 	}
 
 	// TODO docu
-	public void refresh() {
+	/**
+	 * Replenishes this worms action points to its max
+	 * @effect this worm's action points will be set to this worm's maximum action points
+	 * 			|new.getActionPoints()==this.getMaxActionPoints()
+	 */
+	protected void refresh() {
 		int REGENERATION_OF_HEALTH = 10;
-		this.replenishActionPoints();
+		this.setActionPoints(this.getMaxActionPoints());
 		this.changeHealt(REGENERATION_OF_HEALTH);
 	}
 
@@ -438,8 +447,23 @@ public class Worm extends Entity {
 	 * @Effect	setHitPoints(getHitpoints() + amount)
 	 * 
 	 */
-	public void changeHealt(int amount) {
+	protected void changeHealt(int amount) {
 		this.setHitPoints(this.getHitPoints() + amount);
+	}
+	
+	/**
+	 Return true if the given amount of hit points is a valid
+	 * amount of action points.
+	 * 
+	 * @param 	hitpoints
+	 * 			The amount of hit points to check whether it is a valid amount.
+	 * @return	Return true if the given amount of hit points is not
+	 * 			negative and less or equal to the maximum amount of hit points
+	 * 			of this worm.
+	 * 			|(hitPoints >=0) && (hitPoints <= getMass())
+	 */
+	public boolean canHaveAsHitPoints(int hitPoints) {
+		return (hitPoints >= 0) && (hitPoints <= getMaxHitPoints());
 	}
 
 	/**
@@ -448,7 +472,7 @@ public class Worm extends Entity {
 	private int actionPoints;
 
 	/**
-	 * Return true if the given amount of action points if a valid
+	 * Return true if the given amount of action points is a valid
 	 * amount of action points.
 	 * 
 	 * @param 	actionPoints
@@ -511,15 +535,6 @@ public class Worm extends Entity {
 	 */
 	public int getMaxActionPoints() {
 		return (int) Math.round(getMass());
-	}
-
-	/**
-	 * Replenishes this worms action points to its max
-	 * @post this worm's action points will be set to this worm's maximum action points
-	 * 			|new.getActionPoints()==this.getMaxActionPoints()
-	 */
-	public void replenishActionPoints() {
-		this.setActionPoints(this.getMaxActionPoints());
 	}
 
 	// Movement
@@ -723,7 +738,7 @@ public class Worm extends Entity {
 	/**
 	 * The constant GRAVITY is used to 	easy manipulate the gravity in the different methods
 	 */
-	public final double GRAVITY = 9.80665;
+	private final double GRAVITY = 9.80665;
 
 	/** 
 	 * Calculates the initial velocity this worm has when it jumps.
