@@ -639,8 +639,7 @@ public class Worm extends Entity {
 			dist = maxNotAdjacentDistances.get(indexFarest).doubleValue();
 		}
 		double stepAngle = getDirection() - 0.75 + 0.25 * indexFarest;
-		setXCoordinate(getXCoordinate() + dist * Math.cos(stepAngle));
-		setYCoordinate(getYCoordinate() + dist * Math.sin(stepAngle));
+		setPosition(getXCoordinate() + dist * Math.cos(stepAngle), getYCoordinate() + dist * Math.sin(stepAngle));
 		setActionPoints(getActionPoints()
 				- (int) Math.ceil((dist / getRadius())
 						* (Math.abs(Math.cos(stepAngle)) + 4 * Math.abs(Math
@@ -705,8 +704,7 @@ public class Worm extends Entity {
 			pos.setYcoordinate(pos.getYCoordinate()-0.01);
 		}
 		this.heal((int) (3*(pos.getYCoordinate()-this.getYCoordinate())));
-		this.setXCoordinate(pos.getXCoordinate());
-		this.setYCoordinate(pos.getYCoordinate());
+		setPosition(pos.getXCoordinate(), pos.getYCoordinate());
 		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}

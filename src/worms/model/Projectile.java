@@ -9,6 +9,7 @@ import be.kuleuven.cs.som.annotate.Raw;
 /**
  * A class of projectiles used in the game worms with a position, world
  * weapon, direction, mass and force.
+ * The class also implements methods to make this projectile jump(shoot).
  * 
  * @invar	The direction of this projectile should be a valid direction at all time.
  * 			|isValidDirection(getDirection())
