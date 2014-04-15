@@ -4,17 +4,55 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 
+/**
+ * A class of foods used in the game of worms with a position(x- and y-coordinate)
+ * and a world.
+ * The class also implements a method to get eaten by a worm.
+ * 
+ * @invar	The radius of this food is a valid radius at all time.
+ * 			|isValidRadius(getRadius())
+ * @author  Glenn Cools & Mathijs Cuppens
+ * @version	1.3
+ *
+ */
 public class Food extends Entity {
 	
-	//TODO docu Constructor
-	//TODO Class Invar
-	//TODO DOCU check
-	
+	/**
+	 * Initialize a new food with the given world, position (x- and y-coordinate)
+	 * and a random radius.
+	 * 
+	 * @param 	world
+	 * 			The world of this new food.
+	 * @param 	x
+	 * 			The x-coordinate of the position of this new food.
+	 * @param 	y
+	 * 			The x-coordinate of the position of this new food.
+	 * @effect	This new food is initialized as a subobject of the class Entity
+	 * 			with the given position (x- and y-coordinate) and world.
+	 * 			| super(new Position(x,y),world)
+	 * @effect	The radius of this new food is set to a random generated radius bigger
+	 * 			than the minimal radius.
+	 * 			|setRadius(getMinRadius()*(1+RANDOM))
+	 */
 	public Food(World world, double x, double y) {
 		super(new Position(x,y),world);
 		setRadius(getMinRadius()*(1+world.getSeed().nextDouble()));
 	}
 
+	/**
+	 * Initialize a new food with the given world, random position (x- and y-coordinate)
+	 * and a random radius.
+	 * 
+	 * @param 	world
+	 * 			The world of this new food.
+	 * @effect	This new food is initialized as a subobject of the class Entity
+	 * 			with the given world and random position.
+	 * 			|super(new Position(0,0),world)
+	 * 			|setPosition(randXCoord, randYCoord);
+	 * @effect	The radius of this new food is set to a random generated radius bigger
+	 * 			than the minimal radius.
+	 * 			|setRadius(getMinRadius()*(1+RANDOM))
+	 */
 	public Food(World world) {
 		super(new Position(0, 0),world);
 		setRadius(getMinRadius()*(1+world.getSeed().nextDouble()));
@@ -22,16 +60,15 @@ public class Food extends Entity {
 		this.setPosition(randCoord[0], randCoord[1]);
 	}
 
-
 	/**
-	 * Variable holding the radius of this food
+	 * Variable holding the radius of this food.
 	 */
 	private double radius;
 
 	/**
-	 * Return the radius of this food
+	 * Return the radius of this food.
 	 * 
-	 * @return	The radius of this food
+	 * @return	The radius of this food.
 	 */
 	@Basic
 	@Raw
@@ -42,7 +79,7 @@ public class Food extends Entity {
 	/**
 	 * Set the radius of this food to the given radius if this given radius is valid.
 	 * 
-	 * @param radius
+	 * @param 	radius
 	 * 			The new radius of this food.
 	 * @post	If the given radius is valid, then the new radius of this food is equal
 	 * 			to the given radius.
@@ -82,11 +119,15 @@ public class Food extends Entity {
 		return 0.20;
 	}
 
-	/** The worm consumes this food to grow by 10% in radius
+	/** 
+	 * A worm consumes this food to grow by 10% in radius.
 	 *  
-	 * @param worm the worm that eats this food
-	 * @post	this food will be destroyed
+	 * @param 	worm 
+	 * 			The worm that eats this food.
+	 * @effect	This food will be destroyed
 	 * 			|terminate()
+	 * @effect	The radius of the worm who eats this food will grow by 10%.
+	 * 			|worm.setRadius(worm.getRadius()*1.1)
 	 */
 	public void getEatenBy(Worm worm){
 		worm.setRadius(worm.getRadius()*1.1);

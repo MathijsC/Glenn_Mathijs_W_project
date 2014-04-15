@@ -5,3 +5,5 @@
 3) Moet ge bij constructor aangeven welke exception doorgegooid worden?
 4) Moet er telkens gecontroleerd worden of Object nog niet terminated is?
 5) Moeten terminated objects nog voldoen aan invar?
+6) Random is niet altijd random.
+7) formeel @effect constructor worm rand positie.

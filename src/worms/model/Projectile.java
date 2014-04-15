@@ -26,11 +26,13 @@ import be.kuleuven.cs.som.annotate.Raw;
 public class Projectile extends Entity {
 
 	/**
-	 * Initialize this new projectile with the given position, world, weapon
+	 * Initialize this new projectile with the given position (x- and y-coordinate), world, weapon
 	 * direction, mass and force.
 	 * 
-	 * @param 	position
-	 * 			The position of this new projectile (an object position holding coordinates).
+	 * @param 	x
+	 * 			The x-coordinate of the position of this new food.
+	 * @param 	y
+	 * 			The x-coordinate of the position of this new food.
 	 * @param 	world
 	 * 			The world of this new projectile.
 	 * @param 	weapon
@@ -41,9 +43,9 @@ public class Projectile extends Entity {
 	 * 			The mass of this new projectile.
 	 * @param 	force
 	 * 			The force of this new projectile.
-	 * @effect	This projectile is initialize as and subobject of the class Entity
-	 * 			with the given position and world.
-	 * 			| super(position,world)
+	 * @effect	This projectile is initialized as a subobject of the class Entity
+	 * 			with the given position (x- and y-coordinate) and world.
+	 * 			| super(new Position(x,y),world)
 	 * @effect	The direction of this new projectiile is equal to the given
 	 * 			direction modulo 2*PI.
 	 * 			| setDirection(direction)
@@ -54,9 +56,9 @@ public class Projectile extends Entity {
 	 * @post	The weapon of this new projectile is set to the given weapon.
 	 * 			| new.getWeapon() == weapon
 	 */
-	public Projectile(Position position, World world, Weapon weapon,
+	public Projectile(double x, double y, World world, Weapon weapon,
 			double direction, double mass, double force) {
-		super(position, world);
+		super(new Position(x,y), world);
 		this.setDirection(direction);
 		this.mass = mass;
 		this.force = force;

@@ -4,7 +4,7 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 
 /**
- * A class of positions with a x- and y-coordinate.
+ * A class of positions used in the game of worms with a x- and y-coordinate.
  * The class also implements a method to get the distance between two positions.
  * 
  * @author 	Glenn Cools & Mathijs Cuppens

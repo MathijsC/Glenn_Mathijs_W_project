@@ -101,16 +101,17 @@ public enum Weapon {
 				* (this.getMaxForce() - this.getMinForce()) / 100));
 	}
 
-	public Position calcStartingPoint(Worm worm) {
-		Position startingPoint = new Position(worm.getXCoordinate()
+	public double[] calcStartingPoint(Worm worm) {
+		double[] startingCoord = {worm.getXCoordinate()
 				+ Math.cos(worm.getDirection()) * worm.getRadius(),
 				worm.getYCoordinate() + Math.sin(worm.getDirection())
-						* worm.getRadius());
-		return startingPoint;
+						* worm.getRadius()};
+		return startingCoord;
 	}
 
 	public void shoot(World world, Worm worm, int propulsion) {
-		new Projectile(this.calcStartingPoint(worm),
+		double[] startingPoint = calcStartingPoint(worm);
+		new Projectile(startingPoint[0],startingPoint[1],
 				world,this, worm.getDirection(), this.getMass(),
 				this.calcForce(propulsion));
 	}

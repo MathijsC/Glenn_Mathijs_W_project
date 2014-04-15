@@ -2,7 +2,7 @@ package worms.model;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
-//TODO moeten getermineerde objecten ook aan invar voldoen??
+//TODO moeten getermineerde objecten ook aan invar voldoen?? alle klassen nakijken hierop!!
 /**
  * A class of entities used in the game of worms with a position and a world.
  * The class also implements methods to terminate entities.
