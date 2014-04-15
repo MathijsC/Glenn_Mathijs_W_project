@@ -2,6 +2,7 @@ package worms.model;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
@@ -23,9 +24,11 @@ import be.kuleuven.cs.som.annotate.Raw;
  * 			|getMass() == calcMass(getRadius())
  * @invar	The amount of action points of this worm should be a valid amount at all time.
  * 			|canHaveAsActionPoints(getActionPoints())
+ * @invar	The amount of hit points of this worm should be a valid amount at all time.
+ * 			|canHaveAsHitPoints(getHitPoints())
  * 
  * @author 	Glenn Cools, Mathijs Cuppens
- *	
+ *	s
  * @version 1.30
  */
 public class Worm extends Entity {
@@ -64,29 +67,31 @@ public class Worm extends Entity {
 	@Raw
 	public Worm(World world, double x, double y, double direction,
 			double radius, String name) {
-		super(new Position(x, y),world);
+		super(new Position(x, y), world);
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
 		setName(name);
 		if (!world.getTeams().isEmpty()) {
-			setTeam(world.getTeams().get(world.getTeams().size() - 1));
+			setTeam(world.getTeams().get(
+					world.getSeed().nextInt(world.getTeams().size())));
 		}
 
 	}
 
 	// TODO docu
 	public Worm(World world) {
-		super(new Position(0, 0),world);
-		setRadius((0.25+(world.getSeed().nextDouble())*getMinRadius()));
+		super(new Position(0, 0), world);
+		setRadius((1 + (world.getSeed().nextDouble())) * getMinRadius());
 		setDirection(world.getSeed().nextDouble() * 2 * Math.PI);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
-		setName("Glenn");
+		final String[] wormNames = {"Glenn","Mathijs","Siri","Bernd","Tom","Nick","Toon","Lieven","Joeri","Syd"};
+		setName(wormNames[world.getSeed().nextInt(wormNames.length)]);
 		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
-			setTeam(world.getTeams().get(world.getTeams().size() - 1));
+			setTeam(world.getTeams().get(world.getSeed().nextInt(world.getTeams().size())));
 		}
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
@@ -101,19 +106,19 @@ public class Worm extends Entity {
 	}
 
 	// TODO
-	public void setTeam(Team team) {
+	private void setTeam(Team team) {
 		this.team = team;
 		team.addWorm(this);
 	}
 
-	/**
+	/** // TODO docu
 	 * @return the weapon
 	 */
 	public Weapon getWeapon() {
 		return this.weapon;
 	}
 
-	/**
+	/** // TODO docu
 	 * @param weapon the weapon to set
 	 */
 	public void setWeapon(Weapon weapon) {
@@ -129,9 +134,10 @@ public class Worm extends Entity {
 		}
 
 	}
-
+	// TODO docu
 	private Weapon weapon;
-
+	
+	// TODO docu
 	public void shoot(int propulsion) {
 		if (this.canShoot(this.getWeapon())) {
 			this.getWeapon().shoot(this.getWorld(), this, propulsion);
@@ -139,20 +145,23 @@ public class Worm extends Entity {
 					.getActionPoints()));
 		}
 	}
-
+	
+	// TODO docu
 	public boolean canShoot(Weapon weapon) {
 
 		return (this.getActionPoints() - weapon.getActionPoints()) > 0;
 	}
 
-
-
-
 	// TODO docu
-	public void refresh() {
+	/**
+	 * Replenishes this worms action points to its max
+	 * @effect this worm's action points will be set to this worm's maximum action points
+	 * 			|new.getActionPoints()==this.getMaxActionPoints()
+	 */
+	protected void refresh() {
 		int REGENERATION_OF_HEALTH = 10;
-		this.replenishActionPoints();
-		this.heal(REGENERATION_OF_HEALTH);
+		this.setActionPoints(this.getMaxActionPoints());
+		this.changeHealt(REGENERATION_OF_HEALTH);
 	}
 
 	/**
@@ -385,8 +394,8 @@ public class Worm extends Entity {
 	public int getHitPoints() {
 		return hitPoints;
 	}
-	
-	//TODO recheck
+
+	// TODO recheck
 
 	/**
 	 * Set the number of hitpoints of this worm to the given number of points.
@@ -418,10 +427,6 @@ public class Worm extends Entity {
 			this.hitPoints = hitPoints;
 		}
 	}
-	
-	public void dealDamage(int damage) {
-		this.setHitPoints(this.getHitPoints()-damage);
-	}
 
 	/**
 	 * Return the maximum number of hitpoints of this worm.
@@ -434,16 +439,32 @@ public class Worm extends Entity {
 	}
 
 	/**
-	 * heals this worm for a given amount of hitpoints
-	 * @param amount of hitPoints the worm will heal
+	 * changes the hitpoints of this worm for a given amount of hitpoints
+	 * Positive: the worm heals
+	 * Negative: the worm receives damage
+	 * 
+	 * @param amount of hitPoints the worm will change hitpoints in
 	 * @Effect	setHitPoints(getHitpoints() + amount)
 	 * 
 	 */
-	public void heal(int amount) {
+	protected void changeHealt(int amount) {
 		this.setHitPoints(this.getHitPoints() + amount);
 	}
 	
-	
+	/**
+	 Return true if the given amount of hit points is a valid
+	 * amount of action points.
+	 * 
+	 * @param 	hitpoints
+	 * 			The amount of hit points to check whether it is a valid amount.
+	 * @return	Return true if the given amount of hit points is not
+	 * 			negative and less or equal to the maximum amount of hit points
+	 * 			of this worm.
+	 * 			|(hitPoints >=0) && (hitPoints <= getMass())
+	 */
+	public boolean canHaveAsHitPoints(int hitPoints) {
+		return (hitPoints >= 0) && (hitPoints <= getMaxHitPoints());
+	}
 
 	/**
 	 * Variable holding the number of action points of this worm.
@@ -451,7 +472,7 @@ public class Worm extends Entity {
 	private int actionPoints;
 
 	/**
-	 * Return true if the given amount of action points if a valid
+	 * Return true if the given amount of action points is a valid
 	 * amount of action points.
 	 * 
 	 * @param 	actionPoints
@@ -497,11 +518,12 @@ public class Worm extends Entity {
 	 */
 	@Raw
 	private void setActionPoints(int actionPoints) {
-		if (actionPoints < 0)
+		if (actionPoints < 0) {
 			this.actionPoints = 0;
-		else if (actionPoints > this.getMaxActionPoints())
+			this.getWorld().startNextTurn();
+		} else if (actionPoints > this.getMaxActionPoints()) {
 			this.actionPoints = this.getMaxActionPoints();
-		else
+		} else
 			this.actionPoints = actionPoints;
 	}
 
@@ -513,15 +535,6 @@ public class Worm extends Entity {
 	 */
 	public int getMaxActionPoints() {
 		return (int) Math.round(getMass());
-	}
-
-	/**
-	 * Replenishes this worms action points to its max
-	 * @post this worm's action points will be set to this worm's maximum action points
-	 * 			|new.getActionPoints()==this.getMaxActionPoints()
-	 */
-	public void replenishActionPoints() {
-		this.setActionPoints(this.getMaxActionPoints());
 	}
 
 	// Movement
@@ -629,7 +642,7 @@ public class Worm extends Entity {
 			} else {
 				maxAdjacentDistances.add(0.0);
 				maxNotAdjacentDistances.add(dist);
-				}
+			}
 			angle += 0.25;
 		}
 		int indexFarest = getIndexBestStep(maxAdjacentDistances);
@@ -644,7 +657,7 @@ public class Worm extends Entity {
 				- (int) Math.ceil((dist / getRadius())
 						* (Math.abs(Math.cos(stepAngle)) + 4 * Math.abs(Math
 								.sin(stepAngle)))));
-		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
+		if (getWorld().checkWormEatFood(getPosition(), getRadius())) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 
@@ -657,7 +670,7 @@ public class Worm extends Entity {
 		while (dist <= this.getRadius()) {
 			double xCo = (getXCoordinate() + dist * Math.cos(angle));
 			double yCo = (getYCoordinate() + dist * Math.sin(angle));
-			if (!getWorld().isPassable(xCo, yCo,this.getRadius())) {
+			if (!getWorld().isPassable(xCo, yCo, this.getRadius())) {
 				break;
 			}
 			result = dist;
@@ -690,25 +703,32 @@ public class Worm extends Entity {
 		}
 		return indexBest;
 	}
-	
-	//TODO docu
-	public boolean canFall(){
-		return !getWorld().isAdjacentTerrain(getRadius(), getXCoordinate(), getYCoordinate());
+
+	// TODO docu
+	public boolean canFall() {
+		return !getWorld().isAdjacentTerrain(getRadius(), getXCoordinate(),
+				getYCoordinate());
 	}
-	
-	//TODO docu
-	public void fall(){
-		
-		Position pos = new Position(this.getXCoordinate(),this.getYCoordinate());
-		while ((!getWorld().isAdjacentTerrain(getRadius(), pos.getXCoordinate(), pos.getYCoordinate())) && (getWorld().isPassable(pos.getXCoordinate(), pos.getYCoordinate(),getRadius())) && (pos.getYCoordinate()-getRadius() > 0)){
-			pos.setYcoordinate(pos.getYCoordinate()-0.01);
+
+	// TODO docu
+	public void fall() {
+
+		Position pos = new Position(this.getXCoordinate(),
+				this.getYCoordinate());
+		while ((!getWorld().isAdjacentTerrain(getRadius(),
+				pos.getXCoordinate(), pos.getYCoordinate()))
+				&& (getWorld().isPassable(pos.getXCoordinate(),
+						pos.getYCoordinate(), getRadius()))
+				&& (pos.getYCoordinate() - getRadius() > 0)) {
+			pos.setYcoordinate(pos.getYCoordinate() - 0.01);
 		}
-		this.heal((int) (3*(pos.getYCoordinate()-this.getYCoordinate())));
+		this.changeHealt((int) (3 * (pos.getYCoordinate() - this
+				.getYCoordinate())));
 		setPosition(pos.getXCoordinate(), pos.getYCoordinate());
-		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
+		if (getWorld().checkWormEatFood(getPosition(), getRadius())) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
-		if (getYCoordinate()-getRadius() < 0){
+		if (getYCoordinate() - getRadius() < 0) {
 			terminate();
 		}
 	}
@@ -716,7 +736,7 @@ public class Worm extends Entity {
 	/**
 	 * The constant GRAVITY is used to 	easy manipulate the gravity in the different methods
 	 */
-	public final double GRAVITY = 9.80665;
+	private final double GRAVITY = 9.80665;
 
 	/** 
 	 * Calculates the initial velocity this worm has when it jumps.
@@ -769,7 +789,7 @@ public class Worm extends Entity {
 		// System.out.println(timeStep);
 
 		setActionPoints(0);
-		if (getWorld().checkWormEatFood(getPosition(), getRadius())){
+		if (getWorld().checkWormEatFood(getPosition(), getRadius())) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 	}
@@ -803,7 +823,7 @@ public class Worm extends Entity {
 		while (jumping) {
 			tempPosition = this.jumpStep(time);
 			if (getWorld().isPassable(tempPosition.getXCoordinate(),
-					tempPosition.getYCoordinate(),this.getRadius())) {
+					tempPosition.getYCoordinate(), this.getRadius())) {
 				position = tempPosition;
 				time = time + timeStep;
 			} else {

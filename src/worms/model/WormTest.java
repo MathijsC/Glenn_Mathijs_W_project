@@ -23,7 +23,7 @@ public class WormTest {
 			{ true, true, true, true,true },
 			{ false, false, false, false,false } };
 	/**
-	 * Set up n immutable test fixture.
+	 * Set up an immutable test fixture.
 	 * 
 	 * @post   The variable noActionPoints references a new
 	 *         worm with: X-Coordinate 0, Y-Coordinate 0, Direction 1, Radius 0.5,
@@ -75,6 +75,7 @@ public class WormTest {
 		assertEquals(Math.PI, newWorm.getDirection(),0.00001);
 		assertEquals(1876.708911, newWorm.getMass(),0.00001);
 		assertEquals(1877, newWorm.getActionPoints());
+		assertEquals(1877, newWorm.getHitPoints());
 		assertEquals("Jason", newWorm.getName());	
 	}
 	
@@ -211,6 +212,35 @@ public class WormTest {
 	public final void getMaxActionPoints_SingleCase(){
 		assertEquals(556, testWorm.getMaxActionPoints());
 	}
+	
+	//HITPOINTS
+	/**
+	 * getHitPoints is implicitly tested in the constructor test and
+	 * other tests to check the current action points of the worm.
+	 */
+	
+	@Test
+	public final void canHaveHitPoints_TrueCase(){
+		assertTrue(testWorm.canHaveAsHitPoints(450));
+	}
+	@Test
+	public final void canHaveAsHitPoints_FalseCase(){
+		assertFalse(testWorm.canHaveAsHitPoints(560));
+	}	
+	@Test
+	public final void canHaveAsHitPoints_TrueCase_UpperBoundary(){
+		assertTrue(testWorm.canHaveAsHitPoints(556));
+	}
+	@Test
+	public final void canHaveAsHitPoints_TrueCase_LowerBoundary(){
+		assertTrue(testWorm.canHaveAsHitPoints(0));
+	}
+	@Test
+	public final void getMaxHitPoints_SingleCase(){
+		assertEquals(556, testWorm.getMaxHitPoints());
+	}
+	
+	
 	
 	//TURN
 	@Test

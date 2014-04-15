@@ -175,6 +175,10 @@ public class World {
 	public void removeEntity(Entity entity){
 		if (entity instanceof Worm){
 			worms.remove(entity);
+			if(this.getCurrentWormIndex() >= worms.size()) {
+				this.startNextRound();
+			}
+			
 		} else if (entity instanceof Projectile){
 			this.projectile = null;
 		} else if (entity instanceof Food){
