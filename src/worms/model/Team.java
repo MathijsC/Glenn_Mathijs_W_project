@@ -76,8 +76,8 @@ public class Team {
 	 * Set the world of this team to the given world.
 	 * 
 	 * @param 	world
-	 * 			The world where this worm lives in.
-	 * @post	The world of this worm is set to the given world.
+	 * 			The world where this team is in.
+	 * @post	The world of this team is set to the given world.
 	 * 			| new.getWorld() == world
 	 * @effect	The world is added to the given world.
 	 * 			| world.addTeam(this)
@@ -102,7 +102,7 @@ public class Team {
 	 * @param 	team
 	 * 			The team to check if he lives in a world.			
 	 * @return	True if the given team has a world.
-	 * 			| TODO formeel
+	 * 			| team.getWorld() != null
 	 */
 	private static boolean hasWorld(Team team){
 		return (team.getWorld() != null);
@@ -127,7 +127,7 @@ public class Team {
 	 * 
 	 * @param 	worm
 	 * 			The worm to be added to this team.
-	 * @post	The last worm added to thi team is the given worm.
+	 * @post	The last worm added to this team is the given worm.
 	 * 			TODO formeel
 	 * 
 	 * 
