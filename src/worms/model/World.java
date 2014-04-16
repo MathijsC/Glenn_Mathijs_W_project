@@ -39,7 +39,6 @@ public class World {
 		this.setPassableMap(passableMap);
 		this.seed = random;
 	}
-	
 
 	/**
 	 * A variable containing the width of this world.
@@ -120,54 +119,55 @@ public class World {
 		return seed;
 	}
 
-	//OBJECTS
-	
+	// OBJECTS
+
 	/**
 	 * A list containing all the worms who are currently in this world.
 	 */
 	private ArrayList<Worm> worms = new ArrayList<Worm>();
-	
+
 	/**
 	 * A variable holding the projectile that is active in this world
 	 */
 	private Projectile projectile;
-	
+
 	/**
 	 * A list containing all the food in this world.
 	 */
 	private ArrayList<Food> foodList = new ArrayList<Food>();
 
-	//TODO
-	public void addEntity(Entity entity) throws IllegalStateException,IllegalArgumentException {
+	// TODO
+	public void addEntity(Entity entity) throws IllegalStateException,
+			IllegalArgumentException {
 		if (!(entity.getWorld() == this)) {
 			throw new IllegalStateException();
 		}
-		if (entity instanceof Worm){
-			worms.add((Worm)entity);
-		} else if (entity instanceof Projectile){
-			this.projectile = (Projectile)entity;
-		} else if (entity instanceof Food){
-			foodList.add((Food)entity);
+		if (entity instanceof Worm) {
+			worms.add((Worm) entity);
+		} else if (entity instanceof Projectile) {
+			this.projectile = (Projectile) entity;
+		} else if (entity instanceof Food) {
+			foodList.add((Food) entity);
 		} else {
 			throw new IllegalArgumentException();
-		}		
+		}
 	}
-	
+
 	// TODO
-	public void removeEntity(Entity entity){
-		if (entity instanceof Worm){
+	public void removeEntity(Entity entity) {
+		if (entity instanceof Worm) {
 			worms.remove(entity);
-			if(this.getCurrentWormIndex() >= worms.size()) {
+			if (this.getCurrentWormIndex() >= worms.size()) {
 				this.startNextRound();
 			}
-			
-		} else if (entity instanceof Projectile){
+
+		} else if (entity instanceof Projectile) {
 			this.projectile = null;
-		} else if (entity instanceof Food){
+		} else if (entity instanceof Food) {
 			foodList.remove(entity);
 		} else {
 			throw new IllegalArgumentException();
-		}		
+		}
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class World {
 	public ArrayList<Worm> getWorms() {
 		return worms;
 	}
-	
+
 	/**
 	 * Return the active projectile in this world
 	 * 
@@ -187,7 +187,7 @@ public class World {
 	public Projectile getProjectile() {
 		return this.projectile;
 	}
-	
+
 	/**
 	 * Return a list of the food who in this world.
 	 * 
@@ -207,8 +207,7 @@ public class World {
 		return worms.get(index);
 	}
 
-	
-	//GAMEPLAY
+	// GAMEPLAY
 	/**
 	 * The index of the worm who is at turn in the list of worms.
 	 */
@@ -289,31 +288,31 @@ public class World {
 	public void startGame() {
 		setCurrentWormIndex(0);
 	}
-	
-	//TODO
+
+	// TODO
 	public boolean isGameFinished() {
 		Team teamFirstWorm = getWormAtIndex(0).getTeam();
-		for (Worm worm:worms){
-			if ((worm.getTeam() != teamFirstWorm)){
+		for (Worm worm : worms) {
+			if ((worm.getTeam() != teamFirstWorm)) {
 				return false;
 			}
 		}
-		if ((teamFirstWorm == null) && (getWorms().size() > 1)){
+		if ((teamFirstWorm == null) && (getWorms().size() > 1)) {
 			return false;
 		}
 		return true;
 	}
-	
-	public String getWinnerName(){
-		if (getWorms().size() == 1){
+
+	public String getWinnerName() {
+		if (getWorms().size() == 1) {
 			return getWormAtIndex(0).getName();
 		} else {
 			return getWormAtIndex(0).getTeam().getName();
 		}
-		
+
 	}
 
-	//TEAMS
+	// TEAMS
 	/**
 	 * A list containing all the teams who are curently in this world.
 	 */
@@ -381,7 +380,6 @@ public class World {
 
 		return hit;
 	}
-	
 
 	// TODO
 	public Food getFoodEatenBy(Worm worm) {
@@ -402,26 +400,60 @@ public class World {
 
 		return food;
 	}
-	
-	// TODO
-		public boolean checkWormCanEatFood(Position position, double wormRadius) {
-			int i = 0;
-			boolean eat = false;
-			Food food = null;
-			while ((i < this.getFoodList().size()) && (!eat)) {
-				food = this.getFoodAtIndex(i);
-				if ((position.distanceTo(food.getPosition())) <= (wormRadius + food
-						.getRadius())) {
-					eat = true;
-				}
-				i++;
-			}
 
-			return eat;
+	// TODO
+	public boolean checkWormCanEatFood(Position position, double wormRadius) {
+		int i = 0;
+		boolean eat = false;
+		Food food = null;
+		while ((i < this.getFoodList().size()) && (!eat)) {
+			food = this.getFoodAtIndex(i);
+			if ((position.distanceTo(food.getPosition())) <= (wormRadius + food
+					.getRadius())) {
+				eat = true;
+			}
+			i++;
+		}
+
+		return eat;
+	}
+	
+	//TODO
+	/**
+	 * 
+	 * @param worm	The worm which position need to be checked if it is in the world
+	 * @return		True if the worm is in within the boundaries of this world
+	 * 				False if the worm is no longer within the boundaries of this world
+	 * 				|(0 < W0RMX < WIDTH) && (0 < WORMY < HEIGTH)
+	 */
+	public boolean wormInWorld(Worm worm) {
+		return (0 < (worm.getXCoordinate() - worm.getRadius()))
+				&& (0 < (worm.getYCoordinate() - worm.getRadius()))
+				&& ((worm.getXCoordinate() - worm.getRadius()) < this
+						.getWidth())
+				&& ((worm.getYCoordinate() - worm.getRadius()) < this
+						.getHeight());
+	}
+	
+	/**
+	 * 
+	 * @param worm	The worm which position need to be checked if it is in the world
+	 * @return		True if the worm is in within the boundaries of this world
+	 * 				False if the worm is no longer within the boundaries of this world
+	 * 				|(0 < PROJECTILEX < WIDTH) && (0 < PROJECTILEY < HEIGTH)
+	 */
+		public boolean projectileInWorld(Projectile projectile) {
+			return (0 < (projectile.getXCoordinate() - projectile.getRadius()))
+					&& (0 < (projectile.getYCoordinate() - projectile.getRadius()))
+					&& ((projectile.getXCoordinate() - projectile.getRadius()) < this
+							.getWidth())
+					&& ((projectile.getYCoordinate() - projectile.getRadius()) < this
+							.getHeight());
 		}
 	
 	
-	//TODO docu
+
+	// TODO docu
 	// This version of isPassable is incomplete, but it is a faster one
 	// to prevent lags during the gameplay.
 	public boolean isPassable(double xCo, double yCo, double radius) {
@@ -431,28 +463,32 @@ public class World {
 		}
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
-		
+
 		double angle = 0;
-		while (angle<2*Math.PI){
+		while (angle < 2 * Math.PI) {
 			double circleX = radius * Math.cos(angle) + xCo;
 			double circleY = radius * Math.sin(angle) + yCo;
-			
+
 			int row = (int) ((this.getPassableMap().length) - ((circleY) / boxHeight));
 			int column = (int) ((circleX) / boxWidth);
-			
-			if ((row >= 0) && (row < getPassableMap().length) && (column >= 0) && (column < getPassableMap()[0].length) && (passableMap[row][column] != true)){
-					return false;
-			}			
-			angle += (1.0/4.0*Math.PI);
+
+			if ((row >= 0) && (row < getPassableMap().length) && (column >= 0)
+					&& (column < getPassableMap()[0].length)
+					&& (passableMap[row][column] != true)) {
+				return false;
+			}
+			angle += (1.0 / 4.0 * Math.PI);
 		}
 		int row = (int) ((this.getPassableMap().length) - ((yCo) / boxHeight));
 		int column = (int) ((xCo) / boxWidth);
-		if ((row >= 0) && (row < getPassableMap().length) && (column >= 0) && (column < getPassableMap()[0].length) && (passableMap[row][column])){
+		if ((row >= 0) && (row < getPassableMap().length) && (column >= 0)
+				&& (column < getPassableMap()[0].length)
+				&& (passableMap[row][column])) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	// TODO docu and max values
 	// This version of isPassable is complete, but it takes to long to run so
 	// the game isn't playable due to the lags this function creates.
@@ -469,21 +505,26 @@ public class World {
 		int lowerRow = (int) ((this.getPassableMap().length) - ((yCo - radius) / boxHeight));
 		int leftColumn = (int) ((xCo - radius) / boxWidth);
 		int rightColumn = (int) ((xCo + radius) / boxWidth);
-		//System.out.println("CheckPassable:");
-		//System.out.println(this.getPassableMap()[0].length+ " | "+this.getPassableMap().length);
-		//System.out.println(boxWidth+ " | "+boxHeight);
-		//System.out.println("Coords: " + xCo + " | " + yCo+" Circlerad: "+radius);
+		// System.out.println("CheckPassable:");
+		// System.out.println(this.getPassableMap()[0].length+
+		// " | "+this.getPassableMap().length);
+		// System.out.println(boxWidth+ " | "+boxHeight);
+		// System.out.println("Coords: " + xCo + " | " +
+		// yCo+" Circlerad: "+radius);
 
-		//String rows = "Rows:";
-		//String cols = "Cols:";
-		//System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
-				//+ " | " + rightColumn);
-		for (int row = upperRow; row <= lowerRow; row+=1) {
-			//rows = rows+"\n"+Integer.toString(row)+": ";
-			for (int column = leftColumn; column <= rightColumn; column+=1) {
-				//rows = rows+" "+Integer.toString(column);
-				if ((row >= 0) && (row < getPassableMap().length) && (column >= 0) && (column < getPassableMap()[0].length) && (isBoxInRadius(row, column, xCo, yCo, radius))) {
-					//rows = rows+"X";
+		// String rows = "Rows:";
+		// String cols = "Cols:";
+		// System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
+		// + " | " + rightColumn);
+		for (int row = upperRow; row <= lowerRow; row += 1) {
+			// rows = rows+"\n"+Integer.toString(row)+": ";
+			for (int column = leftColumn; column <= rightColumn; column += 1) {
+				// rows = rows+" "+Integer.toString(column);
+				if ((row >= 0) && (row < getPassableMap().length)
+						&& (column >= 0)
+						&& (column < getPassableMap()[0].length)
+						&& (isBoxInRadius(row, column, xCo, yCo, radius))) {
+					// rows = rows+"X";
 					if (passableMap[row][column] != true) {
 						/**System.out.println("is impassable");
 						for (int i = upperRow; i <= lowerRow; i++) {
@@ -500,29 +541,24 @@ public class World {
 						}*/
 						return false;
 					}
-				} /**else {
-					rows = rows+"_";
-					}*/
+				}
+				/**else {
+				rows = rows+"_";
+				}*/
 			}
 		}
-		//System.out.println(rows);
-		//System.out.println(cols);
-		/*System.out.println("is passable");
-		for (int i = upperRow; i <= lowerRow; i++) {
-			System.out.print(i+ "| ");
-		    for (int j = leftColumn; j <= rightColumn; j++) {
-		    	if (passableMap[i][j] == true ){
-		    		System.out.print("1 ");
-		    	}
-		    	else {
-		    		System.out.print("0 ");
-		    	}
-		    }
-		    System.out.print("\n");
-		}*/
+		// System.out.println(rows);
+		// System.out.println(cols);
+		/*
+		 * System.out.println("is passable"); for (int i = upperRow; i <=
+		 * lowerRow; i++) { System.out.print(i+ "| "); for (int j = leftColumn;
+		 * j <= rightColumn; j++) { if (passableMap[i][j] == true ){
+		 * System.out.print("1 "); } else { System.out.print("0 "); } }
+		 * System.out.print("\n"); }
+		 */
 		// System.out.println("isPass: " + xCo + " | " + yCo + " | " + column
 		// + " | " + row + " | " + this.getPassableMap()[row][column]);
-		//return this.getPassableMap()[row][column];
+		// return this.getPassableMap()[row][column];
 
 		return true;
 	}
@@ -556,7 +592,7 @@ public class World {
 			return false;
 		}
 		double angle = 0;
-		while (angle <= (2 * Math.PI )) {
+		while (angle <= (2 * Math.PI)) {
 			double circleX = radius * 0.1 * Math.cos(angle) + xCo;
 			double circleY = radius * 0.1 * Math.sin(angle) + yCo;
 			if (!isPassable(circleX, circleY, radius)) {
@@ -567,7 +603,7 @@ public class World {
 		return false;
 	}
 
-	//TODO docu
+	// TODO docu
 	public double[] getRandAdjacentTerrain(double radius) {
 		int max = 0;
 		boolean found = false;
@@ -584,7 +620,7 @@ public class World {
 		return coord;
 	}
 
-	//TODO docu
+	// TODO docu
 	private double[] checkPerimeter(double radius, double xCo, double yCo) {
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;
