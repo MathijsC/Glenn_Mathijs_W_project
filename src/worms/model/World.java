@@ -34,30 +34,12 @@ public class World {
 	 */
 	public World(double width, double height, boolean[][] passableMap,
 			Random random) {
-		setTerminated(false);
 		this.width = width;
 		this.height = height;
 		this.setPassableMap(passableMap);
 		this.seed = random;
 	}
 	
-	//TODO
-	private boolean terminated;
-	
-	//TODO
-	private void setTerminated(boolean terminated){
-		this.terminated = terminated;
-	}
-	
-	//TODO
-	private boolean isTerminated(){
-		return terminated;
-	}
-	
-	//TODO
-	private void terminate(){
-		setTerminated(true);
-	}
 
 	/**
 	 * A variable containing the width of this world.
@@ -585,6 +567,7 @@ public class World {
 		return false;
 	}
 
+	//TODO docu
 	public double[] getRandAdjacentTerrain(double radius) {
 		int max = 0;
 		boolean found = false;
@@ -601,6 +584,7 @@ public class World {
 		return coord;
 	}
 
+	//TODO docu
 	private double[] checkPerimeter(double radius, double xCo, double yCo) {
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;

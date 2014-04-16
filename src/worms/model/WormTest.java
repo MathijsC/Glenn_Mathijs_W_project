@@ -3,8 +3,6 @@ package worms.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
 import java.util.Random;
 
 import org.junit.Before;
@@ -37,7 +35,7 @@ public class WormTest {
 		noActionPoints.jump(0.1);		
 	}
 
-	private Worm testWorm, noDirection,player;
+	private Worm testWorm, noDirection;
 	private Random random1;
 	private World world1;
 	private boolean[][] passableMap1 = new boolean[][] {
@@ -60,10 +58,7 @@ public class WormTest {
 	public void setUp() throws Exception {
 		world1 = new World(5.0,5.0, passableMap1, random1);
 		testWorm = new Worm(world1,0,0,1,0.5,"Test");
-		noDirection = new Worm(world1,0,0,0,0.5,"No Direction");
-		
-		player = new Worm(world1,1,1.2,-Math.PI/2,0.25,"Player");
-		
+		noDirection = new Worm(world1,0,0,0,0.5,"No Direction");		
 	}
 
 
