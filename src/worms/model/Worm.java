@@ -84,7 +84,7 @@ public class Worm extends Entity {
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
 		setName(name);
-		setWeapon(Weapon.Rifle);
+		setCurrentWeaponIndex(0);
 		if (!world.getTeams().isEmpty()) {
 			setTeam(world.getTeams().get(
 					world.getSeed().nextInt(world.getTeams().size())));
@@ -153,19 +153,29 @@ public class Worm extends Entity {
 	 * @return The weapon of this worm.
 	 */
 	public Weapon getWeapon() {
-		return this.weapon;
+		return this.weaponTypeList.get(this.getCurrentWeaponIndex());
+	}
+	
+	
+	/**
+	 * Return the current weapon index
+	 * 
+	 * @return the current weapon index
+	 */
+	public int getCurrentWeaponIndex() {
+		return this.currentWeaponIndex;
 	}
 
 	/**
-	 * Set the weapon of this worm to the given weapon.
+	 * Set the current weapon index of this worm to the given weapon index.
 	 * 
-	 * @param 	weapon
-	 * 			The weapon to set as weapon of this worm.
-	 * @post	The given weapon is equal to the new weapon of this worm.
-	 * 			|new.getWeapon() == weapon
+	 * @param 	index
+	 * 			The index to set as current weapon index of this worm.
+	 * @post	The given weapon index is equal to the new current weapon index of this worm.
+	 * 			|new.getCurrentWeaponIndex() == index
 	 */
-	public void setWeapon(Weapon weapon) {
-		this.weapon = weapon;
+	public void setCurrentWeaponIndex(int index) {
+		this.currentWeaponIndex = index;
 	}
 
 	/**
@@ -185,22 +195,17 @@ public class Worm extends Entity {
 	 * @effect	If the current weapon is the last weapon in weaponTypeList,
 	 * 			select the first weapon of that list as weapon for this worm
 	 * 			and set the currentWeaponIndex to zero.
-	 * 			|if ((currentWeaponIndex+1) >= weaponTypeList.size())
-	 * 			|	then setWeapon(weaponTypeList.get(0))
-	 * 			|		 currentWeaponIndex = 0
-	 * @effect	The next weapon in weaponTypeList, select the first weapon of 
-	 * 			that list as weapon for this worm and add 1 to the currentWeaponIndex.
+	 * 			|if (currentWeaponIndex >= (weaponTypeList.size()-1))
+	 * 			|	then setCurrentWeaponIndex(0);
+	 * @effect	Else select the next weapon in weaponTypeList and add 1 to the currentWeaponIndex of this worm.
 	 * 			|else
-	 * 			|	then setWeapon(weaponTypeList.get(currentWeaponIndex+1))
-	 * 			|		 currentWeaponIndex += 1
+	 * 			|	then setCurrentWeaponIndex(getCurrentWeaponIndex()+1)
 	 */
 	public void selectNextWeapon() {
-		if ((currentWeaponIndex + 1) >= weaponTypeList.size()) {
-			setWeapon(weaponTypeList.get(0));
-			currentWeaponIndex = 0;
+		if (currentWeaponIndex >= (weaponTypeList.size()-1)) {
+			this.setCurrentWeaponIndex(0);
 		} else {
-			setWeapon(weaponTypeList.get(currentWeaponIndex + 1));
-			currentWeaponIndex += 1;
+			this.setCurrentWeaponIndex(this.getCurrentWeaponIndex()+1);
 		}
 	}
 
@@ -833,13 +838,12 @@ public class Worm extends Entity {
 		if (getYCoordinate() - getRadius() < 0) {
 			terminate();
 		} else {
-			if (((int) (3 * (oldPos.getYCoordinate() - this.getYCoordinate()))) < getHitPoints()) {
+			if (((int) (3 * (this.getPosition().distanceTo(oldPos))) < getHitPoints())) {
 				if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
 					getWorld().getFoodEatenBy(this).getEatenBy(this);
 				}
 			}
-			this.addHealt(-(int) (3 * (oldPos.getYCoordinate() - this
-					.getYCoordinate())));
+			this.addHealt(-(int) (3 * (this.getPosition().distanceTo(oldPos))));
 		}
 	}
 
@@ -935,11 +939,14 @@ public class Worm extends Entity {
 	 */
 	private double[] possibleJump(double timeStep) {
 
-		// The function will calculate step by step the next position on the jump of this worm
+		// The function will calculate step by step the next position on the
+		// jump of this worm
 		// and will check if the position is passable.
-		// If so, the function will stop and will return the final position and time of the jump. 
-		// If not, the new position will be stored in a local variable and the next position
-		// will be calculated.	
+		// If so, the function will stop and will return the final position and
+		// time of the jump.
+		// If not, the new position will be stored in a local variable and the
+		// next position
+		// will be calculated.
 
 		Position position = this.getPosition();
 		double time = timeStep;
