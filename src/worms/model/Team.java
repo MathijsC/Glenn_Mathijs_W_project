@@ -2,6 +2,17 @@ package worms.model;
 
 import java.util.ArrayList;
 
+/**
+ * A class of teams used in the game of worms with worms, a name and a world.
+ * The class also implements a method to add worms to the team.
+ * @invar	A team should at all time have a world.
+ * 			|hasWorld()
+ * @invar	A team should at all time have a valid name.
+ * 			|isValidName(getName()) 
+ * @author 	Glenn Cools & Mathijs Cuppens
+ * @version	1.2
+ *
+ */
 public class Team {
 	
 	/**
@@ -89,7 +100,7 @@ public class Team {
 		if (world == null) {
 			throw new NullPointerException();
 		}
-		if (Team.hasWorld(this)){
+		if (hasWorld()){
 			throw new IllegalStateException();
 		}
 		this.world = world;
@@ -104,8 +115,8 @@ public class Team {
 	 * @return	True if the given team has a world.
 	 * 			| team.getWorld() != null
 	 */
-	private static boolean hasWorld(Team team){
-		return (team.getWorld() != null);
+	private boolean hasWorld(){
+		return (getWorld() != null);
 	}
 	
 	/**
@@ -128,9 +139,7 @@ public class Team {
 	 * @param 	worm
 	 * 			The worm to be added to this team.
 	 * @post	The last worm added to this team is the given worm.
-	 * 			TODO formeel
-	 * 
-	 * 
+	 * 			|getWorms().get(getWorms().size()-1) == worm 
 	 */
 	public void addWorm(Worm worm) throws IllegalStateException{
 		if (!(worm.getTeam() == this)){

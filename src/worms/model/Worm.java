@@ -82,7 +82,7 @@ public class Worm extends Entity {
 		setDirection(direction);
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
-		setActionPoints(getMaxActionPoints());
+		setHitPoints(getMaxHitPoints());
 		setName(name);
 		setWeapon(Weapon.Rifle);
 		if (!world.getTeams().isEmpty()) {
@@ -108,11 +108,14 @@ public class Worm extends Entity {
 	 * 			
 	 */
 	public Worm(World world) {
-		this(world,0.0,0.0,world.getSeed().nextDouble() * 2 * Math.PI,(1 + (world.getSeed().nextDouble())) * getMinRadius(),"Dummyname");
-		final String[] wormNames = {"Glenn","Mathijs","Siri","Bernd","Tom","Nick","Toon","Lieven","Joeri","Syd"};
+		this(world, 0.0, 0.0, world.getSeed().nextDouble() * 2 * Math.PI,
+				(1 + (world.getSeed().nextDouble())) * getMinRadius(),
+				"Dummyname");
+		final String[] wormNames = { "Glenn", "Mathijs", "Siri", "Bernd",
+				"Tom", "Nick", "Toon", "Lieven", "Joeri", "Syd" };
 		setName(wormNames[world.getSeed().nextInt(wormNames.length)]);
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
-		this.setPosition(randCoord[0], randCoord[1]);		
+		this.setPosition(randCoord[0], randCoord[1]);
 	}
 
 	/**
@@ -164,17 +167,18 @@ public class Worm extends Entity {
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 	}
-	
+
 	/**
 	 * An arrayList holding all the possible weapons of this worm.
 	 */
-	private ArrayList<Weapon> weaponTypeList = new ArrayList<Weapon>(Arrays.asList(Weapon.Rifle, Weapon.Bazooka));
+	private ArrayList<Weapon> weaponTypeList = new ArrayList<Weapon>(
+			Arrays.asList(Weapon.Rifle, Weapon.Bazooka));
 
 	/**
 	 * A variable holding the index of the current weapon of this worm.
 	 */
-	private int	currentWeaponIndex = 0;
-	
+	private int currentWeaponIndex = 0;
+
 	/**
 	 * Set the next weapon of weaponTypeList as weapon of this worm.
 	 * 
@@ -190,12 +194,12 @@ public class Worm extends Entity {
 	 * 			|	then setWeapon(weaponTypeList.get(currentWeaponIndex+1))
 	 * 			|		 currentWeaponIndex += 1
 	 */
-	public void selectNextWeapon() {		
-		if ((currentWeaponIndex+1) >= weaponTypeList.size()){
+	public void selectNextWeapon() {
+		if ((currentWeaponIndex + 1) >= weaponTypeList.size()) {
 			setWeapon(weaponTypeList.get(0));
 			currentWeaponIndex = 0;
 		} else {
-			setWeapon(weaponTypeList.get(currentWeaponIndex+1));
+			setWeapon(weaponTypeList.get(currentWeaponIndex + 1));
 			currentWeaponIndex += 1;
 		}
 	}
@@ -204,7 +208,7 @@ public class Worm extends Entity {
 	 * A variable holding the weapon of this worm.
 	 */
 	private Weapon weapon;
-	
+
 	/**
 	 * Make this worm shoot with his weapon and the given propulsion at
 	 * the cost of action points.
@@ -226,7 +230,7 @@ public class Worm extends Entity {
 					.getActionPoints()));
 		}
 	}
-	
+
 	/**
 	 * Check if this worm can shoot with the given weapon.
 	 * 
@@ -485,7 +489,6 @@ public class Worm extends Entity {
 		return hitPoints;
 	}
 
-
 	/**
 	 * Set the number of hitpoints of this worm to the given number of points and
 	 * terminate this worm if he has zero hit points.
@@ -518,7 +521,7 @@ public class Worm extends Entity {
 		} else {
 			this.hitPoints = hitPoints;
 		}
-		if (getHitPoints() <= 0){
+		if (getHitPoints() <= 0) {
 			terminate();
 		}
 	}
@@ -548,7 +551,7 @@ public class Worm extends Entity {
 	protected void addHealt(int amount) {
 		this.setHitPoints(this.getHitPoints() + amount);
 	}
-	
+
 	/**
 	 * Return true if the given amount of hit points is a valid
 	 * amount of action points.
@@ -628,7 +631,7 @@ public class Worm extends Entity {
 			this.actionPoints = this.getMaxActionPoints();
 		} else
 			this.actionPoints = actionPoints;
-		if (getActionPoints() <= 0){
+		if (getActionPoints() <= 0) {
 			getWorld().startNextTurn();
 		}
 	}
@@ -757,7 +760,8 @@ public class Worm extends Entity {
 			dist = maxNotAdjacentDistances.get(indexFarest).doubleValue();
 		}
 		double stepAngle = getDirection() - 0.75 + 0.25 * indexFarest;
-		setPosition(getXCoordinate() + dist * Math.cos(stepAngle), getYCoordinate() + dist * Math.sin(stepAngle));
+		setPosition(getXCoordinate() + dist * Math.cos(stepAngle),
+				getYCoordinate() + dist * Math.sin(stepAngle));
 		setActionPoints(getActionPoints()
 				- (int) Math.ceil((dist / getRadius())
 						* (Math.abs(Math.cos(stepAngle)) + 4 * Math.abs(Math
@@ -830,36 +834,39 @@ public class Worm extends Entity {
 	 * 
 	 * @effect	Set the new position of this worm to a new position under the
 	 * 			current position of this worm.
-	 * 			|setPosition(NEW X, NEW Y)
+	 * 			|setPosition(OLD x, NEW Y)
 	 * @effect	Add a negative amount of hit points to this worm according to
 	 * 			the meters this worm fell down.
-	 * 			|addHealth(CONTANT * METERS FELL DOWN)
-	 * @effect	If this worm can eat food at its new position, let the worm eat
-	 * 			the food.
-	 * 			|if (getWorld().checkWormCanEatFood(getPosition(),...)
-	 * 			|	then getWorld().getFoodEatenBy(this).getEatenBy(this)
+	 * 			|addHealth(-CONTANT * METERS FELL DOWN)
 	 * @effect	If this worm falls out of the world, get it terminated.
 	 * 			|if (getYCoordinate() - getRadius() < 0)
 	 * 			|	then terminate()
+	 * @effect	Else and If this worm can eat food at its new position, let the worm eat
+	 * 			the food.
+	 * 			|else
+	 * 			|	then if (getWorld().checkWormCanEatFood(getPosition(),...)
+	 * 			|		then getWorld().getFoodEatenBy(this).getEatenBy(this)
 	 */
 	public void fall() {
-		Position pos = new Position(this.getXCoordinate(),
+		Position oldPos = new Position(this.getXCoordinate(),
 				this.getYCoordinate());
 		while ((!getWorld().isAdjacentTerrain(getRadius(),
-				pos.getXCoordinate(), pos.getYCoordinate()))
-				&& (getWorld().isPassable(pos.getXCoordinate(),
-						pos.getYCoordinate(), getRadius()))
-				&& (pos.getYCoordinate() - getRadius() > 0)) {
-			pos.setYcoordinate(pos.getYCoordinate() - 0.01);
-		}
-		this.addHealt((int) (3 * (pos.getYCoordinate() - this
-				.getYCoordinate())));
-		setPosition(pos.getXCoordinate(), pos.getYCoordinate());
-		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
-			getWorld().getFoodEatenBy(this).getEatenBy(this);
+				getXCoordinate(), getYCoordinate()))
+				&& (getWorld().isPassable(getXCoordinate(),
+						getYCoordinate(), getRadius()))
+				&& (getYCoordinate() - getRadius() > 0)) {
+			setPosition(getXCoordinate(),getYCoordinate() - 0.01);
 		}
 		if (getYCoordinate() - getRadius() < 0) {
 			terminate();
+		} else {
+			if (((int) (3 * (oldPos.getYCoordinate() - this.getYCoordinate()))) < getHitPoints()) {
+				if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
+					getWorld().getFoodEatenBy(this).getEatenBy(this);
+				}
+			}
+			this.addHealt(-(int) (3 * (oldPos.getYCoordinate() - this
+					.getYCoordinate())));
 		}
 	}
 
@@ -890,8 +897,7 @@ public class Worm extends Entity {
 	 * 			|(getDirection() < Math.PI) && (getDirection() > 0) && (getActionPoints() > 0);
 	 */
 	public boolean canJump() {
-		return (getDirection() < Math.PI) && (getDirection() > 0)
-				&& (getActionPoints() > 0);
+		return (getActionPoints() > 0);
 	}
 
 	/** 
@@ -955,13 +961,13 @@ public class Worm extends Entity {
 	 * 			that is impassable) and the time it will take to perform that jump.
 	 */
 	private double[] possibleJump(double timeStep) {
-		
-		 // The function will calculate step by step the next position on the jump of this worm
-		 // and will check if the position is passable.
-		 // If so, the function will stop and will return the final position and time of the jump. 
-		 // If not, the new position will be stored in a local variable and the next position
-		 // will be calculated.	
-		
+
+		// The function will calculate step by step the next position on the jump of this worm
+		// and will check if the position is passable.
+		// If so, the function will stop and will return the final position and time of the jump. 
+		// If not, the new position will be stored in a local variable and the next position
+		// will be calculated.	
+
 		Position position = this.getPosition();
 		double time = timeStep;
 		Position tempPosition;
