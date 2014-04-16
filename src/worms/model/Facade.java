@@ -77,7 +77,7 @@ public class Facade implements IFacade {
 	 * Returns whether or not the given worm can move a given number of steps.
 	 */
 	public boolean canMove(Worm worm) {
-		return worm.canMove(1);
+		return worm.canMove();
 	}
 
 	/**

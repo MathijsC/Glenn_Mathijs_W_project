@@ -687,38 +687,30 @@ public class Worm extends Entity {
 	}
 
 	/** 
-	 * Returns if this worm is able to move the given amount of steps.
+	 * Returns if this worm is able to move.
 	 * 
-	 * @param	steps
-	 * 			The amount of steps that is checked if the worm is able to move them.
 	 * @return 	Return a boolean that states if this worm is able to turn or not
-				based on its action points, the given amount of steps and the cost
+	 *			based on its action points and the cost
 	 * 			to move one step in the direction of this worm.	The amount of action points
 	 * 			is rounded up to an integer.	
-	 * 			|getActionPoints() >= roundUp(steps * COST)
-	 * @throws	IllegalArgumentException
-	 * 			The steps are negative.
-	 * 			| steps <0
+	 * 			|getActionPoints() >= roundUp(COST)
 	 */
-	public boolean canMove(int steps) throws IllegalArgumentException {
-		if (steps < 0) {
-			throw new IllegalArgumentException();
-		}
-		return getActionPoints() >= (int) Math.ceil(steps
-				* (Math.abs(Math.cos(getDirection())) + 4 * Math.abs(Math
-						.sin(getDirection()))));
+	public boolean canMove() {
+		double[] bestStepData = getBestStep();
+		int actionPointsNeeded = (int) Math
+				.ceil((bestStepData[0] / getRadius())
+						* (Math.abs(Math.cos(bestStepData[1]
+								+ getDirection())) + 4 * Math
+								.abs(Math.sin(bestStepData[1]
+										+ getDirection()))));
+		return getActionPoints() >= actionPointsNeeded;
 	}
 
 	/**	
-	 * TODO rewrite docu
-	 * Let this worm move a given amount of steps in the direction of this worm
+	 * Let this worm move in the direction of this worm
 	 * at the expense of an amount of action points.
 	 * 
-	 * @param	steps
-	 * 			The amount of steps this worm will move.
-	 * @post	The new coordinates of this worm are equal to the old coordinate added to
-	 * 			the amount of steps moved in the direction of this worm. The length of a 
-	 * 			step is based on the radius of this worm.
+	 * @effect	The new coordinates of this worm are set to the new position
 	 *			|new.getXCoordinate() = this.getXCoordinate() + getRadius()*STEPS_IN_X_DIRECTION
 	 *			|new.getYCoordinate() = this.getYCoordinate() + getRadius()*STEPS_IN_Y_DIRECTION;
 	 * @post	The number of action points of this worm is decreased by the amount based on the 
@@ -731,86 +723,68 @@ public class Worm extends Entity {
 	 * 			| !canMove(steps)
 	 */
 	public void move() throws IllegalStateException {
-		// if (!canMove(1)) {
-		// throw new IllegalStateException();
-		// }
-
+		if (!canMove()) {
+			throw new IllegalStateException();
+		}
+		double[] bestStepData = getBestStep();
+		double xCo = (getXCoordinate() + bestStepData[0]
+				* Math.cos(getDirection() + bestStepData[1]));
+		double yCo = (getYCoordinate() + bestStepData[0]
+				* Math.sin(getDirection() + bestStepData[1]));
+		if (getWorld().isPassable(xCo, yCo, getRadius())) {
+			setPosition(xCo, yCo);
+			setActionPoints(getActionPoints()
+					- (int) Math
+							.ceil((bestStepData[0] / getRadius())
+									* (Math.abs(Math.cos(bestStepData[1]
+											+ getDirection())) + 4 * Math
+											.abs(Math.sin(bestStepData[1]
+													+ getDirection())))));
+			if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
+				getWorld().getFoodEatenBy(this).getEatenBy(this);
+			}
+		}
+	}
+	
+	private double[] getBestStep(){
+		double bestStepDist = 0;
+		double bestStepAngle = -0.75;
 		double angle = -0.75;
-		ArrayList<Double> maxAdjacentDistances = new ArrayList<Double>();
-		ArrayList<Double> maxNotAdjacentDistances = new ArrayList<Double>();
 		while (angle <= 0.75) {
-			double dist = getFarestDist(getDirection() + angle);
+
+			double dist = getRadius();
 			double xCo = (getXCoordinate() + dist
 					* Math.cos(getDirection() + angle));
 			double yCo = (getYCoordinate() + dist
 					* Math.sin(getDirection() + angle));
-			if (getWorld().isAdjacentTerrain(getRadius(), xCo, yCo)) {
-				maxAdjacentDistances.add(dist);
-				maxNotAdjacentDistances.add(0.0);
-			} else {
-				maxAdjacentDistances.add(0.0);
-				maxNotAdjacentDistances.add(dist);
+			while ((dist >= 0.1)
+					&& (!getWorld().isAdjacentTerrain(getRadius(),xCo, yCo))) {
+				xCo = (getXCoordinate() + dist
+						* Math.cos(getDirection() + angle));
+				yCo = (getYCoordinate() + dist
+						* Math.sin(getDirection() + angle));
+				
+				dist -= 0.01;
 			}
-			angle += 0.25;
-		}
-		int indexFarest = getIndexBestStep(maxAdjacentDistances);
-		double dist = maxAdjacentDistances.get(indexFarest).doubleValue();
-		if (dist == 0) {
-			indexFarest = getIndexBestStep(maxNotAdjacentDistances);
-			dist = maxNotAdjacentDistances.get(indexFarest).doubleValue();
-		}
-		double stepAngle = getDirection() - 0.75 + 0.25 * indexFarest;
-		setPosition(getXCoordinate() + dist * Math.cos(stepAngle),
-				getYCoordinate() + dist * Math.sin(stepAngle));
-		setActionPoints(getActionPoints()
-				- (int) Math.ceil((dist / getRadius())
-						* (Math.abs(Math.cos(stepAngle)) + 4 * Math.abs(Math
-								.sin(stepAngle)))));
-		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
-			getWorld().getFoodEatenBy(this).getEatenBy(this);
-		}
-
-	}
-
-	// TODO docu
-	private double getFarestDist(double angle) {
-		double dist = 0.0;
-		double result = 0.0;
-		while (dist <= this.getRadius()) {
-			double xCo = (getXCoordinate() + dist * Math.cos(angle));
-			double yCo = (getYCoordinate() + dist * Math.sin(angle));
-			if (!getWorld().isPassable(xCo, yCo, this.getRadius())) {
-				break;
+			//check closest posible
+			if (!getWorld().isAdjacentTerrain(getRadius(),xCo, yCo)) {
+				dist = 0.1;
+				xCo = (getXCoordinate() + dist
+						* Math.cos(getDirection() + angle));
+				yCo = (getYCoordinate() + dist
+						* Math.sin(getDirection() + angle));
 			}
-			result = dist;
-			dist += getRadius() * 0.05;
-			if (Math.abs(getRadius() - dist) < getRadius() * 0.049) {
-				dist = getRadius();
-			}
-		}
-
-		if (dist < 0.1) {
-			result = 0.0;
-		}
-		return result;
-
-	}
-
-	// TODO docu
-	private int getIndexBestStep(ArrayList<Double> dists) {
-		int indexBest = 0;
-		for (int i = 1; i <= dists.size() - 1; i++) {
-			if (dists.get(i).doubleValue() > dists.get(indexBest).doubleValue()) {
-				indexBest = i;
-			} else if (dists.get(i).doubleValue() == dists.get(indexBest)
-					.doubleValue()) {
-				if (Math.abs((-0.75 + 0.25 * i)) < Math
-						.abs((-0.75 + 0.25 * indexBest))) {
-					indexBest = i;
+			//if better change best
+			if (dist >= bestStepDist) {
+				if (Math.abs(angle) < Math.abs(bestStepAngle)) {
+					bestStepAngle = angle;
 				}
+				bestStepDist = dist;
 			}
+			angle += 0.0175;
 		}
-		return indexBest;
+		double[] result = {bestStepDist,bestStepAngle};
+		return result;
 	}
 
 	/**
@@ -850,12 +824,11 @@ public class Worm extends Entity {
 	public void fall() {
 		Position oldPos = new Position(this.getXCoordinate(),
 				this.getYCoordinate());
-		while ((!getWorld().isAdjacentTerrain(getRadius(),
-				getXCoordinate(), getYCoordinate()))
-				&& (getWorld().isPassable(getXCoordinate(),
-						getYCoordinate(), getRadius()))
-				&& (getYCoordinate() - getRadius() > 0)) {
-			setPosition(getXCoordinate(),getYCoordinate() - 0.01);
+		while ((!getWorld().isAdjacentTerrain(getRadius(), getXCoordinate(),
+				getYCoordinate()))
+				&& (getWorld().isPassable(getXCoordinate(), getYCoordinate(),
+						getRadius())) && (getYCoordinate() - getRadius() > 0)) {
+			setPosition(getXCoordinate(), getYCoordinate() - 0.01);
 		}
 		if (getYCoordinate() - getRadius() < 0) {
 			terminate();
@@ -1014,10 +987,6 @@ public class Worm extends Entity {
 		if (time <= 0) {
 			throw new IllegalArgumentException();
 		}
-		// TODO jumptime vraagt argument, maar hier niet mee gegeven... :/
-		/*
-		 * if (time > this.jumpTime()) { throw new IllegalArgumentException(); }
-		 */
 		double X = getXCoordinate() + initialVelocity()
 				* Math.cos(getDirection()) * time;
 		double Y = getYCoordinate() + initialVelocity()

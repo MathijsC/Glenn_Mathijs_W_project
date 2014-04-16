@@ -262,19 +262,19 @@ public class WormTest {
 	//MOVEMENT
 	@Test
 	public final void canMove_TrueCase() throws Exception{
-		assertTrue(testWorm.canMove(15));
+		assertTrue(testWorm.canMove());
 	}
 	@Test
 	public final void canMove_FalseCase() throws Exception{
-		assertFalse(noActionPoints.canMove(15));
+		assertFalse(noActionPoints.canMove());
 	}
 	@Test
 	public final void canMove_FalseCase_Boundary() throws Exception{
-		assertFalse(testWorm.canMove(143));
+		assertFalse(testWorm.canMove());
 	}
 	@Test (expected = IllegalArgumentException.class)
 	public final void canMove_NegativeSteps() throws Exception{
-		testWorm.canMove(-5);
+		testWorm.canMove();
 	}
 	/**@Test
 	public final void move_LegalCase() throws Exception{
