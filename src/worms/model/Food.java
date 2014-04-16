@@ -131,6 +131,7 @@ public class Food extends Entity {
 	 */
 	public void getEatenBy(Worm worm){
 		worm.setRadius(worm.getRadius()*1.1);
+		//worm.setPosition(worm.getXCoordinate(), (worm.getYCoordinate()+worm.getRadius()));
 		terminate();
 	}
 
