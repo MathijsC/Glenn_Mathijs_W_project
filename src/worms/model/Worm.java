@@ -155,8 +155,7 @@ public class Worm extends Entity {
 	public Weapon getWeapon() {
 		return this.weaponTypeList.get(this.getCurrentWeaponIndex());
 	}
-	
-	
+
 	/**
 	 * Return the current weapon index
 	 * 
@@ -202,10 +201,10 @@ public class Worm extends Entity {
 	 * 			|	then setCurrentWeaponIndex(getCurrentWeaponIndex()+1)
 	 */
 	public void selectNextWeapon() {
-		if (currentWeaponIndex >= (weaponTypeList.size()-1)) {
+		if (currentWeaponIndex >= (weaponTypeList.size() - 1)) {
 			this.setCurrentWeaponIndex(0);
 		} else {
-			this.setCurrentWeaponIndex(this.getCurrentWeaponIndex()+1);
+			this.setCurrentWeaponIndex(this.getCurrentWeaponIndex() + 1);
 		}
 	}
 
@@ -694,9 +693,9 @@ public class Worm extends Entity {
 	/** 
 	 * Returns if this worm is able to move.
 	 * 
-	 * @return 	Return a boolean that states if this worm is able to turn or not
+	 * @return 	Return a boolean that states if this worm is able to move or not
 	 *			based on its action points and the cost
-	 * 			to move one step in the direction of this worm.	The amount of action points
+	 * 			to move a step in the direction of this worm. The amount of action points
 	 * 			is rounded up to an integer.	
 	 * 			|getActionPoints() >= roundUp(COST)
 	 */
@@ -704,10 +703,8 @@ public class Worm extends Entity {
 		double[] bestStepData = getBestStep();
 		int actionPointsNeeded = (int) Math
 				.ceil((bestStepData[0] / getRadius())
-						* (Math.abs(Math.cos(bestStepData[1]
-								+ getDirection())) + 4 * Math
-								.abs(Math.sin(bestStepData[1]
-										+ getDirection()))));
+						* (Math.abs(Math.cos(bestStepData[1] + getDirection())) + 4 * Math
+								.abs(Math.sin(bestStepData[1] + getDirection()))));
 		return getActionPoints() >= actionPointsNeeded;
 	}
 
@@ -717,41 +714,41 @@ public class Worm extends Entity {
 	 * 
 	 * @effect	The new coordinates of this worm are set to the new position
 	 *			|new.getXCoordinate() = this.getXCoordinate() + getRadius()*STEPS_IN_X_DIRECTION
-	 *			|new.getYCoordinate() = this.getYCoordinate() + getRadius()*STEPS_IN_Y_DIRECTION;
-	 * @post	The number of action points of this worm is decreased by the amount based on the 
-	 * 			given amount of steps and the cost to move one step in the direction of this worm.
+	 * @effect	The number of action points of this worm is decreased by the amount based on the 
+	 * 			the cost to move a step in the direction of this worm.
 	 * 			This expense is rounded up to an integer.
-	 * 			|new.getActionPoints = this.getActionPoints - (int) Math.ceil(STEPS_IN_X_DIRECTION * 
+	 * 			|setActionPoints(getActionPoints() - roundUp(STEPS_IN_X_DIRECTION * 
 	 * 				COST_X + STEPS_IN_Y_DIRECTION * COST_Y)
+	 * @effect	If this worm can eat food at his new position, the food gets eaten by him.
+	 * 			|if (getWorld().checkWormCanEatFood(getPosition(), getRadius()))
+	 * 			|	then getWorld().getFoodEatenBy(this).getEatenBy(this)
 	 * @throws	IllegalStateException
 	 * 			This worm cannot move the given steps.
-	 * 			| !canMove(steps)
+	 * 			|!canMove()
 	 */
 	public void move() throws IllegalStateException {
 		if (!canMove()) {
 			throw new IllegalStateException();
 		}
-		double[] bestStepData = getBestStep();
+		double[] bestStepData = getBestStep2();
 		double xCo = (getXCoordinate() + bestStepData[0]
 				* Math.cos(getDirection() + bestStepData[1]));
 		double yCo = (getYCoordinate() + bestStepData[0]
 				* Math.sin(getDirection() + bestStepData[1]));
-		if (getWorld().isPassable(xCo, yCo, getRadius())) {
+		//if (getWorld().isPassable(xCo, yCo, getRadius())) {
 			setPosition(xCo, yCo);
 			setActionPoints(getActionPoints()
-					- (int) Math
-							.ceil((bestStepData[0] / getRadius())
-									* (Math.abs(Math.cos(bestStepData[1]
-											+ getDirection())) + 4 * Math
-											.abs(Math.sin(bestStepData[1]
-													+ getDirection())))));
+					- (int) Math.ceil((bestStepData[0] / getRadius())
+							* (Math.abs(Math.cos(bestStepData[1]
+									+ getDirection())) + 4 * Math.abs(Math
+									.sin(bestStepData[1] + getDirection())))));
 			if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
 				getWorld().getFoodEatenBy(this).getEatenBy(this);
 			}
-		}
+		//}
 	}
-	
-	private double[] getBestStep(){
+
+	private double[] getBestStep() {
 		double bestStepDist = 0;
 		double bestStepAngle = -0.75;
 		double angle = -0.75;
@@ -763,16 +760,16 @@ public class Worm extends Entity {
 			double yCo = (getYCoordinate() + dist
 					* Math.sin(getDirection() + angle));
 			while ((dist >= 0.1)
-					&& (!getWorld().isAdjacentTerrain(getRadius(),xCo, yCo))) {
+					&& (!getWorld().isAdjacentTerrain(getRadius(), xCo, yCo))) {
 				xCo = (getXCoordinate() + dist
 						* Math.cos(getDirection() + angle));
 				yCo = (getYCoordinate() + dist
 						* Math.sin(getDirection() + angle));
-				
+
 				dist -= 0.01;
 			}
 			//check closest posible
-			if (!getWorld().isAdjacentTerrain(getRadius(),xCo, yCo)) {
+			if (!getWorld().isAdjacentTerrain(getRadius(), xCo, yCo)) {
 				dist = 0.1;
 				xCo = (getXCoordinate() + dist
 						* Math.cos(getDirection() + angle));
@@ -788,8 +785,58 @@ public class Worm extends Entity {
 			}
 			angle += 0.0175;
 		}
-		double[] result = {bestStepDist,bestStepAngle};
+		double[] result = { bestStepDist, bestStepAngle };
 		return result;
+	}
+
+	private double[] getBestStep2() {
+		double[] bestAdj = { 0, -0.75 };
+		double[] bestNAdj = { 0, -0.75 };
+
+		double dist = getRadius();
+		boolean bestAdjFound = false;
+		boolean bestNAdjFound = false;
+
+		while (((!bestAdjFound) || (!bestNAdjFound)) && (dist >= 0.1)) {
+			double angle = -0.75;
+
+			while (angle <= 0.75) {
+				double xCo = (getXCoordinate() + dist
+						* Math.cos(getDirection() + angle));
+				double yCo = (getYCoordinate() + dist
+						* Math.sin(getDirection() + angle));
+				//check adjacent end positions
+				if ((!bestAdjFound)
+						&& getWorld().isAdjacentTerrain(getRadius(), xCo, yCo)) {
+					if (Math.abs(angle) < Math.abs(bestAdj[1])) {
+						bestAdj[1] = angle;
+					}
+					bestAdj[0] = dist;
+				}
+				//check not adjacent end positions
+				if ((!bestNAdjFound)
+						&& getWorld().isPassable(xCo, yCo, getRadius())) {
+					if (Math.abs(angle) < Math.abs(bestNAdj[1])) {
+						bestNAdj[1] = angle;
+					}
+					bestNAdj[0] = dist;
+				}
+				angle += 0.0175;
+			}
+			if (bestAdj[0] > 0) {
+				bestAdjFound = true;
+			}
+			if (bestNAdj[0] > 0) {
+				bestNAdjFound = true;
+			}
+			dist -= 0.01;
+		}
+		if (bestAdjFound){
+			return bestAdj;
+		} else {
+			return bestNAdj;
+		}
+
 	}
 
 	/**
