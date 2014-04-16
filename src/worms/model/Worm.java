@@ -27,8 +27,10 @@ import be.kuleuven.cs.som.annotate.Raw;
  * 			|canHaveAsHitPoints(getHitPoints())
  * 
  * @author 	Glenn Cools, Mathijs Cuppens
+
  * @version 1.33
- */
+*/
+
 public class Worm extends Entity {
 
 	/**
