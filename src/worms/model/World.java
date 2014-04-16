@@ -418,40 +418,26 @@ public class World {
 		return eat;
 	}
 	
-	//TODO
+	//TODO check
 	/**
 	 * 
-	 * @param worm	The worm which position need to be checked if it is in the world
+	 * @param pos	
+	 * 				The position of the entity that needs to be checked if it is in this world
+	 * @param radius
+	 * 				The radius of the entity that nees to be checked if it is in this world
+	 * 
 	 * @return		True if the worm is in within the boundaries of this world
 	 * 				False if the worm is no longer within the boundaries of this world
-	 * 				|(0 < W0RMX < WIDTH) && (0 < WORMY < HEIGTH)
+	 * 				|(0 < ENTITY_X < WIDTH) && (0 < ENTITY_Y < HEIGTH)
 	 */
-	public boolean wormInWorld(Worm worm) {
-		return (0 < (worm.getXCoordinate() - worm.getRadius()))
-				&& (0 < (worm.getYCoordinate() - worm.getRadius()))
-				&& ((worm.getXCoordinate() - worm.getRadius()) < this
+	public boolean entityInWorld(Position pos, double radius) {
+		return (0 < (pos.getXCoordinate() - radius))
+				&& (0 < (pos.getYCoordinate() - radius))
+				&& ((pos.getXCoordinate() - radius) < this
 						.getWidth())
-				&& ((worm.getYCoordinate() - worm.getRadius()) < this
+				&& ((pos.getYCoordinate() - radius) < this
 						.getHeight());
-	}
-	
-	/**
-	 * 
-	 * @param worm	The worm which position need to be checked if it is in the world
-	 * @return		True if the worm is in within the boundaries of this world
-	 * 				False if the worm is no longer within the boundaries of this world
-	 * 				|(0 < PROJECTILEX < WIDTH) && (0 < PROJECTILEY < HEIGTH)
-	 */
-		public boolean projectileInWorld(Projectile projectile) {
-			return (0 < (projectile.getXCoordinate() - projectile.getRadius()))
-					&& (0 < (projectile.getYCoordinate() - projectile.getRadius()))
-					&& ((projectile.getXCoordinate() - projectile.getRadius()) < this
-							.getWidth())
-					&& ((projectile.getYCoordinate() - projectile.getRadius()) < this
-							.getHeight());
-		}
-	
-	
+	}	
 
 	// TODO docu
 	// This version of isPassable is incomplete, but it is a faster one

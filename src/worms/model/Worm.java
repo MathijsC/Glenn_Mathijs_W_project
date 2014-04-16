@@ -598,6 +598,7 @@ public class Worm extends Entity {
 		return actionPoints;
 	}
 
+
 	/**
 	 * Set the number of action points of this worm to the given number of points.
 	 * If this worm ends with zero action points, the turn of this worm ends and
@@ -860,13 +861,12 @@ public class Worm extends Entity {
 		if (getYCoordinate() - getRadius() < 0) {
 			terminate();
 		} else {
-			if (((int) (3 * (oldPos.getYCoordinate() - this.getYCoordinate()))) < getHitPoints()) {
+			if (((int) (3 * (this.getPosition().distanceTo(oldPos))) < getHitPoints())) {
 				if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
 					getWorld().getFoodEatenBy(this).getEatenBy(this);
 				}
 			}
-			this.addHealt(-(int) (3 * (oldPos.getYCoordinate() - this
-					.getYCoordinate())));
+			this.addHealt(-(int) (3 * (this.getPosition().distanceTo(oldPos))));
 		}
 	}
 

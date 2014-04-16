@@ -290,16 +290,14 @@ public class Projectile extends Entity {
 	* @Post 	If this projectile is not terminated, the function will do it's work.
 	* 			| if(!isTerminated)
 	* 			|	then proceed
-	* @effect 	A theoretical jump will be calculated to get the location where it will hit something (worm or terrain)
-	* 			and this projectile's location will be set to the new location
+	* @effect 	A theoretical jump will be calculated to get the position where it will hit something (worm or terrain)
+	* 			and this projectile's location will be set to the new position.
 	* 			| new.getPosition = possibleJump()
-	* @effect  	If the new location is on a worm this projectile will deal damage to that worm
-	* 			and it will be destroyed
+	* @effect  	If the new position is on a worm this projectile will deal damage to that worm.
 	* 			| if(wormHit)
 	* 			| 	then dealDamage() and terminate()
-	* @post 	If this projectile doesn't hit a worm it will be destroyed
-	* 			| if(!wormHit)
-	* 			| 	then terminate()
+	* @effect 	After the jump the projectile will be destroyed
+	* 			| terminate()
 	*/
 
 	public void jump(double timeStep) {
@@ -358,7 +356,7 @@ public class Projectile extends Entity {
 		boolean jumping = true;
 		boolean hit = false;
 
-		while ((jumping) && (!hit)) {
+		while ((jumping) && (!hit) && (this.getWorld().entityInWorld(position, this.getRadius()))) {
 			tempPosition = this.jumpStep(time);
 			if (getWorld().isPassable(tempPosition.getXCoordinate(),
 					tempPosition.getYCoordinate(), this.getRadius())) {
