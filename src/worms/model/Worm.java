@@ -217,21 +217,21 @@ public class Worm extends Entity {
 	 * Make this worm shoot with his weapon and the given propulsion at
 	 * the cost of action points.
 	 * 
-	 * @param 	propulsion
+	 * @param 	yield
 	 * 			This worm shoots his weapon with the given propulsion.
 	 * @effect	If the this worm can shoot, shoot the weapon with the
 	 * 			given propulsion.
 	 * 			|if (canShoot(getWeapon))
-	 * 			|	then getWeapon.shoot(getWorld(), this worm, propulsion)
+	 * 			|	then getWeapon.shoot(getWorld(), this worm, yield)
 	 * @effect	If the this worm can shoot, remove the action points needed 
 	 * 			to fire this weapon.
 	 * 			|	then setActionPoints(ACTION POINTS NEEDED)
 	 */
-	public void shoot(int propulsion) {
+	public void shoot(int yield) {
 		if (this.canShoot(this.getWeapon())) {
-			this.getWeapon().shoot(this.getWorld(), this, propulsion);
+			this.getWeapon().shoot(this.getWorld(), this, yield);
 			this.setActionPoints((this.getActionPoints() - weapon
-					.getActionPoints()));
+					.getActionPointsCost()));
 		}
 	}
 
@@ -244,7 +244,7 @@ public class Worm extends Entity {
 	 * 			|(getActionPoints() - ACTION POINTS NEEDED) >= 0
 	 */
 	public boolean canShoot(Weapon weapon) {
-		return (this.getActionPoints() - weapon.getActionPoints()) >= 0;
+		return (this.getActionPoints() - weapon.getActionPointsCost()) >= 0;
 	}
 
 	/**
