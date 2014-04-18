@@ -323,10 +323,7 @@ public class WormTest {
 	public final void canJump_FalseCase_Direction_LowerBoundary(){
 		assertFalse(noDirection.canJump());
 	}
-	@Test
-	public final void initialVelocity_SingleCase(){
-		assertEquals(7.403046705059146, testWorm.initialVelocity(),0.00001);
-	}
+
 	// functie jump aangepast
 	/*@Test
 	public final void jump_LegalCase() throws Exception{

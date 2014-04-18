@@ -14,7 +14,7 @@ hitpoint (int), action points (int) 							Total				DONE
 //HP=0 remove from world															DONE
 Name (adjust rules)												Defensive			DONE
 (turn)															nominally			DONE
-Move, adjust to terrain	, fall (formal docu), jump				defensive			
+Move, adjust to terrain	, fall (formal docu), jump				defensive			DONE
 select weapon, fire weapon (propulsion)							
 
 -Projectile																			DONE

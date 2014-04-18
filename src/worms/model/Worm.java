@@ -161,7 +161,7 @@ public class Worm extends Entity {
 	 * 
 	 * @return the current weapon index
 	 */
-	public int getCurrentWeaponIndex() {
+	private int getCurrentWeaponIndex() {
 		return this.currentWeaponIndex;
 	}
 
@@ -173,7 +173,7 @@ public class Worm extends Entity {
 	 * @post	The given weapon index is equal to the new current weapon index of this worm.
 	 * 			|new.getCurrentWeaponIndex() == index
 	 */
-	public void setCurrentWeaponIndex(int index) {
+	private void setCurrentWeaponIndex(int index) {
 		this.currentWeaponIndex = index;
 	}
 
@@ -910,7 +910,7 @@ public class Worm extends Entity {
 	 * 			of the environment.
 	 * 			| FORCE / MASS * CONTSTANT
 	 */
-	public double initialVelocity() {
+	private double initialVelocity() {
 		double force = 5 * getActionPoints() + getMass() * GRAVITY;
 		return force / getMass() * 0.5;
 	}
@@ -985,6 +985,9 @@ public class Worm extends Entity {
 	 * 			An elementary time interval used to calculate the jumptime.
 	 * @return	The position where the jump of this worm will end (by reaching terrain
 	 * 			that is impassable) and the time it will take to perform that jump.
+	 * @Throws	IllegalArgumentException
+	 * 			The given timestep is not a number.
+	 * 			| timeStep == Double.NaN
 	 */
 	private double[] possibleJump(double timeStep) {
 
@@ -996,6 +999,10 @@ public class Worm extends Entity {
 		// If not, the new position will be stored in a local variable and the
 		// next position
 		// will be calculated.
+		
+		if(timeStep == Double.NaN) {
+			throw new IllegalArgumentException();
+		}
 
 		Position position = this.getPosition();
 		double time = timeStep;
@@ -1028,9 +1035,8 @@ public class Worm extends Entity {
 	 * 			coordinates of this worm, the initial velocity the direction of this worm, 
 	 * 			the gravity of the environment and the world of this worm.
 	 * @throws 	IllegalArgumentException
-	 * 			The given time is not during the jump.
+	 * 			The given time is negative.
 	 * 			| time <=0
-	 * 			| time > this.jumpTime()
 	 * @throws 	IllegalStateException
 	 * 			The worm cannot jump.
 	 * 			| ! canJump()
