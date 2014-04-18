@@ -297,6 +297,8 @@ public class Worm extends Entity {
 	 * 
 	 * @param 	direction
 	 * 			The new direction of this worm
+	 * @pre		The given direction must be a number
+	 * 			| direction != Double.NaN
 	 * @post	If the new direction of this worm is positive after calculated
 	 * 			module 2*PI, the direction is added to the base (2*PI) to get
 	 * 			a positive direction between 0 and 2*PI.

@@ -90,7 +90,7 @@ public class Food extends Entity {
 	 * 			| !isValidRadius(radius)
 	 */
 	@Raw
-	public void setRadius(double radius) throws IllegalArgumentException {
+	private void setRadius(double radius) throws IllegalArgumentException {
 		if (!isValidRadius(radius))
 			throw new IllegalArgumentException();
 		this.radius = radius;
@@ -129,9 +129,8 @@ public class Food extends Entity {
 	 * @effect	The radius of the worm who eats this food will grow by 10%.
 	 * 			|worm.setRadius(worm.getRadius()*1.1)
 	 */
-	public void getEatenBy(Worm worm){
+	public void getEatenBy(Worm worm) {
 		worm.setRadius(worm.getRadius()*1.1);
-		//worm.setPosition(worm.getXCoordinate(), (worm.getYCoordinate()+worm.getRadius()));
 		terminate();
 	}
 

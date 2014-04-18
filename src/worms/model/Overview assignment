@@ -8,16 +8,16 @@ return which entities it contains, singular and grouped,		defensive?
 Start game,finish game, return winning worms					Total(gekozen)
 
 -Worm
-hitpoint (int), action points (int) 							Total	done
-//start turn -> replenish action points, add 10 hitpoints				done
-//end turn when AP or HP =0
-//HP=0 remove from world
-Name (adjust rules)												Defensive	
-(turn)															nominally	done?
-Move, adjust to terrain	, fall (formal docu), jump				defensive
+hitpoint (int), action points (int) 							Total				DONE
+//start turn -> replenish action points, add 10 hitpoints							DONE
+//end turn when AP or HP =0															DONE
+//HP=0 remove from world															DONE
+Name (adjust rules)												Defensive			DONE
+(turn)															nominally			DONE
+Move, adjust to terrain	, fall (formal docu), jump				defensive			
 select weapon, fire weapon (propulsion)							
 
--Projectile																			~Done
+-Projectile																			DONE
 trajectory, trajectoryTime, trajectoryStep, stops when hit 		defensive
 terrain or worm or leaves the world => destroy projectile and remove from world
 start position,													defensive
@@ -27,12 +27,12 @@ mass,density,radius	,											defensive
 *Bazooka: 300g,2.5-9.5N(propulsion),50AP,80HP
 
 -Food
-positions														defensive
+positions														defensive          	DONE 
 radius(min:0.2m)												"
 eaten when overlaps with worms at any time						"
 => worms radius increases 10%, destroyed and removed from world
 
--Team(max: 10 teams in a world, friendly fire!)					defensive
+-Team(max: 10 teams in a world, friendly fire!)					defensive			DONE
 assign worm,
 a team can win the game
 name(rules)
