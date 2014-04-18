@@ -151,6 +151,8 @@ public class Projectile extends Entity {
 	 * 
 	 * @param 	direction
 	 * 			The new direction of this projectile.
+	 * @pre		The given direction must be a number
+	 * 			| direction != Double.NaN
 	 * @post	If the new direction of this projectile is positive after calculated
 	 * 			module 2*PI, the direction is added to the base (2*PI) to get
 	 * 			a positive direction between 0 and 2*PI.
@@ -287,9 +289,6 @@ public class Projectile extends Entity {
 	/** 
 	* Let this projectile jump over a distance.
 	* 
-	* @Post 	If this projectile is not terminated, the function will do it's work.
-	* 			| if(!isTerminated)
-	* 			|	then proceed
 	* @effect 	A theoretical jump will be calculated to get the position where it will hit something (worm or terrain)
 	* 			and this projectile's location will be set to the new position.
 	* 			| new.getPosition = possibleJump()
@@ -298,10 +297,15 @@ public class Projectile extends Entity {
 	* 			| 	then dealDamage() and terminate()
 	* @effect 	After the jump the projectile will be destroyed
 	* 			| terminate()
+	* @Throws	IllegalStateException
+	* 			If the projectile is cannot be destroyed already.
+	* 			| !isTerminated
 	*/
 
-	public void jump(double timeStep) {
+	public void jump(double timeStep) throws IllegalStateException{
 		if (!isTerminated()) {
+			throw new IllegalStateException();
+		}
 			double[] newPosition = Arrays.copyOfRange(
 					this.possibleJump(timeStep), 0, 2);
 			this.setPosition(newPosition[0], newPosition[1]);
@@ -311,7 +315,7 @@ public class Projectile extends Entity {
 				wormHit.addHealt(this.getWeapon().getDamage());
 			}
 			terminate();
-		}
+		
 	}
 
 	/**
@@ -323,7 +327,7 @@ public class Projectile extends Entity {
 	 * 			|possibleJump(timeStep)
 	 * @return	Return the time a jump of this projectile would take
 	 * 			based on the direction of this projectile, the gravity
-	 * 			of the environment and the initial velocity and the world of this worm.
+	 * 			of the environment and the initial velocity and the world of this projectile.
 	 */
 	public double jumpTime(double timeStep) {
 		return this.possibleJump(timeStep)[2];
@@ -340,16 +344,23 @@ public class Projectile extends Entity {
 	 * 			An elementary time interval used to calculate the jumptime.
 	 * @return	The position where the jump of this projectile will end (by hitting anything) 
 	 * 			and the time it will take to perform that jump.
+	 * @Throws	IllegalArgumentException
+	 * 			The given timestep is not a number.
+	 * 			| timeStep == Double.NaN
 	 */
-	private double[] possibleJump(double timeStep) {
+	private double[] possibleJump(double timeStep) throws IllegalArgumentException {
 		
 		 // The function will calculate step by step the next position on the trajectory of this projectile
 		 // and will check if the location is passable or if the projectile will hit a worm
 		 // at that position. 
 		 // If so, the function will stop and will return the final position of the jump. 
 		 // If not, the new position will be stored in a local variable and the next position
-		 // will be calculated.		
-
+		 // will be calculated.
+		
+		if(timeStep == Double.NaN) {
+			throw new IllegalArgumentException();
+		}
+		
 		Position position = this.getPosition();
 		double time = timeStep;
 		Position tempPosition;
