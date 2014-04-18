@@ -298,12 +298,12 @@ public class Projectile extends Entity {
 	* @effect 	After the jump the projectile will be destroyed
 	* 			| terminate()
 	* @Throws	IllegalStateException
-	* 			If the projectile is cannot be destroyed already.
-	* 			| !isTerminated
+	* 			This projectile is terminated
+	 * 			| isTerminated()
 	*/
 
 	public void jump(double timeStep) throws IllegalStateException{
-		if (!isTerminated()) {
+		if (isTerminated()) {
 			throw new IllegalStateException();
 		}
 			double[] newPosition = Arrays.copyOfRange(
@@ -397,10 +397,9 @@ public class Projectile extends Entity {
 	 * 			coordinates of this projectile, the initial velocity the direction of this projectile, 
 	 * 			the gravity of the environment and the world of this projectile.
 	 * @throws 	IllegalArgumentException
-	 * 			The given time is not during the jump.
+	 * 			The given time is negative.
 	 * 			| time <=0
-	 * 			| time > this.jumpTime()
-	 * @thorws	IllegalStateException
+	 * @throws	IllegalStateException
 	 * 			This projectile is terminated
 	 * 			| isTerminated()
 	 */
@@ -412,10 +411,7 @@ public class Projectile extends Entity {
 		if (isTerminated()) {
 			throw new IllegalStateException();
 		}
-		// TODO vraag aan assistent en controleer docu @throws erna
-		/*
-		 * if (time > this.jumpTime()) { throw new IllegalArgumentException(); }
-		 */
+
 		double X = getXCoordinate() + initialVelocity()
 				* Math.cos(getDirection()) * time;
 		double Y = getYCoordinate() + initialVelocity()
