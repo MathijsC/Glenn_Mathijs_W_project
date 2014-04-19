@@ -705,8 +705,8 @@ public class Worm extends Entity {
 		double[] bestStepData = getBestStep();
 		int actionPointsNeeded = (int) Math
 				.ceil((bestStepData[0] / getRadius())
-						* (Math.abs(Math.cos(bestStepData[1] + getDirection())) + 4 * Math
-								.abs(Math.sin(bestStepData[1] + getDirection()))));
+						* (Math.abs(Math.cos(bestStepData[1])) + 4 * Math
+								.abs(Math.sin(bestStepData[1]))));
 		return getActionPoints() >= actionPointsNeeded;
 	}
 
@@ -715,7 +715,7 @@ public class Worm extends Entity {
 	 * at the expense of an amount of action points.
 	 * 
 	 * @effect	The new coordinates of this worm are set to the new position
-	 *			|new.getXCoordinate() = this.getXCoordinate() + getRadius()*STEPS_IN_X_DIRECTION
+	 *			|setPosition(NEW X, NEW Y)
 	 * @effect	The number of action points of this worm is decreased by the amount based on the 
 	 * 			the cost to move a step in the direction of this worm.
 	 * 			This expense is rounded up to an integer.
@@ -732,66 +732,39 @@ public class Worm extends Entity {
 		if (!canMove()) {
 			throw new IllegalStateException();
 		}
-		double[] bestStepData = getBestStep2();
+		double[] bestStepData = getBestStep();
 		double xCo = (getXCoordinate() + bestStepData[0]
-				* Math.cos(getDirection() + bestStepData[1]));
+				* Math.cos(bestStepData[1]));
 		double yCo = (getYCoordinate() + bestStepData[0]
-				* Math.sin(getDirection() + bestStepData[1]));
-		//if (getWorld().isPassable(xCo, yCo, getRadius())) {
-			setPosition(xCo, yCo);
-			setActionPoints(getActionPoints()
-					- (int) Math.ceil((bestStepData[0] / getRadius())
-							* (Math.abs(Math.cos(bestStepData[1]
-									+ getDirection())) + 4 * Math.abs(Math
-									.sin(bestStepData[1] + getDirection())))));
-			if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
-				getWorld().getFoodEatenBy(this).getEatenBy(this);
-			}
-		//}
-	}
-
-	private double[] getBestStep() {
-		double bestStepDist = 0;
-		double bestStepAngle = -0.75;
-		double angle = -0.75;
-		while (angle <= 0.75) {
-
-			double dist = getRadius();
-			double xCo = (getXCoordinate() + dist
-					* Math.cos(getDirection() + angle));
-			double yCo = (getYCoordinate() + dist
-					* Math.sin(getDirection() + angle));
-			while ((dist >= 0.1)
-					&& (!getWorld().isAdjacentTerrain(getRadius(), xCo, yCo))) {
-				xCo = (getXCoordinate() + dist
-						* Math.cos(getDirection() + angle));
-				yCo = (getYCoordinate() + dist
-						* Math.sin(getDirection() + angle));
-
-				dist -= 0.01;
-			}
-			//check closest posible
-			if (!getWorld().isAdjacentTerrain(getRadius(), xCo, yCo)) {
-				dist = 0.1;
-				xCo = (getXCoordinate() + dist
-						* Math.cos(getDirection() + angle));
-				yCo = (getYCoordinate() + dist
-						* Math.sin(getDirection() + angle));
-			}
-			//if better change best
-			if (dist >= bestStepDist) {
-				if (Math.abs(angle) < Math.abs(bestStepAngle)) {
-					bestStepAngle = angle;
-				}
-				bestStepDist = dist;
-			}
-			angle += 0.0175;
+				* Math.sin(bestStepData[1]));
+		setPosition(xCo, yCo);
+		setActionPoints(getActionPoints()
+				- (int) Math.ceil((bestStepData[0] / getRadius())
+						* (Math.abs(Math.cos(bestStepData[1])) + 4 * Math
+								.abs(Math.sin(bestStepData[1])))));
+		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
+			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
-		double[] result = { bestStepDist, bestStepAngle };
-		return result;
 	}
 
-	private double[] getBestStep2() {
+	/**
+	 * Return a double with data of the best step this worm can make calculated
+	 * with the radius and direction of this worm. The data is the distance and
+	 * the direction of the step.
+	 *  
+	 * @return	The data of the best possible step this worm can take.
+	 * 			|[DISTANCE, DIRECTION]
+	 */
+	private double[] getBestStep() {
+
+		// This function will run through every possible position in a distance range
+		// from the radius of the worm to 0.1 (steps of 0.01) and an angle range from
+		// -0.75 to 0.75 radians (steps of 0.0175). The function starts at the farest
+		// distance so if it finds the farest (best) adjacent and/or position first.
+		// When a position with equal distance and better angle is found, this one is stored.
+		// When an adjacent position is found, this one is taken, if not, the best (farest dist,
+		// closest angle) step to passable terrain is chosen.
+
 		double[] bestAdj = { 0, -0.75 };
 		double[] bestNAdj = { 0, -0.75 };
 
@@ -799,7 +772,7 @@ public class Worm extends Entity {
 		boolean bestAdjFound = false;
 		boolean bestNAdjFound = false;
 
-		while (((!bestAdjFound) || (!bestNAdjFound)) && (dist >= 0.1)) {
+		while ((!bestAdjFound) && (dist >= 0.1)) {
 			double angle = -0.75;
 
 			while (angle <= 0.75) {
@@ -831,9 +804,15 @@ public class Worm extends Entity {
 			if (bestNAdj[0] > 0) {
 				bestNAdjFound = true;
 			}
-			dist -= 0.01;
+			if ((dist != 0.1) && ((dist - 0.1) < 0.01)) {
+				dist = 0.1;
+			} else {
+				dist -= 0.01;
+			}
 		}
-		if (bestAdjFound){
+		bestAdj[1] += getDirection();
+		bestNAdj[1] += getDirection();
+		if (bestAdjFound) {
 			return bestAdj;
 		} else {
 			return bestNAdj;
@@ -999,8 +978,8 @@ public class Worm extends Entity {
 		// If not, the new position will be stored in a local variable and the
 		// next position
 		// will be calculated.
-		
-		if(timeStep == Double.NaN) {
+
+		if (timeStep == Double.NaN) {
 			throw new IllegalArgumentException();
 		}
 

@@ -58,8 +58,8 @@ public enum Weapon {
 	private Weapon(double mass, double minForce, double maxForce,
 			int actionPointsCost, int damage) {
 		this.setMassProjectile(mass);
-		this.setMinForce(minForce);
 		this.setMaxForce(maxForce);
+		this.setMinForce(minForce);		
 		this.setActionPoints(actionPointsCost);
 		this.setDamage(damage);
 	}
