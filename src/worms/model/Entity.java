@@ -1,16 +1,16 @@
 package worms.model;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Raw;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of entities used in the game of worms with a position and a world.
  * The class also implements methods to terminate entities.
  * 
- * @invar	An entity should at all time have a world
- * 			|hasWorld()
+ * @invar	An entity who is not terminated should at all time have a world
+ * 			|if (!isTerminated)
+ * 			|	then hasWorld()
  * @author 	Glenn Cools & Mathijs Cuppens
- * @version	1.6
+ * @version	1.7
  */
 public class Entity {
 
@@ -28,6 +28,7 @@ public class Entity {
 	 * @effect	The world of this new entity is set to world.
 	 * 			|setWorld(world)
 	 */
+	@Raw
 	public Entity(Position position, World world) {
 		this.position = position;
 		this.terminated = false;
@@ -104,6 +105,8 @@ public class Entity {
 	 * @return	True if this entity is terminated
 	 * 			|terminated
 	 */
+	@Basic
+	@Raw
 	public boolean isTerminated() {
 		return this.terminated;
 	}
@@ -133,6 +136,8 @@ public class Entity {
 	 * 
 	 * @return The world where this entity lives.
 	 */
+	@Basic
+	@Raw
 	public World getWorld() {
 		return world;
 	}
@@ -207,6 +212,7 @@ public class Entity {
 	 * @return	True if the given entity lives in a world.
 	 * 			| getWorld() != null
 	 */
+	@Raw
 	private boolean hasWorld() {
 		return (getWorld() != null);
 	}
