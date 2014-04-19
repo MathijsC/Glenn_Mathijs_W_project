@@ -34,6 +34,7 @@ public class Food extends Entity {
 	 * 			than the minimal radius.
 	 * 			|setRadius(getMinRadius()*(1+RANDOM))
 	 */
+	@Raw
 	public Food(World world, double x, double y) {
 		super(new Position(x,y),world);
 		setRadius(getMinRadius()*(1+world.getSeed().nextDouble()));
@@ -53,6 +54,7 @@ public class Food extends Entity {
 	 * 			than the minimal radius.
 	 * 			|setRadius(getMinRadius()*(1+RANDOM))
 	 */
+	@Raw
 	public Food(World world) {
 		super(new Position(0, 0),world);
 		setRadius(getMinRadius()*(1+world.getSeed().nextDouble()));
