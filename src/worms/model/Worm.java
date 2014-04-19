@@ -82,9 +82,9 @@ public class Worm extends Entity {
 		setHitPoints(getMaxHitPoints());
 		setName(name);
 		setCurrentWeaponIndex(0);
-		if (!world.getTeams().isEmpty()) {
-			setTeam(world.getTeams().get(
-					world.getSeed().nextInt(world.getTeams().size())));
+		if (!world.getTeamList().isEmpty()) {
+			setTeam(world.getTeamList().get(
+					world.getSeed().nextInt(world.getTeamList().size())));
 		}
 
 	}
@@ -763,7 +763,7 @@ public class Worm extends Entity {
 				- (int) Math.ceil((bestStepData[0] / getRadius())
 						* (Math.abs(Math.cos(bestStepData[1])) + 4 * Math
 								.abs(Math.sin(bestStepData[1])))));
-		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
+		if (getWorld().checkWormCanEatFood(this)) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 	}
@@ -888,7 +888,7 @@ public class Worm extends Entity {
 			terminate();
 		} else {
 			if (((int) (3 * (this.getPosition().distanceTo(oldPos))) < getHitPoints())) {
-				if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
+				if (getWorld().checkWormCanEatFood(this)) {
 					getWorld().getFoodEatenBy(this).getEatenBy(this);
 				}
 			}
@@ -947,7 +947,7 @@ public class Worm extends Entity {
 		this.setPosition(newPosition[0], newPosition[1]);
 
 		setActionPoints(0);
-		if (getWorld().checkWormCanEatFood(getPosition(), getRadius())) {
+		if (getWorld().checkWormCanEatFood(this)) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 	}

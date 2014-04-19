@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import be.kuleuven.cs.som.annotate.*;
+
 //TODO invar
 /**
  * A class of worlds used in the game of worms with a height, width,
@@ -216,7 +217,7 @@ public class World {
 	 * 			|else
 	 */
 	@Model
-	protected void removeEntity(Entity entity) throws IllegalArgumentException{
+	protected void removeEntity(Entity entity) throws IllegalArgumentException {
 		if (entity instanceof Worm) {
 			getWormList().remove(entity);
 			if (this.getCurrentWormIndex() >= getWormList().size()) {
@@ -236,6 +237,8 @@ public class World {
 	 * 
 	 * @return 	The list of worms who live in this world.
 	 */
+	@Basic
+	@Raw
 	public ArrayList<Worm> getWormList() {
 		return worms;
 	}
@@ -245,6 +248,8 @@ public class World {
 	 * 
 	 * @return the active projectile in this world
 	 */
+	@Basic
+	@Raw
 	public Projectile getProjectile() {
 		return this.projectile;
 	}
@@ -254,22 +259,40 @@ public class World {
 	 * 
 	 * @return 	The list of food in this world.
 	 */
+	@Basic
+	@Raw
 	public ArrayList<Food> getFoodList() {
 		return foodList;
 	}
 
-	//------------TOT HIER GERAAKT, DE REST DOE IK OVER 2 UUR OFZO-----------//
-	// TODO
+	/**
+	 * Return the food at a given index in the food list of this world.
+	 * 
+	 * @param 	index
+	 * 			The index of the place in the food list of the food
+	 * 			you want to return.
+	 * @return	The food at the given index.
+	 * 			|foodList.get(index)
+	 */
+	@Raw
 	public Food getFoodAtIndex(int index) {
-		return this.foodList.get(index);
+		return getFoodList().get(index);
 	}
 
-	// TODO
+	/**
+	 * Return the worm at a given index in the worm list of this world.
+	 * 
+	 * @param 	index
+	 * 			The index of the place in the worm list of the food
+	 * 			you want to return.
+	 * @return	The worm at the given index.
+	 * 			|wormList.get(index)
+	 */
+	@Raw
 	public Worm getWormAtIndex(int index) {
-		return worms.get(index);
+		return getWormList().get(index);
 	}
 
-	// GAMEPLAY
 	/**
 	 * The index of the worm who is at turn in the list of worms.
 	 */
@@ -280,6 +303,9 @@ public class World {
 	 * 
 	 * @return 	The index of the worm who is at turn in the list of worms.
 	 */
+	@Basic
+	@Raw
+	@Model
 	private int getCurrentWormIndex() {
 		return currentWormIndex;
 	}
@@ -292,6 +318,8 @@ public class World {
 	 * @post	The new current index is equal to the given index.
 	 * 			| new.getCurrentWormIndex() == currentWormIndex
 	 */
+	@Raw
+	@Model
 	private void setCurrentWormIndex(int currentWormIndex) {
 		this.currentWormIndex = currentWormIndex;
 	}
@@ -299,20 +327,21 @@ public class World {
 	/**
 	 * Get the worm who is currently at turn in this world.
 	 * 
-	 * @return The worm who is currently at turn in this world.
+	 * @return 	The worm who is currently at turn in this world.
+	 * 			|getWormList().get(getCurrentWormIndex())
 	 */
 	public Worm getCurrentWorm() {
-		return this.worms.get(this.getCurrentWormIndex());
+		return getWormList().get(this.getCurrentWormIndex());
 	}
 
 	/**
 	 * Start the turn of the next worm.
 	 * 
 	 * @effect	If the last worm has finished its turn, start a new round.
-	 * 			| if(last worm played)
+	 * 			|if(LAST WORM PLAYED)
 	 * 			|	then startNextRound();
 	 * @effect	Else set the next worm to the current worm.
-	 * 			| else
+	 * 			|else
 	 * 			|	then setCurrentWormIndex(next worm index)
 	 */
 	public void startNextTurn() {
@@ -320,18 +349,17 @@ public class World {
 			startNextRound();
 		else
 			setCurrentWormIndex(getCurrentWormIndex() + 1);
-
 	}
 
 	/**
 	 * Start a next round of the game.
 	 * 
-	 * TODO check ALL
 	 * @effect	All the worms in the world refresh.
-	 * 			| worm.refresh()
-	 * @post	The current worm is set to the first worm (index = 0) in this world.
-	 * 			| new.getCurrentWormIndex == 0
+	 * 			|worm.refresh()
+	 * @effect	The current worm is set to the first worm (index = 0) in this world.
+	 * 			|setCurrentWormIndex(0)
 	 */
+	@Model
 	private void startNextRound() {
 
 		for (Worm worm : worms) {
@@ -344,15 +372,25 @@ public class World {
 	/**
 	 * Start a new game.
 	 * 
-	 * @post	The current worm is set to the first worm (index = 0) in this world.
-	 * 			| new.getCurrentWormIndex == 0
+	 * @effect	The current worm is set to the first worm (index = 0) in this world.
+	 * 			|setCurrentWormIndex(0)
 	 */
 	public void startGame() {
 		setCurrentWormIndex(0);
 	}
 
-	// TODO
+	/**
+	 * Check if the game running in this world is finished.
+	 * 
+	 * @return	True if the game is finished. The game is finished
+	 * 			when there is only worms of one team left (or only one
+	 * 			worm if he has no team).
+	 */
 	public boolean isGameFinished() {
+
+		//This function iterates through the list of worms and checks if they
+		//have the same team as the first worm. If not, the game isn't finished yet.
+
 		Team teamFirstWorm = getWormAtIndex(0).getTeam();
 		for (Worm worm : worms) {
 			if ((worm.getTeam() != teamFirstWorm)) {
@@ -365,6 +403,17 @@ public class World {
 		return true;
 	}
 
+	/**
+	 * Return the name of the winning worm (or winning team if more worms of the
+	 * same team are left).
+	 * 
+	 * @return	If there is only one worm left in this world, return his name.
+	 * 			|if (getWormList().size() == 1)
+	 * 			|	then getWormAtIndex(0).getName()
+	 * @return	Else return the name of the winning team (the team of the first worm)
+	 * 			|else
+	 * 			|	then getWormAtIndex(0).getTeam().getName()
+	 */
 	public String getWinnerName() {
 		if (getWormList().size() == 1) {
 			return getWormAtIndex(0).getName();
@@ -374,7 +423,6 @@ public class World {
 
 	}
 
-	// TEAMS
 	/**
 	 * A list containing all the teams who are curently in this world.
 	 */
@@ -385,13 +433,15 @@ public class World {
 	 * 
 	 * @param 	team
 	 * 			The team to be added to this world.
-	 * @post	The last team added to this world is the given team.
-	 * 			TODO formeel
-	 * @throws	TODO
+	 * @post	The last team added to this world is equal to the given team.
+	 * 			|new.getTeamList().get(getTeamList().size()-1) == team
+	 * @throws	IllegalStateException
+	 * 			The world of the given team is not this team.
+	 * 			|team.getWorld() != this
 	 * 
 	 */
 	public void addTeam(Team team) throws IllegalStateException {
-		if (!(team.getWorld() == this)) {
+		if (team.getWorld() != this) {
 			throw new IllegalStateException();
 		}
 		teams.add(team);
@@ -402,12 +452,32 @@ public class World {
 	 * 
 	 * @return 	The list of teams who are in this world.
 	 */
-	public ArrayList<Team> getTeams() {
+	public ArrayList<Team> getTeamList() {
 		return teams;
 	}
 
-	// TODO
+	/**
+	 * Get the worm who gets hit by the given projectile in this world.
+	 * If no worm is hitted return null.
+	 * 
+	 * @param 	projectile
+	 * 			The projectile to get the hitted worm from.
+	 * @return	The worm from who the distance to the position of the given
+	 * 			projectile is smaller than the sum of the radius of both.
+	 * 			|if (projectile.getPosition().distanceTo(worm.getPosition()) < projectile
+	 *			|	.getRadius() + worm.getRadius())
+	 *			|		then return worm
+	 * @return	If no worm is hitted return null.
+	 * 			|else
+	 * 			|	then return null
+	 */
 	public Worm getWormHit(Projectile projectile) {
+
+		//This function iterates through all the worms in this world and
+		//checks the distance between the position of the worm and the position
+		//of the given projectile. If the distance is smaller than the sum of the radius
+		//of both, the worm gets hit.
+
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
@@ -422,29 +492,59 @@ public class World {
 		if (hit == false) {
 			worm = null;
 		}
-
 		return worm;
 	}
 
-	// TODO
-	public boolean checkProjectileHitWorm(Position position, double radius) {
+	/**
+	 * Returns true if the given projectile hits a worm.
+	 * 
+	 * @param 	projectile
+	 * 			The projectile to check if it hits a worm in this world.
+	 * @return	True if the distance between the position of a worm and the
+	 * 			position of the given projectile is smaller than the sum of the
+	 * 			radius of both and the worm is not equal to the current worm.
+	 * 			|if ((projectile.getPosition().distanceTo(worm.getPosition()) < projectile
+	 *			|	.getRadius() + worm.getRadius()) && (worm != getCurrentWorm()))
+	 *			|		then return true
+	 */
+	public boolean checkProjectileHitWorm(Projectile projectile) {
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
 		while ((i < this.getWormList().size()) && (!hit)) {
 			worm = this.getWormAtIndex(i);
-			if ((position.distanceTo(worm.getPosition())) <= (radius + worm
-					.getRadius()) && (worm != this.getCurrentWorm())) {
+			if ((projectile.getPosition().distanceTo(worm.getPosition())) < (projectile
+					.getRadius() + worm.getRadius())
+					&& (worm != this.getCurrentWorm())) {
 				hit = true;
 			}
 			i++;
 		}
-
 		return hit;
 	}
 
-	// TODO
+	/**
+	 * Get the food who gets eaten by the given worm in this world.
+	 * If no food is eaten return null.
+	 * 
+	 * @param 	worm
+	 * 			The worm to get the eaten food from.
+	 * @return	The food from who the distance to the position of the given
+	 * 			worm is smaller than the sum of the radius of both.
+	 * 			|if (food.getPosition().distanceTo(worm.getPosition()) < worm
+	 *			|	.getRadius() + food.getRadius())
+	 *			|		then return food
+	 * @return	If no food is eaten return null.
+	 * 			|else
+	 * 			|	then return null
+	 */
 	public Food getFoodEatenBy(Worm worm) {
+
+		//This function iterates through all the foods in this world and
+		//checks the distance between the position of the food and the position
+		//of the given worm. If the distance is smaller than the sum of the radius
+		//of both, the food gets eaten.
+
 		int i = 0;
 		boolean eat = false;
 		Food food = null;
@@ -463,15 +563,26 @@ public class World {
 		return food;
 	}
 
-	// TODO
-	public boolean checkWormCanEatFood(Position position, double wormRadius) {
+	/**
+	 * Returns true if the given worm can eat food.
+	 * 
+	 * @param 	worm
+	 * 			The worm to check if he can eat food in this world.
+	 * @return	True if the distance between the position of a food and the
+	 * 			position of the given worm is smaller than the sum of the
+	 * 			radius of both.
+	 *			|if ((worm.getPosition().distanceTo(food.getPosition())) <= (worm.getRadius() + food
+	 *			|	.getRadius()))
+	 *			|		then return true
+	 */
+	public boolean checkWormCanEatFood(Worm worm) {
 		int i = 0;
 		boolean eat = false;
 		Food food = null;
 		while ((i < this.getFoodList().size()) && (!eat)) {
 			food = this.getFoodAtIndex(i);
-			if ((position.distanceTo(food.getPosition())) <= (wormRadius + food
-					.getRadius())) {
+			if ((worm.getPosition().distanceTo(food.getPosition())) <= (worm
+					.getRadius() + food.getRadius())) {
 				eat = true;
 			}
 			i++;
@@ -479,32 +590,51 @@ public class World {
 
 		return eat;
 	}
-	
-	//TODO check
+
 	/**
-	 * 
-	 * @param pos	
-	 * 				The position of the entity that needs to be checked if it is in this world
-	 * @param radius
-	 * 				The radius of the entity that nees to be checked if it is in this world
-	 * 
-	 * @return		True if the worm is in within the boundaries of this world
-	 * 				False if the worm is no longer within the boundaries of this world
-	 * 				|(0 < ENTITY_X < WIDTH) && (0 < ENTITY_Y < HEIGTH)
+	 * Check if the given position and a circle with the given radius around it is
+	 * in this world.
+	 * @param 	pos	
+	 * 			The position of the entity that needs to be checked if it is in this world
+	 * @param 	radius
+	 * 			The radius of the entity that needs to be checked if it is in this world
+	 * @return	True if the worm is in within the boundaries of this world
+	 * 			False if the worm is no longer within the boundaries of this world
+	 * 			|(0 < ENTITY_X < WIDTH) && (0 < ENTITY_Y < HEIGTH)
 	 */
 	public boolean entityInWorld(Position pos, double radius) {
 		return (0 < (pos.getXCoordinate() - radius))
 				&& (0 < (pos.getYCoordinate() - radius))
-				&& ((pos.getXCoordinate() - radius) < this
-						.getWidth())
-				&& ((pos.getYCoordinate() - radius) < this
-						.getHeight());
-	}	
+				&& ((pos.getXCoordinate() - radius) < this.getWidth())
+				&& ((pos.getYCoordinate() - radius) < this.getHeight());
+	}
 
-	// TODO docu
-	// This version of isPassable is incomplete, but it is a faster one
-	// to prevent lags during the gameplay.
+	/**
+	 * Checks if the given position (x- and y-coordinate) is passable for an
+	 * entity with the given radius in this world.
+	 * @param 	xCo
+	 * 			The x-coordinate of the position to check.
+	 * @param 	yCo
+	 * 			The y-coordinate of the position to check.
+	 * @param 	radius
+	 * 			The radius of the entity to check.
+	 * @return	True if the the positions inside the circle with given position
+	 * 			(x- and y-coordinate) as center and given radius as radius are
+	 * 			passable.
+	 * 			|for each position checked
+	 * 			|	if (passableMap[ROW AT yCO][COLUMN AT xCO] != true)
+	 * 			|		then return false
+	 */
 	public boolean isPassable(double xCo, double yCo, double radius) {
+
+		//This version of isPassable is incomplete, but it is a faster one
+		//to prevent lags during the gameplay.		
+
+		//This method checks the passability of 8 equaly divided positions
+		//on the circle with the given radius around the given position and the center
+		//of that circle. If one of these positions is impassable, the function returns
+		//false. If the circle is fully outside this world, the method returns true.
+
 		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
 				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {
 			return true;
@@ -537,10 +667,34 @@ public class World {
 		return false;
 	}
 
-	// TODO docu and max values
-	// This version of isPassable is complete, but it takes to long to run so
-	// the game isn't playable due to the lags this function creates.
+	/**
+	 * Checks if the given position (x- and y-coordinate) is passable for an
+	 * entity with the given radius in this world.
+	 * @param 	xCo
+	 * 			The x-coordinate of the position to check.
+	 * @param 	yCo
+	 * 			The y-coordinate of the position to check.
+	 * @param 	radius
+	 * 			The radius of the entity to check.
+	 * @return	True if the the positions inside the circle with given position
+	 * 			(x- and y-coordinate) as center and given radius as radius are
+	 * 			passable.
+	 * 			|for each position checked
+	 * 			|	if (passableMap[ROW AT yCO][COLUMN AT xCO] != true)
+	 * 			|		then return false
+	 */
 	public boolean isPassableCorrect(double xCo, double yCo, double radius) {
+
+		// This version of isPassable is complete, but it takes to long to run so
+		// the game isn't playable due to the lags this function creates.
+
+		//This method checks the passability of every position within the circle with 
+		//the given radius around the given position and the center
+		//of that circle. If one of these positions is impassable, the function returns
+		//false. If the circle is fully outside this world, the method returns true.
+		//The method does this by getting every box of the passableMap matrix of this world
+		//inside a square around the circle. If the 'box' (one element of the matrix) is inside
+		//the circle, the method checks the passability of that box.
 
 		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
 				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {
@@ -549,90 +703,76 @@ public class World {
 
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
+
 		int upperRow = (int) ((this.getPassableMap().length) - ((yCo + radius) / boxHeight));
 		int lowerRow = (int) ((this.getPassableMap().length) - ((yCo - radius) / boxHeight));
 		int leftColumn = (int) ((xCo - radius) / boxWidth);
 		int rightColumn = (int) ((xCo + radius) / boxWidth);
-		// System.out.println("CheckPassable:");
-		// System.out.println(this.getPassableMap()[0].length+
-		// " | "+this.getPassableMap().length);
-		// System.out.println(boxWidth+ " | "+boxHeight);
-		// System.out.println("Coords: " + xCo + " | " +
-		// yCo+" Circlerad: "+radius);
 
-		// String rows = "Rows:";
-		// String cols = "Cols:";
-		// System.out.println(upperRow + " | " + lowerRow + " | " + leftColumn
-		// + " | " + rightColumn);
 		for (int row = upperRow; row <= lowerRow; row += 1) {
-			// rows = rows+"\n"+Integer.toString(row)+": ";
 			for (int column = leftColumn; column <= rightColumn; column += 1) {
-				// rows = rows+" "+Integer.toString(column);
 				if ((row >= 0) && (row < getPassableMap().length)
 						&& (column >= 0)
 						&& (column < getPassableMap()[0].length)
 						&& (isBoxInRadius(row, column, xCo, yCo, radius))) {
-					// rows = rows+"X";
 					if (passableMap[row][column] != true) {
-						/**System.out.println("is impassable");
-						for (int i = upperRow; i <= lowerRow; i++) {
-							System.out.print(i+ "| ");
-						    for (int j = leftColumn; j <= rightColumn; j++) {
-						    	if (passableMap[i][j] == true ){
-						    		System.out.print("1 ");
-						    	}
-						    	else {
-						    		System.out.print("0 ");
-						    	}
-						    }
-						    System.out.print("\n");
-						}*/
 						return false;
 					}
 				}
-				/**else {
-				rows = rows+"_";
-				}*/
 			}
 		}
-		// System.out.println(rows);
-		// System.out.println(cols);
-		/*
-		 * System.out.println("is passable"); for (int i = upperRow; i <=
-		 * lowerRow; i++) { System.out.print(i+ "| "); for (int j = leftColumn;
-		 * j <= rightColumn; j++) { if (passableMap[i][j] == true ){
-		 * System.out.print("1 "); } else { System.out.print("0 "); } }
-		 * System.out.print("\n"); }
-		 */
-		// System.out.println("isPass: " + xCo + " | " + yCo + " | " + column
-		// + " | " + row + " | " + this.getPassableMap()[row][column]);
-		// return this.getPassableMap()[row][column];
-
 		return true;
 	}
 
-	public boolean isBoxInRadius(double row, double column, double xCo,
+	/**
+	 * Check if the element in the given row and column of the passableMap matrix is 
+	 * inside a circle with center the given position (x- and y-coordinate) and radius
+	 * the given radius.
+	 * 
+	 * @param 	row
+	 * 			The row of the element to check.
+	 * @param 	column
+	 * 			The column of the element to check.
+	 * @param 	xCo
+	 * 			The x-coordinate of the center position of the circle to check.
+	 * @param 	yCo
+	 * 			The y-coordinate of the center position of the circle to check.
+	 * @param 	radius
+	 * 			The radius of the circle to check.
+	 * @return	True if one of the corners of the rectangle (the element of the
+	 * 			passableMap matrix) is 
+	 */
+	private boolean isBoxInRadius(double row, double column, double xCo,
 			double yCo, double radius) {
+		
+		//This method sees an element of the passableMap matrix as a rectangle
+		//with width (width of this world divided by the number of columns in the matrix)
+		//with height (height of this world divided by the number of rows in the matrix).
+		//If one of the four corners of this rectangle is closer to the center than the
+		//radius, the rectangle is partially inside the circle and so this method returns true.		
+		
+		Position center = new Position(xCo,yCo);
+		
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
-		double[] leftTopCorner = { column * boxWidth,
-				this.getHeight() - row * boxHeight };
-		double[] rightTopCorner = { (column + 0.99) * boxWidth,
-				this.getHeight() - row * boxHeight };
-		double[] leftBottomCorner = { column * boxWidth,
-				this.getHeight() - (row + 0.99) * boxHeight };
-		double[] rightBottomCorner = { (column + 0.99) * boxWidth,
-				this.getHeight() - (row + 0.99) * boxHeight };
-		boolean result = (((Math.pow(leftTopCorner[0] - xCo, 2) + Math.pow(
-				leftTopCorner[1] - yCo, 2)) < Math.pow(radius, 2))
-				|| ((Math.pow(rightTopCorner[0] - xCo, 2) + Math.pow(
-						rightTopCorner[1] - yCo, 2)) < Math.pow(radius, 2))
-				|| ((Math.pow(leftBottomCorner[0] - xCo, 2) + Math.pow(
-						leftBottomCorner[1] - yCo, 2)) < Math.pow(radius, 2)) || ((Math
-				.pow(rightBottomCorner[0] - xCo, 2) + Math.pow(
-				rightBottomCorner[1] - yCo, 2)) < Math.pow(radius, 2)));
+		Position leftTopCorner = new Position(column * boxWidth,
+				this.getHeight() - row * boxHeight);
+		Position rightTopCorner = new Position((column + 0.99) * boxWidth,
+				this.getHeight() - row * boxHeight );
+		Position leftBottomCorner = new Position(column * boxWidth,
+				this.getHeight() - (row + 0.99) * boxHeight );
+		Position rightBottomCorner = new Position ((column + 0.99) * boxWidth,
+				this.getHeight() - (row + 0.99) * boxHeight );
+		
+		boolean result = ((center.distanceTo(leftTopCorner) < radius) ||
+						  (center.distanceTo(rightTopCorner) < radius) ||
+				          (center.distanceTo(leftBottomCorner) < radius) || 
+				          (center.distanceTo(rightBottomCorner) < radius));
+		
 		return result;
 	}
+	
+	//----------------------TOT HIER GERAAKT, REST IS VOOR MORGEN, TIS TE LAAT AANT WORDEN :p----//
 
 	// TODO docu and max values
 	public boolean isAdjacentTerrain(double radius, double xCo, double yCo) {

@@ -273,15 +273,9 @@ public class Projectile extends Entity {
 	 * @return	Returns the radius of this projectile based on its density and mass.
 	 * 			| VOLUME = MASS/DENSITY
 	 * 			| VOLUME = 4/3*PI*R^3
-	 * @throws	IllegalArgumentException
-	 * 			The radius is an invalid radius.
-	 * 			| !isValidRadius(radius)
 	 */
-	private double calcRadius() throws IllegalArgumentException {
+	private double calcRadius(){
 		final int DENSITY_OF_THE_PROJECTILE = 7800;
-		if (!isValidRadius(radius)) {
-			throw new IllegalArgumentException();
-		}
 		return Math.pow((3 / (4 * Math.PI))
 				* (this.getMass() / DENSITY_OF_THE_PROJECTILE), 1.0 / 3);
 	}
@@ -318,8 +312,7 @@ public class Projectile extends Entity {
 		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
 				0, 2);
 		this.setPosition(newPosition[0], newPosition[1]);
-		if (this.getWorld().checkProjectileHitWorm(this.getPosition(),
-				this.getRadius())) {
+		if (this.getWorld().checkProjectileHitWorm(this)) {
 			Worm wormHit = this.getWorld().getWormHit(this);
 			wormHit.addHealt(this.getWeapon().getDamage());
 		}
@@ -384,8 +377,7 @@ public class Projectile extends Entity {
 					tempPosition.getYCoordinate(), this.getRadius())) {
 				position = tempPosition;
 				time = time + timeStep;
-				if (this.getWorld().checkProjectileHitWorm(position,
-						this.getRadius())) {
+				if (this.getWorld().checkProjectileHitWorm(this)) {
 					hit = true;
 				}
 			} else {
