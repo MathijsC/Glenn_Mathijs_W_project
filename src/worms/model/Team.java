@@ -179,8 +179,8 @@ public class Team {
 	 * 
 	 * @param 	worm
 	 * 			The worm to be added to this team.
-	 * @post	The last worm added to this team is the given worm.
-	 * 			|getWorms().get(getWorms().size()-1) == worm 
+	 * @post	The last worm added to this team is equal to the given worm.
+	 * 			|new.getWorms().get(getWorms().size()-1) == worm 
 	 * @throws	IllegalStateException
 	 * 			The given worm doesn't have this team as team attribute.
 	 * 			|!(worm.getTeam() == this

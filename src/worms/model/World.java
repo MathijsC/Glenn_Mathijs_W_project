@@ -3,17 +3,24 @@ package worms.model;
 import java.util.ArrayList;
 import java.util.Random;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
-import be.kuleuven.cs.som.annotate.Raw;
-
-import com.sun.xml.internal.bind.v2.TODO;
-
+import be.kuleuven.cs.som.annotate.*;
+//TODO invar
+/**
+ * A class of worlds used in the game of worms with a height, width,
+ * passable map matrix, random seed, list of worms, list of foods, 
+ * list of teams, projectile, current playing worm.
+ * The class also implements methods for the gameplay (start game,
+ * next round,get winner,...) and to add entities and teams to the world.
+ * 
+ * @author 	Glenn Cools & Mathijs Cuppens
+ * @version	1.25
+ *
+ */
 public class World {
 
 	/**
 	 * Initialize this new world with a given width, height, passableMap and
-	 * a random.
+	 * a random seed.
 	 * 
 	 * @param 	width
 	 * 			The width for this new world.
@@ -22,15 +29,15 @@ public class World {
 	 * @param 	passableMap
 	 * 			The map matrix of this new world with the position that are passable.
 	 * @param 	random
-	 * 			TODO
+	 * 			The random seed for this world.
 	 * @post	The width of this new world is equal to the given width.
 	 * 			| new.getWidth == width;	
 	 * @post	The height of this new world is equal to the given height.
 	 * 			| new.getHeight == height;
 	 * @effect	The passable map of this new world is set to the given passable map matrix.
 	 * 			| setPassableMap(passableMap)
-	 * @post	The seed
-	 * 			TODO	
+	 * @post	The random seed of this new world is equal to the given random.
+	 * 			| new.getSeed() == random	
 	 */
 	public World(double width, double height, boolean[][] passableMap,
 			Random random) {
@@ -95,31 +102,31 @@ public class World {
 	 * Set the passable map of this world to the given passable map matrix.
 	 * 
 	 * @param 	passableMap
-	 * 			The map matrix of this world with the position that are passable.
-	 * 			
+	 * 			The map matrix of this world with the position that are passable.		
 	 * @post	The passable map matrix of this world is equal to the given passable map.
 	 * 			| new.getPassableMap() == passableMap.			
 	 */
 	@Raw
-	@Basic
-	public void setPassableMap(boolean[][] passableMap) {
+	@Model
+	private void setPassableMap(boolean[][] passableMap) {
 		this.passableMap = passableMap;
 	}
 
 	/**
-	 * TODO seed
+	 * A variable containing the random seed of this world.
 	 */
 	private final Random seed;
 
 	/**
-	 * TODO seed
-	 * @return
+	 * Return the random seed of this world.
+	 * 
+	 * @return	The random seed of this world.
 	 */
+	@Basic
+	@Raw
 	public Random getSeed() {
 		return seed;
 	}
-
-	// OBJECTS
 
 	/**
 	 * A list containing all the worms who are currently in this world.
@@ -136,31 +143,85 @@ public class World {
 	 */
 	private ArrayList<Food> foodList = new ArrayList<Food>();
 
-	// TODO
-	public void addEntity(Entity entity) throws IllegalStateException,
+	/**
+	 * Add the given entity to this world.
+	 * 
+	 * @param 	entity
+	 * 			The entity do be added to this world.
+	 * @post	If the given entity is a worm, the last worm added to this
+	 * 			world is equal to the given entity(worm).
+	 * 			|if (entity instanceof Worm)
+	 * 			|	then new.getWormList().get(getWormList().size()-1) == entity
+	 * @post	If the given entity is a food, the last food added to this
+	 * 			world is equal to the given entity(food).
+	 * 			|else if (entity instanceof Food)
+	 * 			|	then new.getFoodList().get(getFoodList().size()-1) == entity
+	 * @post	If the given entity is a projectile, the new projectile of
+	 * 			this world is equal to the given entity(projectile)
+	 * 			|else if (entity instanceof Projectile)
+	 * 			|	new.getProjectile() == entity
+	 * @throws 	IllegalStateException
+	 * 			The world of the given entity is not this world.
+	 * 			|entity.getWorld() != this
+	 * @throws 	IllegalArgumentException
+	 * 			If the given entity is an subobject of entity that cannot 
+	 * 			be added to this world.
+	 * 			|else
+	 */
+	@Model
+	protected void addEntity(Entity entity) throws IllegalStateException,
 			IllegalArgumentException {
-		if (!(entity.getWorld() == this)) {
+		if (entity.getWorld() != this) {
 			throw new IllegalStateException();
 		}
 		if (entity instanceof Worm) {
-			worms.add((Worm) entity);
+			getWormList().add((Worm) entity);
 		} else if (entity instanceof Projectile) {
 			this.projectile = (Projectile) entity;
 		} else if (entity instanceof Food) {
-			foodList.add((Food) entity);
+			getFoodList().add((Food) entity);
 		} else {
 			throw new IllegalArgumentException();
 		}
 	}
 
-	// TODO
-	public void removeEntity(Entity entity) {
+	/**
+	 * Remove the given entity from this world.
+	 * 
+	 * @param 	entity
+	 * 			The entity to be removed from this world.
+	 * @post	If the given entity is a worm, the number of worms in this world
+	 * 			is decremented by 1 and the worm list of this world does not contain
+	 * 			the given entity(worm).
+	 * 			|if (entity instanceof Worm)
+	 * 			|	then new.getWormList().size() == getWormList().size() - 1
+	 * 			|	then !new.getWormList().contain(entity)
+	 * @effect	If the given entity is the last worm in worm the worm list, the next
+	 * 			gameround starts. 
+	 * 			|if (this.getCurrentWormIndex() >= getWormList().size())
+	 * 			|	then startNextRound()
+	 * @post	If the given entity is a food, the number of foods in this world
+	 * 			is decremented by 1 and the food list of this world does not contain
+	 * 			the given entity(food).
+	 * 			|if (entity instanceof Food)
+	 * 			|	then new.getFoodList().size() == getFoodList().size() - 1
+	 * 			|	then !new.getFoodList().contain(entity)
+	 * @post	If the given entity is a projectile, the projectile of this world is set
+	 * 			to null.
+	 * 			|else if (entity instanceof Projectile)
+	 * 			|	then new.getProjectile = null
+	 * @throws 	IllegalArgumentException
+	 * 			If the given entity is an subobject of entity that cannot 
+	 * 			be removed from this world.
+	 * 			|else
+	 */
+	@Model
+	protected void removeEntity(Entity entity) throws IllegalArgumentException{
 		if (entity instanceof Worm) {
-			worms.remove(entity);
-			if (this.getCurrentWormIndex() >= worms.size()) {
+			getWormList().remove(entity);
+			if (this.getCurrentWormIndex() >= getWormList().size()) {
 				this.startNextRound();
 			}
-
 		} else if (entity instanceof Projectile) {
 			this.projectile = null;
 		} else if (entity instanceof Food) {
@@ -175,7 +236,7 @@ public class World {
 	 * 
 	 * @return 	The list of worms who live in this world.
 	 */
-	public ArrayList<Worm> getWorms() {
+	public ArrayList<Worm> getWormList() {
 		return worms;
 	}
 
@@ -197,6 +258,7 @@ public class World {
 		return foodList;
 	}
 
+	//------------TOT HIER GERAAKT, DE REST DOE IK OVER 2 UUR OFZO-----------//
 	// TODO
 	public Food getFoodAtIndex(int index) {
 		return this.foodList.get(index);
@@ -297,14 +359,14 @@ public class World {
 				return false;
 			}
 		}
-		if ((teamFirstWorm == null) && (getWorms().size() > 1)) {
+		if ((teamFirstWorm == null) && (getWormList().size() > 1)) {
 			return false;
 		}
 		return true;
 	}
 
 	public String getWinnerName() {
-		if (getWorms().size() == 1) {
+		if (getWormList().size() == 1) {
 			return getWormAtIndex(0).getName();
 		} else {
 			return getWormAtIndex(0).getTeam().getName();
@@ -349,7 +411,7 @@ public class World {
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
-		while ((i < this.getWorms().size()) && (!hit)) {
+		while ((i < this.getWormList().size()) && (!hit)) {
 			worm = this.getWormAtIndex(i);
 			if (projectile.getPosition().distanceTo(worm.getPosition()) < projectile
 					.getRadius() + worm.getRadius()) {
@@ -369,7 +431,7 @@ public class World {
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
-		while ((i < this.getWorms().size()) && (!hit)) {
+		while ((i < this.getWormList().size()) && (!hit)) {
 			worm = this.getWormAtIndex(i);
 			if ((position.distanceTo(worm.getPosition())) <= (radius + worm
 					.getRadius()) && (worm != this.getCurrentWorm())) {

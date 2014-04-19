@@ -218,10 +218,10 @@ public class Entity {
 	/**
 	 * Removes this entity from its world.
 	 * 
-	 * @post	If this entity is terminated and this entity has a world,
+	 * @effect	If this entity is terminated and this entity has a world,
 	 * 			set the world of this entity to null.
 	 * 			|if ((isTerminated()) && (hasWorld()))
-	 * 			|	new.getWorld() == null
+	 * 			|	setWorld(null)
 	 * @effect	If this entity is terminated and this entity has a world,
 	 * 			remove this entity from its world.
 	 * 			|if ((isTerminated()) && (hasWorld()))

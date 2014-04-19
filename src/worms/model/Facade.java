@@ -391,7 +391,7 @@ public class Facade implements IFacade {
 	 * Returns all the worms in the given world
 	 */
 	public Collection<Worm> getWorms(World world) {
-		return world.getWorms();
+		return world.getWormList();
 
 	}
 
