@@ -3,9 +3,7 @@ package worms.model;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
-import be.kuleuven.cs.som.annotate.Raw;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class for a worm objects containing a x-coordinate, y-coordinate
@@ -106,6 +104,7 @@ public class Worm extends Entity {
 	 * 			|setPosition(RANDOM X,RANDOM Y)
 	 * 			
 	 */
+	@Raw
 	public Worm(World world) {
 		this(world, 0.0, 0.0, world.getSeed().nextDouble() * 2 * Math.PI,
 				(1 + (world.getSeed().nextDouble())) * getMinRadius(),
@@ -127,6 +126,8 @@ public class Worm extends Entity {
 	 * 
 	 * @return	The team of this worm.
 	 */
+	@Raw
+	@Basic
 	public Team getTeam() {
 		return team;
 	}
@@ -141,6 +142,8 @@ public class Worm extends Entity {
 	 * @effect	This worm is added to the given team.
 	 * 			|team.addWorm(this)
 	 */
+	@Raw
+	@Model
 	private void setTeam(Team team) {
 		this.team = team;
 		team.addWorm(this);
@@ -151,6 +154,8 @@ public class Worm extends Entity {
 	 * 
 	 * @return The weapon of this worm.
 	 */
+	@Basic
+	@Raw
 	public Weapon getWeapon() {
 		return this.weaponTypeList.get(this.getCurrentWeaponIndex());
 	}
@@ -160,6 +165,8 @@ public class Worm extends Entity {
 	 * 
 	 * @return the current weapon index
 	 */
+	@Basic
+	@Raw
 	private int getCurrentWeaponIndex() {
 		return this.currentWeaponIndex;
 	}
@@ -172,6 +179,8 @@ public class Worm extends Entity {
 	 * @post	The given weapon index is equal to the new current weapon index of this worm.
 	 * 			|new.getCurrentWeaponIndex() == index
 	 */
+	@Raw
+	@Model
 	private void setCurrentWeaponIndex(int index) {
 		this.currentWeaponIndex = index;
 	}
@@ -199,6 +208,7 @@ public class Worm extends Entity {
 	 * 			|else
 	 * 			|	then setCurrentWeaponIndex(getCurrentWeaponIndex()+1)
 	 */
+	@Raw
 	public void selectNextWeapon() {
 		if (currentWeaponIndex >= (weaponTypeList.size() - 1)) {
 			this.setCurrentWeaponIndex(0);
@@ -308,6 +318,7 @@ public class Worm extends Entity {
 	 * 			| new.getDirection() == direction % (Math.PI*2)
 	 */
 	@Raw
+	@Model
 	private void setDirection(double direction) {
 		if (direction % (Math.PI * 2) < 0)
 			this.direction = (direction % (Math.PI * 2) + 2 * Math.PI);
@@ -376,6 +387,7 @@ public class Worm extends Entity {
 	 * @return	The minimal radius this worm should have.
 	 */
 	@Immutable
+	@Raw
 	public static double getMinRadius() {
 		return 0.25;
 	}
@@ -454,6 +466,8 @@ public class Worm extends Entity {
 	 * 			The given mass is negative.
 	 * 			| mass<0
 	 */
+	@Raw
+	@Model
 	private void setMass(double mass) throws IllegalArgumentException {
 		if (mass < 0)
 			throw new IllegalArgumentException();
@@ -483,29 +497,32 @@ public class Worm extends Entity {
 	}
 
 	/**
-	 * Variable holding the number of hitpoints of this worm 
+	 * Variable holding the number of hit points of this worm 
 	 */
 	private int hitPoints;
 
-	/** returns the current hitpoints of this worm
-	 * @return the hitPoints of this worm
+	/** 
+	 * Returns the current hit points of this worm.
+	 * @return 	the hitPoints of this worm
 	 */
+	@Basic
+	@Raw
 	public int getHitPoints() {
 		return hitPoints;
 	}
 
 	/**
-	 * Set the number of hitpoints of this worm to the given number of points and
+	 * Set the number of hi tpoints of this worm to the given number of points and
 	 * terminate this worm if he has zero hit points.
 	 * 
 	 * @param 	hitPoints
-	 * 			The new number of hitpoints of this worm.
-	 * @post	If the given hitpoints are negative, the hitpoints of
+	 * 			The new number of hit points of this worm.
+	 * @post	If the given hit points are negative, the hit points of
 	 * 			this worm are set to zero.
 	 * 			| if (hitPoints < 0)
 	 * 			|	then new.getHitPoints() == 0
-	 * @post	Else if the given hitpoints are greater then the maximum amount
-	 * 			of hitpoint, the hitpoints of this worm are set to the
+	 * @post	Else if the given hit points are greater then the maximum amount
+	 * 			of hit point, the hit points of this worm are set to the
 	 * 			maximum amount.
 	 * 			| else if (hitPoints > this.getMaxHitPoints())
 	 * 			| 	then new.getHitPoints() == this.getHitPoints()
@@ -518,6 +535,8 @@ public class Worm extends Entity {
 	 * 			|if (getHitpoints() <= 0)
 	 * 			|	then terminate()
 	 */
+	@Raw
+	@Model
 	private void setHitPoints(int hitPoints) {
 		if (hitPoints < 0) {
 			this.hitPoints = 0;
@@ -550,9 +569,9 @@ public class Worm extends Entity {
 	 * 			The amount of hit points to add to this worms hit points.
 	 * @Effect	Add the given amount of hit points to the hit points of this
 	 * 			worm.
-	 * 			|setHitPoints(getHitpoints() + amount)
-	 * 
+	 * 			|setHitPoints(getHitpoints() + amount) 
 	 */
+	@Model
 	protected void addHealt(int amount) {
 		this.setHitPoints(this.getHitPoints() + amount);
 	}
@@ -568,6 +587,7 @@ public class Worm extends Entity {
 	 * 			of this worm.
 	 * 			|(hitPoints >=0) && (hitPoints <= getMass())
 	 */
+	@Raw
 	public boolean canHaveAsHitPoints(int hitPoints) {
 		return (hitPoints >= 0) && (hitPoints <= getMaxHitPoints());
 	}
@@ -588,6 +608,7 @@ public class Worm extends Entity {
 	 * 			of this worm.
 	 * 			|(actionPoints >=0) && (actionPoints <= getMaxActionPoints())
 	 */
+	@Raw
 	public boolean canHaveAsActionPoints(int actionPoints) {
 		return (actionPoints >= 0) && (actionPoints <= getMaxActionPoints());
 	}
@@ -629,6 +650,7 @@ public class Worm extends Entity {
 	 * 			|	then getWorld().startNextTurn()
 	 */
 	@Raw
+	@Model
 	private void setActionPoints(int actionPoints) {
 		if (actionPoints < 0) {
 			this.actionPoints = 0;

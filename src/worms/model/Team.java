@@ -12,7 +12,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @invar	A team should at all time have a valid name.
  * 			|isValidName(getName()) 
  * @author 	Glenn Cools & Mathijs Cuppens
- * @version	1.2
+ * @version	1.6
  *
  */
 public class Team {
@@ -32,7 +32,7 @@ public class Team {
 	@Raw
 	public Team(World world, String name){
 		setName(name);
-		setWorld(world);
+		setWorldTo(world);
 	}
 	
 	/**
@@ -95,27 +95,54 @@ public class Team {
 	 * 
 	 * @param 	world
 	 * 			The world where this team is in.
-	 * @post	The world of this team is set to the given world.
-	 * 			| new.getWorld() == world
+	 * @effect	The world of this team is set to the given world.
+	 * 			| setWorld(world)
 	 * @effect	The world is added to the given world.
 	 * 			| world.addTeam(this)
-	 * @throws	NullPointerException
-	 * 			The given world is null.
-	 * 			| if (world == null)
 	 * @throws	IllegalStateException
 	 * 			This team has a world already.
 	 * 			|hasWorld() 
 	 */
 	@Raw
-	public void setWorld(World world) throws NullPointerException, IllegalStateException{
-		if (world == null) {
-			throw new NullPointerException();
-		}
+	@Model
+	protected void setWorldTo(World world) throws IllegalStateException{
 		if (hasWorld()){
 			throw new IllegalStateException();
 		}
 		this.world = world;
 		world.addTeam(this);
+	}
+	
+	/**
+	 * Sets the world of this team to the given world.
+	 * 
+	 * @param 	world
+	 * 			The world to set as world for this team.
+	 * @post	The new world of this team is equal to world.
+	 * 			|new.getWorld = world.
+	 * @throws	IllegalWorldExceptioin
+	 * 			If this team cannot have the given world as its world.
+	 * 			| if(!canHaveAsWorld(world)
+	 */
+	@Raw
+	@Model
+	private void setWorld(World world) throws IllegalWorldException {
+		if (!canHaveAsWorld(world)) {
+			throw new IllegalWorldException(this, world);
+		}
+		this.world = world;
+	}
+
+	/**
+	 * Returns true is this team can have the given world as its world.
+	 * 
+	 * @param 	world
+	 * 			The world to check if this team can have it as its world.
+	 * @return	True if the world is not null.
+	 * 			|world != null
+	 */
+	public boolean canHaveAsWorld(World world) {
+		return (world != null);
 	}
 	
 	/**
@@ -127,7 +154,7 @@ public class Team {
 	 * 			| team.getWorld() != null
 	 */
 	@Raw
-	private boolean hasWorld(){
+	public boolean hasWorld(){
 		return (getWorld() != null);
 	}
 	
@@ -158,7 +185,8 @@ public class Team {
 	 * 			The given worm doesn't have this team as team attribute.
 	 * 			|!(worm.getTeam() == this
 	 */
-	public void addWorm(Worm worm) throws IllegalStateException{
+	@Model
+	protected void addWorm(Worm worm) throws IllegalStateException{
 		if (!(worm.getTeam() == this)){
 			throw new IllegalStateException();
 		}

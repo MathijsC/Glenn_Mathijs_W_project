@@ -1,8 +1,6 @@
 package worms.model;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
-import be.kuleuven.cs.som.annotate.Raw;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of foods used in the game of worms with a position(x- and y-coordinate)
@@ -92,6 +90,7 @@ public class Food extends Entity {
 	 * 			| !isValidRadius(radius)
 	 */
 	@Raw
+	@Model
 	private void setRadius(double radius) throws IllegalArgumentException {
 		if (!isValidRadius(radius))
 			throw new IllegalArgumentException();

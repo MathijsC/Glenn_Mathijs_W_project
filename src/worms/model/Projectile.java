@@ -2,9 +2,7 @@ package worms.model;
 
 import java.util.Arrays;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
-import be.kuleuven.cs.som.annotate.Raw;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of projectiles used in the game worms with a position, world
@@ -56,9 +54,10 @@ public class Projectile extends Entity {
 	 * @post	The weapon of this new projectile is set to the given weapon.
 	 * 			| new.getWeapon() == weapon
 	 */
+	@Raw
 	public Projectile(double x, double y, World world, Weapon weapon,
 			double direction, double mass, double force) {
-		super(new Position(x,y), world);
+		super(new Position(x, y), world);
 		this.setDirection(direction);
 		this.mass = mass;
 		this.force = force;
@@ -70,6 +69,8 @@ public class Projectile extends Entity {
 	 * 
 	 * @return 	The weapon of this projectile.
 	 */
+	@Basic
+	@Raw
 	public Weapon getWeapon() {
 		return weapon;
 	}
@@ -79,26 +80,38 @@ public class Projectile extends Entity {
 	 * 
 	 * @param 	weapon 
 	 * 			The weapon to set, for this projectile.
+	 * @post	The new weapon of this worm is the given weapon.
+	 * 			|new.getWeapon() == weapon
+	 * @throws	IllegalArgumentException
+	 * 			This projectile can't have the given weapon as weapon.
+	 * 			|!canHaveAsWeapon(weapon)
+	 * @throws	IllegalArgumentException
+	 * 			This projectial has a weapon already.
+	 * 			|hasWeapon()
 	 */
-	private void setWeapon(Weapon weapon) throws IllegalArgumentException,IllegalStateException{
-		if (hasWeapon()){
+	@Raw
+	@Model
+	private void setWeapon(Weapon weapon) throws IllegalArgumentException,
+			IllegalStateException {
+		if (hasWeapon()) {
 			throw new IllegalStateException();
 		}
-		if (!canHaveAsWeapon(weapon)){
+		if (!canHaveAsWeapon(weapon)) {
 			throw new IllegalArgumentException();
 		}
 		this.weapon = weapon;
 	}
-	
+
 	/**
 	 * Return true if this projectile has a weapon.
 	 * 
 	 * @return True if this projectile  has a weapon.
 	 */
-	public boolean hasWeapon(){
+	@Raw
+	public boolean hasWeapon() {
 		return getWeapon() != null;
 	}
-	
+
 	/**
 	 * Return true if the projectile can have the given weapon as a weapon.
 	 * 
@@ -107,7 +120,7 @@ public class Projectile extends Entity {
 	 * @return	True if the projectile can have the given weapon as a weapon.
 	 * 			| weapon != null
 	 */
-	public boolean canHaveAsWeapon(Weapon weapon){
+	public boolean canHaveAsWeapon(Weapon weapon) {
 		return weapon != null;
 	}
 
@@ -163,6 +176,7 @@ public class Projectile extends Entity {
 	 * 			| new.getDirection() == direction % (Math.PI*2)
 	 */
 	@Raw
+	@Model
 	private void setDirection(double direction) {
 		if (direction % (Math.PI * 2) < 0)
 			this.direction = (direction % (Math.PI * 2) + 2 * Math.PI);
@@ -201,7 +215,7 @@ public class Projectile extends Entity {
 	public double getForce() {
 		return force;
 	}
-	
+
 	/**
 	 * Returns true is the given force is a valid amount of force.
 	 * 
@@ -209,8 +223,8 @@ public class Projectile extends Entity {
 	 * 			The force to check if it is valid.
 	 * @return	True if the force is not negative, not zero, not NaN and not infinity.
 	 */
-	public static boolean isValidForce(double force){
-		return ((force >=0) && (force != Double.NaN) && (force != Double.POSITIVE_INFINITY));
+	public static boolean isValidForce(double force) {
+		return ((force >= 0) && (force != Double.NaN) && (force != Double.POSITIVE_INFINITY));
 	}
 
 	/**
@@ -235,6 +249,7 @@ public class Projectile extends Entity {
 	 * @return	The minimal radius this projectile should have.
 	 */
 	@Immutable
+	@Raw
 	public static double getMinRadius() {
 		return 0.0;
 	}
@@ -264,8 +279,9 @@ public class Projectile extends Entity {
 	 */
 	private double calcRadius() throws IllegalArgumentException {
 		final int DENSITY_OF_THE_PROJECTILE = 7800;
-		if (!isValidRadius(radius))
+		if (!isValidRadius(radius)) {
 			throw new IllegalArgumentException();
+		}
 		return Math.pow((3 / (4 * Math.PI))
 				* (this.getMass() / DENSITY_OF_THE_PROJECTILE), 1.0 / 3);
 	}
@@ -297,25 +313,18 @@ public class Projectile extends Entity {
 	* 			| 	then dealDamage() and terminate()
 	* @effect 	After the jump the projectile will be destroyed
 	* 			| terminate()
-	* @Throws	IllegalStateException
-	* 			This projectile is terminated
-	 * 			| isTerminated()
 	*/
-
-	public void jump(double timeStep) throws IllegalStateException{
-		if (isTerminated()) {
-			throw new IllegalStateException();
+	public void jump(double timeStep) {
+		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
+				0, 2);
+		this.setPosition(newPosition[0], newPosition[1]);
+		if (this.getWorld().checkProjectileHitWorm(this.getPosition(),
+				this.getRadius())) {
+			Worm wormHit = this.getWorld().getWormHit(this);
+			wormHit.addHealt(this.getWeapon().getDamage());
 		}
-			double[] newPosition = Arrays.copyOfRange(
-					this.possibleJump(timeStep), 0, 2);
-			this.setPosition(newPosition[0], newPosition[1]);
-			if (this.getWorld().checkProjectileHitWorm(this.getPosition(),
-					this.getRadius())) {
-				Worm wormHit = this.getWorld().getWormHit(this);
-				wormHit.addHealt(this.getWeapon().getDamage());
-			}
-			terminate();
-		
+		terminate();
+
 	}
 
 	/**
@@ -348,26 +357,28 @@ public class Projectile extends Entity {
 	 * 			The given timestep is not a number.
 	 * 			| timeStep == Double.NaN
 	 */
-	private double[] possibleJump(double timeStep) throws IllegalArgumentException {
-		
-		 // The function will calculate step by step the next position on the trajectory of this projectile
-		 // and will check if the location is passable or if the projectile will hit a worm
-		 // at that position. 
-		 // If so, the function will stop and will return the final position of the jump. 
-		 // If not, the new position will be stored in a local variable and the next position
-		 // will be calculated.
-		
-		if(timeStep == Double.NaN) {
+	private double[] possibleJump(double timeStep)
+			throws IllegalArgumentException {
+
+		// The function will calculate step by step the next position on the trajectory of this projectile
+		// and will check if the location is passable or if the projectile will hit a worm
+		// at that position. 
+		// If so, the function will stop and will return the final position of the jump. 
+		// If not, the new position will be stored in a local variable and the next position
+		// will be calculated.
+
+		if (timeStep == Double.NaN) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		Position position = this.getPosition();
 		double time = timeStep;
 		Position tempPosition;
 		boolean jumping = true;
 		boolean hit = false;
 
-		while ((jumping) && (!hit) && (this.getWorld().entityInWorld(position, this.getRadius()))) {
+		while ((jumping) && (!hit)
+				&& (this.getWorld().entityInWorld(position, this.getRadius()))) {
 			tempPosition = this.jumpStep(time);
 			if (getWorld().isPassable(tempPosition.getXCoordinate(),
 					tempPosition.getYCoordinate(), this.getRadius())) {
@@ -399,17 +410,10 @@ public class Projectile extends Entity {
 	 * @throws 	IllegalArgumentException
 	 * 			The given time is negative.
 	 * 			| time <=0
-	 * @throws	IllegalStateException
-	 * 			This projectile is terminated
-	 * 			| isTerminated()
 	 */
-	public Position jumpStep(double time) throws IllegalArgumentException,
-			IllegalStateException {
+	public Position jumpStep(double time) throws IllegalArgumentException {
 		if (time <= 0) {
 			throw new IllegalArgumentException();
-		}
-		if (isTerminated()) {
-			throw new IllegalStateException();
 		}
 
 		double X = getXCoordinate() + initialVelocity()

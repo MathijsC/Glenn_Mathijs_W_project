@@ -1,7 +1,6 @@
 package worms.model;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Raw;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of positions used in the game of worms with a x- and y-coordinate.
@@ -25,6 +24,7 @@ public class Position {
 	 * @effect	Set the given yCoordinate to this new position.
 	 * 			|setYCoordinate(yCoordinate)
 	 */
+	@Raw
 	public Position(double xCoordinate, double yCoordinate) {
 		setXCoordinate(xCoordinate);
 		setYcoordinate(yCoordinate);
@@ -100,10 +100,12 @@ public class Position {
 		this.yCoordinate = yCoordinate;
 	}
 	
-	/** calculates the distance between this position and the other position
+	/** 
+	 * Calculates the distance between this position and the given other position.
 	 * 
-	 * @param other The other position where the distance to will be determined
-	 * @return The distance between this position and the other position
+	 * @param 	other 
+	 * 			The other position where the distance to will be determined.
+	 * @return 	The distance between this position and the given other position.
 	 */
 	public double distanceTo(Position other) {
 

@@ -88,6 +88,7 @@ public enum Weapon {
 	 * 			| mass == Double.NaN
 	 */
 	@Raw
+	@Model
 	private void setMassProjectile(double mass) throws IllegalArgumentException {
 		if (mass < 0) {
 			throw new IllegalArgumentException();
@@ -131,6 +132,7 @@ public enum Weapon {
 	 * 
 	 */
 	@Raw
+	@Model
 	private void setMinForce(double minForce) {
 		if (minForce < 0) {
 			throw new IllegalArgumentException();
@@ -176,6 +178,7 @@ public enum Weapon {
 	 * 
 	 */
 	@Raw
+	@Model
 	private void setMaxForce(double maxForce) {
 		if (maxForce == Double.NaN) {
 			throw new IllegalArgumentException();
@@ -213,6 +216,7 @@ public enum Weapon {
 	 * 			| actionPointsCost < 0
 	 */
 	@Raw
+	@Model
 	private void setActionPoints(int actionPointsCost)
 			throws IllegalArgumentException {
 		if (actionPointsCost < 0) {

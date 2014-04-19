@@ -64,6 +64,7 @@ public class Entity {
 	 * 			| position.setYcoordinate(y)
 	 */
 	@Raw
+	@Model
 	protected void setPosition(double x, double y) {
 		this.position.setXCoordinate(x);
 		this.position.setYcoordinate(y);
@@ -80,7 +81,6 @@ public class Entity {
 		return position.getXCoordinate();
 	}
 
-
 	/**
 	 * Return the y-coordinate of the position of this entity.
 	 * 
@@ -91,7 +91,6 @@ public class Entity {
 	public double getYCoordinate() {
 		return position.getYCoordinate();
 	}
-
 
 	//STATE
 
@@ -119,7 +118,8 @@ public class Entity {
 	 * @effect	This entity is removed from the gameworld.
 	 * 			|unsetWorld()
 	 */
-	public void terminate() {
+	@Model
+	protected void terminate() {
 		this.terminated = true;
 		unsetWorld();
 	}
@@ -147,28 +147,25 @@ public class Entity {
 	 * 
 	 * @param 	world
 	 * 			The world where this entity lives in.
-	 * @post	The world of this entity is set to the given world.
-	 * 			| new.getWorld() == world
+	 * @effect	The world of this entity is set to the given world.
+	 * 			| setWorld(world)
 	 * @effect	The entity is added the the given world.
 	 * 			| world.addEntity(this)
-	 * @throws	IllegalWorldException
-	 * 			The given world is illegal.
-	 * 			| if (!canHaveAsWorld(world)) 
+	 * @throws	IllegalStateException
+	 * 			This entity has a world already.
+	 * 			| hasWorld()
 	 */
-	public void setWorldTo(World world) throws IllegalWorldException,
-			IllegalStateException {
-		if (!canHaveAsWorld(world)) {
-			throw new IllegalWorldException(this, world);
-		}
+	@Model
+	protected void setWorldTo(World world) throws IllegalStateException {
 		if (hasWorld()) {
 			throw new IllegalStateException();
 		}
-		this.world = world;
+		setWorld(world);
 		world.addEntity(this);
 	}
 
 	/**
-	 * Sets the world of this entity to the give world.
+	 * Sets the world of this entity to the given world.
 	 * 
 	 * @param 	world
 	 * 			The world to set as world for this entity.
@@ -179,7 +176,8 @@ public class Entity {
 	 * 			| if(!canHaveAsWorld(world)
 	 */
 	@Raw
-	public void setWorld(World world) throws IllegalWorldException {
+	@Model
+	private void setWorld(World world) throws IllegalWorldException {
 		if (!canHaveAsWorld(world)) {
 			throw new IllegalWorldException(this, world);
 		}
@@ -213,7 +211,7 @@ public class Entity {
 	 * 			| getWorld() != null
 	 */
 	@Raw
-	private boolean hasWorld() {
+	public boolean hasWorld() {
 		return (getWorld() != null);
 	}
 
