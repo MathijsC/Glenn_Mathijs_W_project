@@ -2,7 +2,7 @@ package worms.model;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
-//TODO moeten getermineerde objecten ook aan invar voldoen?? alle klassen nakijken hierop!!
+
 /**
  * A class of entities used in the game of worms with a position and a world.
  * The class also implements methods to terminate entities.
@@ -14,7 +14,6 @@ import be.kuleuven.cs.som.annotate.Raw;
  */
 public class Entity {
 
-	//TODO vraag assist throws doorgeven??
 	/**
 	 * Initialize a new entity with a given position and world.
 	 * 
@@ -45,11 +44,12 @@ public class Entity {
 	 * 
 	 * @return The position of this Entity.
 	 */
+	@Basic
+	@Raw
 	public Position getPosition() {
 		return this.position;
 	}
 
-	//TODO assistent vragen moet throw doorgegeven worden?
 	/**
 	 * Set the x-coordinate and y-coordinate of the position of this entity to the given xCoordinate and yCoordinate.
 	 * 
@@ -62,6 +62,7 @@ public class Entity {
 	 * @effect	The given yCoordinate is the new yCoordinate of this entity.
 	 * 			| position.setYcoordinate(y)
 	 */
+	@Raw
 	protected void setPosition(double x, double y) {
 		this.position.setXCoordinate(x);
 		this.position.setYcoordinate(y);

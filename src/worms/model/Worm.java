@@ -2,7 +2,6 @@ package worms.model;
 
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;

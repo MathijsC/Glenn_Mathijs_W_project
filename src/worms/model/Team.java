@@ -2,6 +2,8 @@ package worms.model;
 
 import java.util.ArrayList;
 
+import be.kuleuven.cs.som.annotate.*;
+
 /**
  * A class of teams used in the game of worms with worms, a name and a world.
  * The class also implements a method to add worms to the team.
@@ -27,6 +29,7 @@ public class Team {
 	 * @effect	Set the world of the new team to the given world
 	 * 			| setWorld(world)
 	 */
+	@Raw
 	public Team(World world, String name){
 		setName(name);
 		setWorld(world);
@@ -42,6 +45,8 @@ public class Team {
 	 * 
 	 * @return	The name of this team.
 	 */
+	@Basic
+	@Raw
 	public String getName() {
 			return name;
 	}
@@ -59,6 +64,7 @@ public class Team {
 	 * 			If the given name is an invalid name.
 	 * 			| if(!isValidName(name))
 	 */
+	@Raw
 	public void setName(String name) throws IllegalArgumentException{
 		if (!isValidName(name))
 			throw new IllegalArgumentException();
@@ -74,6 +80,7 @@ public class Team {
 	 * 			characters allowed in the name.
 	 * 			| name.matches(A regular expression with the allowed characters);
 	 */
+	@Raw
 	public static boolean isValidName(String name) {
 		return name.matches("[A-Z][a-zA-Z]+");
 	}
@@ -94,8 +101,12 @@ public class Team {
 	 * 			| world.addTeam(this)
 	 * @throws	NullPointerException
 	 * 			The given world is null.
-	 * 			| if (world == null) 
+	 * 			| if (world == null)
+	 * @throws	IllegalStateException
+	 * 			This team has a world already.
+	 * 			|hasWorld() 
 	 */
+	@Raw
 	public void setWorld(World world) throws NullPointerException, IllegalStateException{
 		if (world == null) {
 			throw new NullPointerException();
@@ -115,6 +126,7 @@ public class Team {
 	 * @return	True if the given team has a world.
 	 * 			| team.getWorld() != null
 	 */
+	@Raw
 	private boolean hasWorld(){
 		return (getWorld() != null);
 	}
@@ -124,6 +136,8 @@ public class Team {
 	 * 
 	 * @return	The world of this team.
 	 */
+	@Basic
+	@Raw
 	public World getWorld() {
 		return world;
 	}
@@ -140,6 +154,9 @@ public class Team {
 	 * 			The worm to be added to this team.
 	 * @post	The last worm added to this team is the given worm.
 	 * 			|getWorms().get(getWorms().size()-1) == worm 
+	 * @throws	IllegalStateException
+	 * 			The given worm doesn't have this team as team attribute.
+	 * 			|!(worm.getTeam() == this
 	 */
 	public void addWorm(Worm worm) throws IllegalStateException{
 		if (!(worm.getTeam() == this)){
