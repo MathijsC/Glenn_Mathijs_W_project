@@ -772,27 +772,66 @@ public class World {
 		return result;
 	}
 	
-	//----------------------TOT HIER GERAAKT, REST IS VOOR MORGEN, TIS TE LAAT AANT WORDEN :p----//
-
-	// TODO docu and max values
+	/**
+	 * Check if the given position (x- and y-coordinate) is passable and adjacent
+	 * to impassable terrain for an entity with the given radius in this world.
+	 * 
+	 * @param 	radius
+	 * 			The radius to check if the position is adjacent.
+	 * @param 	xCo
+	 * 			The x-coordinate of the position to check.
+	 * @param 	yCo
+	 * 			The y-coordinate of the position to check.
+	 * @return	False if the the given position is not passable terrain in this world.
+	 * 			|if (!isPassable(xCo, yCo, radius))
+	 *			|	then return false
+	 * @return	True if the given position is passble terrain and there is impassable
+	 *			terrain at a distance less than a partition of the enity's radius.
+	 *			|if ((!isPassable(xCo, yCo, radius)) && (!isPassable(circleX, circleY, radius)))
+	 *			|	then return true
+	 * @return	False in other cases.
+	 * 			|else
+	 * 			|	then return false
+	 */
 	public boolean isAdjacentTerrain(double radius, double xCo, double yCo) {
+		
+		//This method first checks of the given position is passable and returns false if not.
+		//Then checks positions close to the center position (closer (steps of 0.01) than 0.1 
+		//times the given radius) if they are passable and returns true if one of them is not.
+		
 		if (!isPassable(xCo, yCo, radius)) {
 			return false;
 		}
 		double angle = 0;
 		while (angle <= (2 * Math.PI)) {
-			double circleX = radius * 0.1 * Math.cos(angle) + xCo;
-			double circleY = radius * 0.1 * Math.sin(angle) + yCo;
-			if (!isPassable(circleX, circleY, radius)) {
-				return true;
+			double fact = 0.1;
+			while (fact >0) {
+				double circleX = radius * fact * Math.cos(angle+Math.PI) + xCo;
+				double circleY = radius * fact * Math.sin(angle+Math.PI) + yCo;
+				if (!isPassable(circleX, circleY, radius)) {
+					return true;
+				}
+				fact -= 0.01;
 			}
 			angle += Math.PI * (1.0 / 8.0);
 		}
 		return false;
 	}
 
-	// TODO docu
+	/**
+	 * Get a position (x- and y-coordinate) for an entity with given radius in this world 
+	 * which is passable and adjacent to impassable terrain. This position is generated 
+	 * with the random seed of this world.
+	 * 
+	 * @param 	radius
+	 * 			The radius of the entity for who this position needs to be generated.
+	 * @return	A double array with an x- and y-coordintate of the randomly generated
+	 * 			position.
+	 * 			|if (isAdjacentTerrain(radius, XCO, YCO)
+	 * 			|	then return [XCO, YCO]
+	 */
 	public double[] getRandAdjacentTerrain(double radius) {
+		
 		int max = 0;
 		boolean found = false;
 		double[] coord = { 0, 0 };
@@ -808,8 +847,29 @@ public class World {
 		return coord;
 	}
 
-	// TODO docu
+	/**
+	 * Get a position (x- and y-coordinate) for an entity with the given radius
+	 * which is passable and adjacent to impassable terrain in this world. The calculation
+	 * of the position starts from a given start position (x- and y-coordinate). 
+	 * 
+	 * @param 	radius
+	 * 			The radius of the entity for who this position needs to be generated.
+	 * @param 	xCo
+	 * 			The x-coordinate of the start position to check.
+	 * @param 	yCo
+	 * 			The y-coordinate of the start position to check.
+	 * @return	A double array with an x- and y-coordintate of the found position.
+	 * 			|return [XCO, YCO]
+	 */
 	private double[] checkPerimeter(double radius, double xCo, double yCo) {
+		
+		//This method gets the direction from the start position to the center
+		//of this world. Next this method checks every position (steps of 0.02)
+		//in the center direction. If one of these positions are passable and 
+		//adjacent to impassable terrain, the coordinates of this position are
+		//returned. If the function doesn't find any such position within 1000 steps
+		//the method returns the last checked position.
+		
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;
 		int max = 0;
@@ -826,7 +886,16 @@ public class World {
 		return coord;
 	}
 
-	// TODO docu
+	/**
+	 * Get the angle of the direction from a given position (x- and y-coordinate) to
+	 * the center of this world.
+	 * 
+	 * @param 	xCo
+	 * 			The x-coordinate of the position to get the direction from.
+	 * @param 	yCo
+	 * 			The y-coordinate of the position to get the direction from.
+	 * @return	The angle of the direction to the center of this world.
+	 */
 	private double getAngleToCenter(double xCo, double yCo) {
 		double angleToCenter;
 		if (xCo < getWidth() / 2) {
