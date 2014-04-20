@@ -176,11 +176,11 @@ public class World {
 			throw new IllegalStateException();
 		}
 		if (entity instanceof Worm) {
-			getWormList().add((Worm) entity);
+			worms.add((Worm) entity);
 		} else if (entity instanceof Projectile) {
-			this.projectile = (Projectile) entity;
+			projectile = (Projectile) entity;
 		} else if (entity instanceof Food) {
-			getFoodList().add((Food) entity);
+			foodList.add((Food) entity);
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -219,12 +219,12 @@ public class World {
 	@Model
 	protected void removeEntity(Entity entity) throws IllegalArgumentException {
 		if (entity instanceof Worm) {
-			getWormList().remove(entity);
+			worms.remove(entity);
 			if (this.getCurrentWormIndex() >= getWormList().size()) {
 				this.startNextRound();
 			}
 		} else if (entity instanceof Projectile) {
-			this.projectile = null;
+			projectile = null;
 		} else if (entity instanceof Food) {
 			foodList.remove(entity);
 		} else {
@@ -240,7 +240,7 @@ public class World {
 	@Basic
 	@Raw
 	public ArrayList<Worm> getWormList() {
-		return worms;
+		return (ArrayList<Worm>)worms.clone();
 	}
 
 	/**
@@ -251,7 +251,7 @@ public class World {
 	@Basic
 	@Raw
 	public Projectile getProjectile() {
-		return this.projectile;
+		return projectile;
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class World {
 	@Basic
 	@Raw
 	public ArrayList<Food> getFoodList() {
-		return foodList;
+		return (ArrayList<Food>)foodList.clone();
 	}
 
 	/**

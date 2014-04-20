@@ -29,7 +29,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @version 1.33
 */
 
-public class Worm extends Entity {
+public class Worm extends Entity{
 
 	/**
 	 * Initialize this new worm with a given position (x- and y-coordinate), looking direction,
@@ -115,6 +115,7 @@ public class Worm extends Entity {
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
 	}
+	
 
 	/**
 	 * A variable holding the team of this worm.

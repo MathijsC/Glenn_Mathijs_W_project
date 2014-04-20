@@ -48,7 +48,7 @@ public class Entity {
 	@Basic
 	@Raw
 	public Position getPosition() {
-		return this.position;
+		return new Position(position.getXCoordinate(), position.getYCoordinate());
 	}
 
 	/**

@@ -199,7 +199,7 @@ public class Team {
 	 * @return 	The list of worms who plays in this team.
 	 */
 	public ArrayList<Worm> getWorms(){
-		return worms;
+		return (ArrayList<Worm>)worms.clone();
 	}
 	
 

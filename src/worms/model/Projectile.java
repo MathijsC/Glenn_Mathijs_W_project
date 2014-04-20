@@ -274,7 +274,7 @@ public class Projectile extends Entity {
 	 * 			| VOLUME = MASS/DENSITY
 	 * 			| VOLUME = 4/3*PI*R^3
 	 */
-	private double calcRadius(){
+	private double calcRadius() {
 		final int DENSITY_OF_THE_PROJECTILE = 7800;
 		return Math.pow((3 / (4 * Math.PI))
 				* (this.getMass() / DENSITY_OF_THE_PROJECTILE), 1.0 / 3);
