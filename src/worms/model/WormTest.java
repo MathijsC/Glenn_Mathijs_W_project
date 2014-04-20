@@ -3,6 +3,7 @@ package worms.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 import java.util.Random;
 
 import org.junit.Before;
@@ -11,13 +12,13 @@ import org.junit.Test;
 
 public class WormTest {
 
-	private static Worm noActionPoints;
+	private static Worm noActionPoints, other;
 	private static Random random;
 	private static World world;
 	private static boolean[][] passableMap = new boolean[][] {
 			{ false, false, false, false, false }, 
 			{ true, true, true, true, true },
-			{ true, true, false, true,true }, 
+			{ true, true, true, true,true }, 
 			{ true, true, true, true,true },
 			{ false, false, false, false,false } };
 	/**
@@ -29,15 +30,16 @@ public class WormTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		world = new World(5.0,5.0, passableMap, random);
-		noActionPoints = new Worm(world,0,0,1,0.5,"No Action Points");
-		// 0.1 is gekozen, misschien hier toch iets anders nemen ? 
-		noActionPoints.jump(0.1);		
+		world = new World(50,50, passableMap, random);
+		noActionPoints = new Worm(world,15,15,1.5,0.3,"No Action Points");
+		other = new Worm(world,15,30,1.5,0.3,"Other");
+		world.startGame();
+		world.getCurrentWorm().jump(0.1);
 	}
 
 	private Worm testWorm, noDirection;
 	private Random random1;
-	private World world1;
+	private World worldStartedGame,worldNStartedGame;
 	private boolean[][] passableMap1 = new boolean[][] {
 			{ false, false, false, false, false }, 
 			{ true, true, true, true, true },
@@ -56,22 +58,32 @@ public class WormTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		world1 = new World(5.0,5.0, passableMap1, random1);
-		testWorm = new Worm(world1,0,0,1,0.5,"Test");
-		noDirection = new Worm(world1,0,0,0,0.5,"No Direction");		
+		worldStartedGame = new World(50,50, passableMap1, random1);
+		worldNStartedGame = new World(50,50, passableMap1, random1);
+		testWorm = new Worm(worldStartedGame,15,15,1,0.5,"Test");
+		noDirection = new Worm(worldStartedGame,15,30,0,0.5,"No Direction");
+		worldStartedGame.startGame();
 	}
 
-
+	/**
+	 * A test for the constructor and all the other getters in the class Worm.
+	 */
 	@Test
-	public final void constructor_SingleCase() throws Exception{
-		Worm newWorm = new Worm(world1,10,20,Math.PI,0.75,"Jason");
+	public final void constructor_legalCase() {
+		Worm newWorm = new Worm(worldNStartedGame,10,20,Math.PI,0.75,"Jason");
 		assertEquals(10, newWorm.getXCoordinate(),0.00001);
 		assertEquals(20, newWorm.getYCoordinate(),0.00001);
 		assertEquals(Math.PI, newWorm.getDirection(),0.00001);
 		assertEquals(1876.708911, newWorm.getMass(),0.00001);
 		assertEquals(1877, newWorm.getActionPoints());
 		assertEquals(1877, newWorm.getHitPoints());
-		assertEquals("Jason", newWorm.getName());	
+		assertEquals("Jason", newWorm.getName());
+		assertTrue(Weapon.Rifle.equals(newWorm.getWeapon()));
+		assertTrue(null == newWorm.getTeam());
+	}
+	@Test (expected = IllegalWorldException.class)
+	public final void constructor_alreadyStarted() throws Exception{
+		new Worm(worldStartedGame,10,20,Math.PI,0.75,"Jason");
 	}
 	
 	//DIRECTION	
@@ -211,7 +223,7 @@ public class WormTest {
 	//HITPOINTS
 	/**
 	 * getHitPoints is implicitly tested in the constructor test and
-	 * other tests to check the current action points of the worm.
+	 * other tests to check the current hit points of the worm.
 	 */
 	
 	@Test
@@ -234,7 +246,6 @@ public class WormTest {
 	public final void getMaxHitPoints_SingleCase(){
 		assertEquals(556, testWorm.getMaxHitPoints());
 	}
-	
 	
 	
 	//TURN
@@ -269,37 +280,12 @@ public class WormTest {
 		assertFalse(noActionPoints.canMove());
 	}
 	@Test
-	public final void canMove_FalseCase_Boundary() throws Exception{
-		assertFalse(testWorm.canMove());
-	}
-	@Test (expected = IllegalArgumentException.class)
-	public final void canMove_NegativeSteps() throws Exception{
-		testWorm.canMove();
-	}
-	/**@Test
 	public final void move_LegalCase() throws Exception{
 		testWorm.move();
-		assertEquals(556-196,testWorm.getActionPoints());
-		assertEquals(13.507557646703495,testWorm.getXCoordinate(),0.00001);
-		assertEquals(21.036774620197413,testWorm.getYCoordinate(),0.00001);
-	}
-	@Test(expected = IllegalArgumentException.class)
-	public final void move_NegativeSteps() throws Exception{
-		testWorm.move();
-	}
-	@Test(expected = IllegalStateException.class)
-	public final void move_ToManySteps() throws Exception{
-		testWorm.move();
-	}*/
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		assertEquals(556-4,testWorm.getActionPoints());
+		assertEquals(15.2690984,testWorm.getXCoordinate(),0.00001);
+		assertEquals(15.42140955,testWorm.getYCoordinate(),0.00001);
+	}	
 	//JUMP
 	@Test
 	public final void canJump_TrueCase(){
@@ -310,49 +296,29 @@ public class WormTest {
 		assertFalse(noActionPoints.canJump());
 	}
 	@Test
-	public final void canJump_FalseCase_Direction(){
-		testWorm.turn(Math.PI*1.5);
-		assertFalse(testWorm.canJump());
-	}
-	@Test
-	public final void canJump_FalseCase_Direction_UpperBoundary(){
-		noDirection.turn(Math.PI);
-		assertFalse(noDirection.canJump());
-	}
-	@Test
-	public final void canJump_FalseCase_Direction_LowerBoundary(){
-		assertFalse(noDirection.canJump());
-	}
-
-	// functie jump aangepast
-	/*@Test
 	public final void jump_LegalCase() throws Exception{
-		testWorm.jump();
+		testWorm.jump(0.1);
 		assertEquals(0, testWorm.getActionPoints());
-		assertEquals(5.08166773335359, testWorm.getXCoordinate(),0.00001);
-		assertEquals(0, testWorm.getYCoordinate(),0.00001);
+		assertEquals(21.799801, testWorm.getXCoordinate(),0.00001);
+		assertEquals(11.41945, testWorm.getYCoordinate(),0.00001);
 	}
 	@Test (expected = IllegalStateException.class)
 	public final void jump_NoActionPoints() throws Exception{
-		noActionPoints.jump();
+		noActionPoints.jump(0.1);
 	}
 	@Test
 	public final void jumpTime_LegalCase() throws Exception{
-		assertEquals(1.2704540289466786, testWorm.jumpTime(),0.00001);
+		assertEquals(1.80000, testWorm.jumpTime(0.1),0.00001);
 	}
 	@Test (expected = IllegalStateException.class)
 	public final void jumpTime_NoActionPoints() throws Exception{
-		noActionPoints.jumpTime();
-	}*/
+		noActionPoints.jumpTime(0.1);
+	}
 	@Test
 	public final void jumpStep_LegalCase() throws Exception{
 		Position coords = testWorm.jumpStep(1);
-		assertEquals(3.999883205192991, coords.getXCoordinate(),0.00001);
-		assertEquals(1.3261240014849731, coords.getYCoordinate(),0.00001);
-	}
-	@Test (expected = IllegalArgumentException.class)
-	public final void jumpStep_AlreadyLanded() throws Exception{
-		testWorm.jumpStep(1.3);
+		assertEquals(18.999883205192991, coords.getXCoordinate(),0.00001);
+		assertEquals(16.3261240014849731, coords.getYCoordinate(),0.00001);
 	}
 	@Test (expected = IllegalArgumentException.class)
 	public final void jumpStep_NegativeTime() throws Exception{
@@ -361,5 +327,42 @@ public class WormTest {
 	@Test (expected = IllegalStateException.class)
 	public final void jumpStep_NoActionPoints() throws Exception{
 		noActionPoints.jumpStep(1);
+	}
+	
+	//Weapon
+	/**
+	 * getWeapon is implicitly tested in the constructor test and
+	 * other tests to check the current weapon of the worm.
+	 */
+	
+	@Test
+	public final void selectNextWeapon(){
+		testWorm.selectNextWeapon();
+		assertTrue(Weapon.Bazooka.equals(testWorm.getWeapon()));
+	}
+	@Test
+	public final void canShoot_legalCase(){
+		assertTrue(testWorm.canShoot(testWorm.getWeapon()));
+	}
+	@Test
+	public final void canShoot_noActionPoints(){
+		assertFalse(noActionPoints.canShoot(noActionPoints.getWeapon()));
+	}
+	
+	//Fall
+	@Test
+	public final void canFall_trueCase(){
+		assertTrue(noDirection.canFall());
+	}
+	@Test
+	public final void canFall_falseCase(){
+		noDirection.fall();
+		assertFalse(noDirection.canFall());
+	}
+	@Test
+	public final void fall(){
+		noDirection.fall();
+		assertEquals(noDirection.getXCoordinate(),15-0,0.0001);
+		assertEquals(noDirection.getYCoordinate(),15-4.4500000,0.0001);
 	}
 }

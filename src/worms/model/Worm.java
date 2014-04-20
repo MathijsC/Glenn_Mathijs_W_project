@@ -942,11 +942,9 @@ public class Worm extends Entity{
 		if (!canJump()) {
 			throw new IllegalStateException();
 		}
-
 		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
 				0, 2);
 		this.setPosition(newPosition[0], newPosition[1]);
-
 		setActionPoints(0);
 		if (getWorld().checkWormCanEatFood(this)) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
@@ -1057,6 +1055,24 @@ public class Worm extends Entity{
 				* Math.pow(time, 2);
 		Position coord = new Position(X, Y);
 		return coord;
+	}
+	
+	/**
+	 * Returns true is this entity can have the given world as its world.
+	 * 
+	 * @param 	world
+	 * 			The world to check if this entity can have it as its world.
+	 * @return	False if the game in the given world is already started.
+	 * 			|if (world.isGameStarted())
+	 * 			|	then return false;
+	 */
+	@Override
+	public boolean canHaveAsWorld(World world) {
+		
+		if (world.isGameStarted()){
+			return false;
+		}
+		return super.canHaveAsWorld(world);
 	}
 
 }

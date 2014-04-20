@@ -40,7 +40,9 @@ public class World {
 	 * @effect	The passable map of this new world is set to the given passable map matrix.
 	 * 			| setPassableMap(passableMap)
 	 * @post	The random seed of this new world is equal to the given random.
-	 * 			| new.getSeed() == random	
+	 * 			| new.getSeed() == random
+	 * @post	The game of this world is not started yet.
+	 * 			|new.isStarted == false	
 	 */
 	public World(double width, double height, boolean[][] passableMap,
 			Random random) {
@@ -48,6 +50,7 @@ public class World {
 		this.height = height;
 		this.setPassableMap(passableMap);
 		this.seed = random;
+		isStarted = false;
 	}
 
 	/**
@@ -370,6 +373,21 @@ public class World {
 		setCurrentWormIndex(0);
 
 	}
+	
+	/**
+	 * A variable to hold the information if the game in this world is started.
+	 */
+	private boolean isStarted;
+	
+	/**
+	 * Check if the game of this world is started already.
+	 * 
+	 * @return	True if the game in this world has already been started.
+	 * 			|isStarted
+	 */
+	public boolean isGameStarted(){
+		return isStarted;
+	}
 
 	/**
 	 * Start a new game.
@@ -378,6 +396,7 @@ public class World {
 	 * 			|setCurrentWormIndex(0)
 	 */
 	public void startGame() {
+		isStarted = true;
 		setCurrentWormIndex(0);
 	}
 
