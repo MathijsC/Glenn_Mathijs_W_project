@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 import be.kuleuven.cs.som.annotate.*;
-//TODO check clone in alle klasses!!!
+
 /**
  * A class for a worm objects containing a x-coordinate, y-coordinate
  * looking direction, radius, name, action points and hit points of this worm.

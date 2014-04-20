@@ -20,8 +20,6 @@ public class Facade implements IFacade {
 	public void addEmptyTeam(World world, String newName) throws ModelException {
 		try {
 			new Team(world, newName);
-		} catch (NullPointerException exc) {
-			throw new ModelException("Illegal World");
 		} catch (IllegalArgumentException exc) {
 			throw new ModelException("Illegal Name");
 		} catch (IllegalStateException exc) {
@@ -99,8 +97,14 @@ public class Facade implements IFacade {
 	 * 
 	 * (For single-student groups that do not implement food, this method should have no effect)
 	 */
-	public Food createFood(World world, double x, double y) {
-		return new Food(world, x, y);
+	public Food createFood(World world, double x, double y) throws ModelException{
+		try {
+			return new Food(world, x, y);
+		} catch (IllegalStateException exc) {
+			throw new ModelException("Illegal State");
+		} catch (IllegalArgumentException exc) {
+			throw new ModelException("Illegal argument");
+		}
 	}
 
 	/**
@@ -132,20 +136,30 @@ public class Facade implements IFacade {
 	 * Create a new worm that is positioned at the given location in the given world,
 	 * looks in the given direction, has the given radius and the given name.
 	 * 
-	 * @param x
-	 * The x-coordinate of the position of the new worm (in meter)
-	 * @param y
-	 * The y-coordinate of the position of the new worm (in meter)
-	 * @param direction
-	 * The direction of the new worm (in radians)
-	 * @param radius 
-	 * The radius of the new worm (in meter)
-	 * @param name
-	 * The name of the new worm
+	 * @param 	x
+	 * 			The x-coordinate of the position of the new worm (in meter)
+	 * @param 	y
+	 * 			The y-coordinate of the position of the new worm (in meter)
+	 * @param 	direction
+	 * 			The direction of the new worm (in radians)
+	 * @param 	radius 
+	 * 			The radius of the new worm (in meter)
+	 * @param 	name
+	 * 			The name of the new worm
+	 * @throws	ModelException
+	 * 			Throws a model exception when the given name, x,y or world are invalid.
 	 */
 	public Worm createWorm(World world, double x, double y, double direction,
-			double radius, String name) {
-		return new Worm(world, x, y, direction, radius, name);
+			double radius, String name) throws ModelException{
+		try {
+			return new Worm(world, x, y, direction, radius, name);
+		} catch (IllegalArgumentException exc) {
+			throw new ModelException("Illegal Name");
+		} catch (IllegalStateException exc) {
+			throw new ModelException("Illegal State");
+		} catch (IllegalWorldException exc) {
+			throw new ModelException("Illegal World");
+		}
 	}
 
 	/**
@@ -196,13 +210,16 @@ public class Facade implements IFacade {
 
 	}
 
-	// TODO @throws
 	/**
 	 * Returns the location on the jump trajectory of the given projectile after a
 	 * time t.
 	 * 
-	 * @return An array with two elements, with the first element being the
-	 *         x-coordinate and the second element the y-coordinate
+	 * @return 	An array with two elements, with the first element being the
+	 *         	x-coordinate and the second element the y-coordinate
+	 * @throws 	ModelException
+	 * 			Throws a model exception when the given time is an illegal time.
+	 * @throws 	ModelException
+	 * 			Throws a model exception when the given projectile isn't able to jump.
 	 */
 	public double[] getJumpStep(Projectile projectile, double t)
 			throws ModelException {
@@ -217,15 +234,16 @@ public class Facade implements IFacade {
 		}
 	}
 
-	// TODO @throws
 	/**
 	 * Returns the location on the jump trajectory of the given worm after a
 	 * time t.
 	 * 
-	 * @return An array with two elements, with the first element being the
-	 *         x-coordinate and the second element the y-coordinate
-	 *  
-	 * @throws Throws a model exception when the given worm isn't able to jump.
+	 * @return 	An array with two elements, with the first element being the
+	 *         	x-coordinate and the second element the y-coordinate
+	 * @throws 	ModelException
+	 * 			Throws a model exception when the given time is an illegal time.
+	 * @throws 	ModelException
+	 * 			Throws a model exception when the given worm isn't able to jump.
 	 */
 	public double[] getJumpStep(Worm worm, double t) throws ModelException {
 		try {
@@ -237,26 +255,27 @@ public class Facade implements IFacade {
 		} catch (IllegalStateException exc) {
 			throw new ModelException("Illegal state");
 		}
-		/**double[] tata={1.0,1.0};
-		return tata;*/
 	}
 
-	// TODO timeStep
 	/**
 	 * Determine the time that the given projectile can jump until it hits the terrain, hits a worm, or leaves the world.
 	 * The time should be determined using the given elementary time interval.
 	 * 
-	 * @param projectile The projectile for which to calculate the jump time.
-	 * 
-	 * @param timeStep An elementary time interval during which you may assume
-	 *                 that the projectile will not completely move through a piece of impassable terrain.
-	 *                 
-	 * @return The time duration of the projectile's jump.
+	 * @param 	projectile 
+	 * 			The projectile for which to calculate the jump time.
+	 * @param 	timeStep 
+	 * 			An elementary time interval during which you may assume
+	 *          that the projectile will not completely move through a piece of impassable terrain.             
+	 * @return 	The time duration of the projectile's jump.
+	 * @throws	ModelException
+	 * 			Throws a ModelException if the timeStep is invalid.
 	 */
-	public double getJumpTime(Projectile projectile, double timeStep) {
-
-		return projectile.jumpTime(timeStep);
-
+	public double getJumpTime(Projectile projectile, double timeStep) throws ModelException{
+		try {
+			return projectile.jumpTime(timeStep);
+		} catch (IllegalArgumentException exc) {
+			throw new ModelException("Illegal argument");
+		}
 	}
 
 	/**
@@ -348,7 +367,6 @@ public class Facade implements IFacade {
 		return worm.getRadius();
 	}
 
-	// TODO
 	/**
 	 * Returns the name of the weapon that is currently active for the given worm,
 	 * or null if no weapon is active.
@@ -371,7 +389,6 @@ public class Facade implements IFacade {
 
 	}
 
-	// TODO what means 'This methode should null if....' in desc???
 	/**
 	 * Returns the name of a single worm if that worm is the winner, or the name
 	 * of a team if that team is the winner. This method should null if there is no winner.
@@ -463,18 +480,21 @@ public class Facade implements IFacade {
 
 	}
 
-	// TODO
 	/**
 	 * Checks whether the given circular region of the given world,
 	 * defined by the given center coordinates and radius,
 	 * is passable and adjacent to impassable terrain. 
 	 * 
-	 * @param world The world in which to check adjacency
-	 * @param x The x-coordinate of the center of the circle to check  
-	 * @param y The y-coordinate of the center of the circle to check
-	 * @param radius The radius of the circle to check
+	 * @param 	world 
+	 * 			The world in which to check adjacency
+	 * @param 	x 
+	 * 			The x-coordinate of the center of the circle to check  
+	 * @param 	y 
+	 * 			The y-coordinate of the center of the circle to check
+	 * @param 	radius 
+	 * 			The radius of the circle to check
 	 * 
-	 * @return True if the given region is passable and adjacent to impassable terrain, false otherwise.
+	 * @return 	True if the given region is passable and adjacent to impassable terrain, false otherwise.
 	 */
 	public boolean isAdjacent(World world, double x, double y, double radius) {
 		return world.isAdjacentTerrain(radius, x, y);
@@ -488,7 +508,6 @@ public class Facade implements IFacade {
 		return !worm.isTerminated();
 	}
 
-	// TODO
 	/**
 	 * Returns whether the game in the given world has finished.
 	 */
@@ -497,18 +516,21 @@ public class Facade implements IFacade {
 
 	}
 
-	// TODO
 	/**
 	 * Checks whether the given circular region of the given world,
 	 * defined by the given center coordinates and radius,
 	 * is impassable. 
 	 * 
-	 * @param world The world in which to check impassability 
-	 * @param x The x-coordinate of the center of the circle to check  
-	 * @param y The y-coordinate of the center of the circle to check
-	 * @param radius The radius of the circle to check
+	 * @param 	world 
+	 * 			The world in which to check impassability 
+	 * @param 	x 
+	 * 			The x-coordinate of the center of the circle to check  
+	 * @param 	y 
+	 * 			The y-coordinate of the center of the circle to check
+	 * @param 	radius 
+	 * 			The radius of the circle to check
 	 * 
-	 * @return True if the given region is impassable, false otherwise.
+	 * @return 	True if the given region is impassable, false otherwise.
 	 */
 	public boolean isImpassable(World world, double x, double y, double radius) {
 		return !world.isPassable(x, y, radius);
@@ -576,7 +598,6 @@ public class Facade implements IFacade {
 		}
 	}
 
-	// TODO
 	/**
 	 * Activates the next weapon for the given worm
 	 */
@@ -598,7 +619,6 @@ public class Facade implements IFacade {
 
 	}
 
-	// TODO
 	/**
 	 * Makes the given worm shoot its active weapon with the given propulsion yield.
 	 */

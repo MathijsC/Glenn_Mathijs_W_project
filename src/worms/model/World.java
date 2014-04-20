@@ -5,13 +5,15 @@ import java.util.Random;
 
 import be.kuleuven.cs.som.annotate.*;
 
-//TODO invar
 /**
  * A class of worlds used in the game of worms with a height, width,
  * passable map matrix, random seed, list of worms, list of foods, 
  * list of teams, projectile, current playing worm.
  * The class also implements methods for the gameplay (start game,
  * next round,get winner,...) and to add entities and teams to the world.
+ * 
+ * @invar	A world contains at all times no more then a maximum amount of teams.
+ * 			|getTeams().size() <= MAX
  * 
  * @author 	Glenn Cools & Mathijs Cuppens
  * @version	1.25
@@ -429,19 +431,25 @@ public class World {
 	private ArrayList<Team> teams = new ArrayList<Team>();
 
 	/**
-	 * Add a new team to this world.
+	 * Add a new team to this world. A world cannot contain more then a certain
+	 * amount of teams.
 	 * 
 	 * @param 	team
 	 * 			The team to be added to this world.
 	 * @post	The last team added to this world is equal to the given team.
 	 * 			|new.getTeamList().get(getTeamList().size()-1) == team
 	 * @throws	IllegalStateException
-	 * 			The world of the given team is not this team.
+	 * 			The world of the given team is not this world.
 	 * 			|team.getWorld() != this
-	 * 
+	 * @throws 	IllegalStateException
+	 * 			This world has already the maximum amount of teams.
+	 * 			|getTeamList().size() >= MAX
 	 */
 	public void addTeam(Team team) throws IllegalStateException {
 		if (team.getWorld() != this) {
+			throw new IllegalStateException();
+		}
+		if (getTeamList().size() >= 10){
 			throw new IllegalStateException();
 		}
 		teams.add(team);
