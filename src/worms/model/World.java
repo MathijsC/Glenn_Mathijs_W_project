@@ -340,20 +340,25 @@ public class World {
 	}
 
 	/**
-	 * Start the turn of the next worm.
+	 * Start the turn of the next worm if the game in this world is started.
 	 * 
-	 * @effect	If the last worm has finished its turn, start a new round.
-	 * 			|if(LAST WORM PLAYED)
-	 * 			|	then startNextRound();
-	 * @effect	Else set the next worm to the current worm.
-	 * 			|else
-	 * 			|	then setCurrentWormIndex(next worm index)
+	 * @effect	If the game in this world is started and if the last worm has 
+	 * 			finished its turn, start a new round.
+	 * 			|if (isGameStarted())
+	 * 			|	if(LAST WORM PLAYED)
+	 * 			|		then startNextRound();
+	 * @effect	If the game in this world is started and else set the next worm to the current worm.
+	 * 			|	else
+	 * 			|		then setCurrentWormIndex(next worm index)
+	 * @post	If the game in this world is not started, do nothing.
 	 */
 	public void startNextTurn() {
-		if (getCurrentWormIndex() >= (worms.size() - 1))
-			startNextRound();
-		else
-			setCurrentWormIndex(getCurrentWormIndex() + 1);
+		if (isGameStarted()){
+			if (getCurrentWormIndex() >= (worms.size() - 1))
+				startNextRound();
+			else
+				setCurrentWormIndex(getCurrentWormIndex() + 1);
+		}
 	}
 
 	/**
@@ -464,7 +469,8 @@ public class World {
 	 * 			This world has already the maximum amount of teams.
 	 * 			|getTeamList().size() >= MAX
 	 */
-	public void addTeam(Team team) throws IllegalStateException {
+	@Model
+	protected void addTeam(Team team) throws IllegalStateException {
 		if (team.getWorld() != this) {
 			throw new IllegalStateException();
 		}

@@ -219,11 +219,6 @@ public class Worm extends Entity{
 	}
 
 	/**
-	 * A variable holding the weapon of this worm.
-	 */
-	private Weapon weapon;
-
-	/**
 	 * Make this worm shoot with his weapon and the given propulsion at
 	 * the cost of action points.
 	 * 

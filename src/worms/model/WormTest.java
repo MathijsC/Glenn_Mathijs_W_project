@@ -65,7 +65,7 @@ public class WormTest {
 		worldStartedGame.startGame();
 	}
 
-	/**
+	/*
 	 * A test for the constructor and all the other getters in the class Worm.
 	 */
 	@Test
@@ -87,7 +87,7 @@ public class WormTest {
 	}
 	
 	//DIRECTION	
-	/**
+	/*
 	 * getDirection is implicitly tested in the constructor test and
 	 * other tests to check the current direction of the worm.
 	 */
@@ -301,6 +301,7 @@ public class WormTest {
 		assertEquals(0, testWorm.getActionPoints());
 		assertEquals(21.799801, testWorm.getXCoordinate(),0.00001);
 		assertEquals(11.41945, testWorm.getYCoordinate(),0.00001);
+		assertEquals(testWorm.getWorld().getCurrentWorm(), noDirection);
 	}
 	@Test (expected = IllegalStateException.class)
 	public final void jump_NoActionPoints() throws Exception{
