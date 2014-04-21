@@ -37,30 +37,30 @@ public class Projectile extends Entity {
 	 * 			The weapon of this new projectile.
 	 * @param 	direction
 	 * 			The direction of this new projectile.
-	 * @param 	mass
-	 * 			The mass of this new projectile.
-	 * @param 	force
-	 * 			The force of this new projectile.
+	 * @param 	yield
+	 * 			The yield this projectile is given.
 	 * @effect	This projectile is initialized as a subobject of the class Entity
 	 * 			with the given position (x- and y-coordinate) and world.
 	 * 			| super(new Position(x,y),world)
 	 * @effect	The direction of this new projectiile is equal to the given
 	 * 			direction modulo 2*PI.
 	 * 			| setDirection(direction)
-	 * @post	The mass of this new projectile is set to the given mass.
-	 * 			| new.getMass() == mass
-	 * @post	The force of this new projectile is set to the given force.
-	 * 			| new.getForce() == force
+	 * @post	The mass of this new projectile is set to the mass of projectiles for
+	 * 			the given weapon.
+	 * 			| new.getMass() == weapon.getMassProjectile()
+	 * @post	The force of this new projectile is set to the force of projectiles for
+	 * 			the given weapon with given yield.
+	 * 			| new.getForce() == weapon.calcForce(yield)
 	 * @post	The weapon of this new projectile is set to the given weapon.
 	 * 			| new.getWeapon() == weapon
 	 */
 	@Raw
 	public Projectile(double x, double y, World world, Weapon weapon,
-			double direction, double mass, double force) {
+			double direction, int yield) {
 		super(new Position(x, y), world);
 		this.setDirection(direction);
-		this.mass = mass;
-		this.force = force;
+		this.mass = weapon.getMassProjectile();
+		this.force = weapon.calcForce(yield);
 		this.setWeapon(weapon);
 	}
 

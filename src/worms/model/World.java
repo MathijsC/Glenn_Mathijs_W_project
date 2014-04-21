@@ -280,7 +280,8 @@ public class World {
 	 * 			|foodList.get(index)
 	 */
 	@Raw
-	public Food getFoodAtIndex(int index) {
+	@Model
+	private Food getFoodAtIndex(int index) {
 		return getFoodList().get(index);
 	}
 
@@ -294,7 +295,8 @@ public class World {
 	 * 			|wormList.get(index)
 	 */
 	@Raw
-	public Worm getWormAtIndex(int index) {
+	@Model
+	private Worm getWormAtIndex(int index) {
 		return getWormList().get(index);
 	}
 
@@ -408,6 +410,9 @@ public class World {
 	/**
 	 * Check if the game running in this world is finished.
 	 * 
+	 * @return	False if the game in this world isn't started yet.
+	 * 			| if(!isGameStarted())
+	 * 			|	then return false
 	 * @return	True if the game is finished. The game is finished
 	 * 			when there is only worms of one team left (or only one
 	 * 			worm if he has no team).
@@ -417,6 +422,10 @@ public class World {
 		//This function iterates through the list of worms and checks if they
 		//have the same team as the first worm. If not, the game isn't finished yet.
 
+		if (!isGameStarted()){
+			return false;
+		}
+		
 		Team teamFirstWorm = getWormAtIndex(0).getTeam();
 		for (Worm worm : worms) {
 			if ((worm.getTeam() != teamFirstWorm)) {
@@ -503,21 +512,28 @@ public class World {
 	 * @return	If no worm is hitted return null.
 	 * 			|else
 	 * 			|	then return null
+	 * @throws	IllegalArguementException
+	 * 			If the given projectile is not in this world.
+	 * 			|projectile.getWorld() != this
 	 */
-	public Worm getWormHit(Projectile projectile) {
+	public Worm getWormHit(Projectile projectile) throws IllegalArgumentException{
 
 		//This function iterates through all the worms in this world and
 		//checks the distance between the position of the worm and the position
 		//of the given projectile. If the distance is smaller than the sum of the radius
 		//of both, the worm gets hit.
 
+		if (projectile.getWorld() != this){
+			throw new IllegalArgumentException();
+		}
+		
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
 		while ((i < this.getWormList().size()) && (!hit)) {
 			worm = this.getWormAtIndex(i);
-			if (projectile.getPosition().distanceTo(worm.getPosition()) < projectile
-					.getRadius() + worm.getRadius()) {
+			if (projectile.getPosition().distanceTo(worm.getPosition()) < (projectile
+					.getRadius() + worm.getRadius())) {
 				hit = true;
 			}
 			i++;
@@ -539,14 +555,22 @@ public class World {
 	 * 			|if ((projectile.getPosition().distanceTo(worm.getPosition()) < projectile
 	 *			|	.getRadius() + worm.getRadius()) && (worm != getCurrentWorm()))
 	 *			|		then return true
+	 * @throws	IllegalArguementException
+	 * 			If the given projectile is not in this world.
+	 * 			|projectile.getWorld() != this
 	 */
 	public boolean checkProjectileHitWorm(Projectile projectile) {
+		
+		if (projectile.getWorld() != this){
+			throw new IllegalArgumentException();
+		}
+		
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
 		while ((i < this.getWormList().size()) && (!hit)) {
 			worm = this.getWormAtIndex(i);
-			if ((projectile.getPosition().distanceTo(worm.getPosition())) < (projectile
+			if (projectile.getPosition().distanceTo(worm.getPosition()) < (projectile
 					.getRadius() + worm.getRadius())
 					&& (worm != this.getCurrentWorm())) {
 				hit = true;
@@ -570,6 +594,9 @@ public class World {
 	 * @return	If no food is eaten return null.
 	 * 			|else
 	 * 			|	then return null
+	 * @throws	IllegalArguementException
+	 * 			If the given worm is not in this world.
+	 * 			|worm.getWorld() != this
 	 */
 	public Food getFoodEatenBy(Worm worm) {
 
@@ -578,6 +605,10 @@ public class World {
 		//of the given worm. If the distance is smaller than the sum of the radius
 		//of both, the food gets eaten.
 
+		if (worm.getWorld() != this){
+			throw new IllegalArgumentException();
+		}
+		
 		int i = 0;
 		boolean eat = false;
 		Food food = null;
@@ -607,8 +638,16 @@ public class World {
 	 *			|if ((worm.getPosition().distanceTo(food.getPosition())) <= (worm.getRadius() + food
 	 *			|	.getRadius()))
 	 *			|		then return true
+	 * @throws	IllegalArguementException
+	 * 			If the given worm is not in this world.
+	 * 			|worm.getWorld() != this
 	 */
 	public boolean checkWormCanEatFood(Worm worm) {
+		
+		if (worm.getWorld() != this){
+			throw new IllegalArgumentException();
+		}
+		
 		int i = 0;
 		boolean eat = false;
 		Food food = null;

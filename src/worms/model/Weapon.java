@@ -311,6 +311,6 @@ public enum Weapon {
 	public void shoot(World world, Worm worm, int yield) {
 		Position startingPoint = calcStartingPoint(worm);
 		new Projectile(startingPoint.getXCoordinate(), startingPoint.getYCoordinate(), world, this,
-				worm.getDirection(), this.getMassProjectile(), this.calcForce(yield));
+				worm.getDirection(), yield);
 	}
 }
