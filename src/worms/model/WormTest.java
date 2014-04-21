@@ -61,7 +61,7 @@ public class WormTest {
 		worldStartedGame = new World(50,50, passableMap1, random1);
 		worldNStartedGame = new World(50,50, passableMap1, random1);
 		testWorm = new Worm(worldStartedGame,15,15,1,0.5,"Test");
-		noDirection = new Worm(worldStartedGame,15,30,0,0.5,"No Direction");
+		noDirection = new Worm(worldStartedGame,20,15,0,0.5,"No Direction");
 		worldStartedGame.startGame();
 	}
 
@@ -348,6 +348,13 @@ public class WormTest {
 	public final void canShoot_noActionPoints(){
 		assertFalse(noActionPoints.canShoot(noActionPoints.getWeapon()));
 	}
+	@Test
+	public final void Shoot_legalCase(){
+		assertFalse(testWorm.getWorld().getProjectile() != null);
+		testWorm.shoot(3);
+		assertEquals(testWorm.getActionPoints(),556-10);
+		assertTrue(testWorm.getWorld().getProjectile() != null);		
+	}
 	
 	//Fall
 	@Test
@@ -362,7 +369,7 @@ public class WormTest {
 	@Test
 	public final void fall(){
 		noDirection.fall();
-		assertEquals(noDirection.getXCoordinate(),15-0,0.0001);
-		assertEquals(noDirection.getYCoordinate(),15-4.4500000,0.0001);
+		assertEquals(20-0,noDirection.getXCoordinate(),0.0001);
+		assertEquals(15-4.46,noDirection.getYCoordinate(),0.0001);
 	}
 }

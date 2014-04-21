@@ -240,7 +240,7 @@ public class Worm extends Entity{
 	public void shoot(int yield) {
 		if (this.canShoot(this.getWeapon())) {
 			this.getWeapon().shoot(this.getWorld(), this, yield);
-			this.setActionPoints((this.getActionPoints() - weapon
+			this.setActionPoints((this.getActionPoints() - getWeapon()
 					.getActionPointsCost()));
 		}
 	}
