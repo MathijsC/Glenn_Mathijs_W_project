@@ -227,7 +227,8 @@ public class Entity {
 	 * 			|if ((isTerminated()) && (hasWorld()))
 	 * 			|	oldWorld.removeEntity(this)
 	 */
-	public void unsetWorld() {
+	@Model
+	private void unsetWorld() {
 		if ((isTerminated()) && (hasWorld())) {
 			World oldWorld = getWorld();
 			setWorld(null);

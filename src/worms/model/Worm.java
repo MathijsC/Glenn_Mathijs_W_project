@@ -29,7 +29,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @version 1.33
 */
 
-public class Worm extends Entity{
+public class Worm extends Entity {
 
 	/**
 	 * Initialize this new worm with a given position (x- and y-coordinate), looking direction,
@@ -115,7 +115,6 @@ public class Worm extends Entity{
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
 	}
-	
 
 	/**
 	 * A variable holding the team of this worm.
@@ -789,7 +788,7 @@ public class Worm extends Entity{
 		boolean bestAdjFound = false;
 		boolean bestNAdjFound = false;
 
-		while ((!bestAdjFound) && (dist >= 0.1)) {
+		while ((!bestAdjFound) && (dist >= 0.9)) {
 			double angle = -0.75;
 
 			while (angle <= 0.75) {
@@ -1051,7 +1050,7 @@ public class Worm extends Entity{
 		Position coord = new Position(X, Y);
 		return coord;
 	}
-	
+
 	/**
 	 * Returns true is this entity can have the given world as its world.
 	 * 
@@ -1063,8 +1062,8 @@ public class Worm extends Entity{
 	 */
 	@Override
 	public boolean canHaveAsWorld(World world) {
-		
-		if (world.isGameStarted()){
+
+		if (world.isGameStarted()) {
 			return false;
 		}
 		return super.canHaveAsWorld(world);

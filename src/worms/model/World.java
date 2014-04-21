@@ -245,7 +245,7 @@ public class World {
 	@Basic
 	@Raw
 	public ArrayList<Worm> getWormList() {
-		return (ArrayList<Worm>)worms.clone();
+		return (ArrayList<Worm>) worms.clone();
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class World {
 	@Basic
 	@Raw
 	public ArrayList<Food> getFoodList() {
-		return (ArrayList<Food>)foodList.clone();
+		return (ArrayList<Food>) foodList.clone();
 	}
 
 	/**
@@ -355,7 +355,7 @@ public class World {
 	 * @post	If the game in this world is not started, do nothing.
 	 */
 	public void startNextTurn() {
-		if (isGameStarted()){
+		if (isGameStarted()) {
 			if (getCurrentWormIndex() >= (worms.size() - 1))
 				startNextRound();
 			else
@@ -380,19 +380,19 @@ public class World {
 		setCurrentWormIndex(0);
 
 	}
-	
+
 	/**
 	 * A variable to hold the information if the game in this world is started.
 	 */
 	private boolean isStarted;
-	
+
 	/**
 	 * Check if the game of this world is started already.
 	 * 
 	 * @return	True if the game in this world has already been started.
 	 * 			|isStarted
 	 */
-	public boolean isGameStarted(){
+	public boolean isGameStarted() {
 		return isStarted;
 	}
 
@@ -422,10 +422,10 @@ public class World {
 		//This function iterates through the list of worms and checks if they
 		//have the same team as the first worm. If not, the game isn't finished yet.
 
-		if (!isGameStarted()){
+		if (!isGameStarted()) {
 			return false;
 		}
-		
+
 		Team teamFirstWorm = getWormAtIndex(0).getTeam();
 		for (Worm worm : worms) {
 			if ((worm.getTeam() != teamFirstWorm)) {
@@ -483,7 +483,7 @@ public class World {
 		if (team.getWorld() != this) {
 			throw new IllegalStateException();
 		}
-		if (getTeamList().size() >= 10){
+		if (getTeamList().size() >= 10) {
 			throw new IllegalStateException();
 		}
 		teams.add(team);
@@ -516,17 +516,18 @@ public class World {
 	 * 			If the given projectile is not in this world.
 	 * 			|projectile.getWorld() != this
 	 */
-	public Worm getWormHit(Projectile projectile) throws IllegalArgumentException{
+	public Worm getWormHit(Projectile projectile)
+			throws IllegalArgumentException {
 
 		//This function iterates through all the worms in this world and
 		//checks the distance between the position of the worm and the position
 		//of the given projectile. If the distance is smaller than the sum of the radius
 		//of both, the worm gets hit.
 
-		if (projectile.getWorld() != this){
+		if (projectile.getWorld() != this) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
@@ -560,11 +561,11 @@ public class World {
 	 * 			|projectile.getWorld() != this
 	 */
 	public boolean checkProjectileHitWorm(Projectile projectile) {
-		
-		if (projectile.getWorld() != this){
+
+		if (projectile.getWorld() != this) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		int i = 0;
 		boolean hit = false;
 		Worm worm = null;
@@ -605,10 +606,10 @@ public class World {
 		//of the given worm. If the distance is smaller than the sum of the radius
 		//of both, the food gets eaten.
 
-		if (worm.getWorld() != this){
+		if (worm.getWorld() != this) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		int i = 0;
 		boolean eat = false;
 		Food food = null;
@@ -643,11 +644,11 @@ public class World {
 	 * 			|worm.getWorld() != this
 	 */
 	public boolean checkWormCanEatFood(Worm worm) {
-		
-		if (worm.getWorld() != this){
+
+		if (worm.getWorld() != this) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		int i = 0;
 		boolean eat = false;
 		Food food = null;
@@ -816,34 +817,34 @@ public class World {
 	 */
 	private boolean isBoxInRadius(double row, double column, double xCo,
 			double yCo, double radius) {
-		
+
 		//This method sees an element of the passableMap matrix as a rectangle
 		//with width (width of this world divided by the number of columns in the matrix)
 		//with height (height of this world divided by the number of rows in the matrix).
 		//If one of the four corners of this rectangle is closer to the center than the
 		//radius, the rectangle is partially inside the circle and so this method returns true.		
-		
-		Position center = new Position(xCo,yCo);
-		
+
+		Position center = new Position(xCo, yCo);
+
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
 		double boxWidth = this.getWidth() / this.getPassableMap()[0].length;
 		Position leftTopCorner = new Position(column * boxWidth,
 				this.getHeight() - row * boxHeight);
 		Position rightTopCorner = new Position((column + 0.99) * boxWidth,
-				this.getHeight() - row * boxHeight );
+				this.getHeight() - row * boxHeight);
 		Position leftBottomCorner = new Position(column * boxWidth,
-				this.getHeight() - (row + 0.99) * boxHeight );
-		Position rightBottomCorner = new Position ((column + 0.99) * boxWidth,
-				this.getHeight() - (row + 0.99) * boxHeight );
-		
-		boolean result = ((center.distanceTo(leftTopCorner) < radius) ||
-						  (center.distanceTo(rightTopCorner) < radius) ||
-				          (center.distanceTo(leftBottomCorner) < radius) || 
-				          (center.distanceTo(rightBottomCorner) < radius));
-		
+				this.getHeight() - (row + 0.99) * boxHeight);
+		Position rightBottomCorner = new Position((column + 0.99) * boxWidth,
+				this.getHeight() - (row + 0.99) * boxHeight);
+
+		boolean result = ((center.distanceTo(leftTopCorner) < radius)
+				|| (center.distanceTo(rightTopCorner) < radius)
+				|| (center.distanceTo(leftBottomCorner) < radius) || (center
+				.distanceTo(rightBottomCorner) < radius));
+
 		return result;
 	}
-	
+
 	/**
 	 * Check if the given position (x- and y-coordinate) is passable and adjacent
 	 * to impassable terrain for an entity with the given radius in this world.
@@ -866,20 +867,22 @@ public class World {
 	 * 			|	then return false
 	 */
 	public boolean isAdjacentTerrain(double radius, double xCo, double yCo) {
-		
+
 		//This method first checks of the given position is passable and returns false if not.
 		//Then checks positions close to the center position (closer (steps of 0.01) than 0.1 
 		//times the given radius) if they are passable and returns true if one of them is not.
-		
+
 		if (!isPassable(xCo, yCo, radius)) {
 			return false;
 		}
 		double angle = 0;
 		while (angle <= (2 * Math.PI)) {
 			double fact = 0.1;
-			while (fact >0) {
-				double circleX = radius * fact * Math.cos(angle+Math.PI) + xCo;
-				double circleY = radius * fact * Math.sin(angle+Math.PI) + yCo;
+			while (fact > 0) {
+				double circleX = radius * fact * Math.cos(angle + Math.PI)
+						+ xCo;
+				double circleY = radius * fact * Math.sin(angle + Math.PI)
+						+ yCo;
 				if (!isPassable(circleX, circleY, radius)) {
 					return true;
 				}
@@ -903,7 +906,7 @@ public class World {
 	 * 			|	then return [XCO, YCO]
 	 */
 	public double[] getRandAdjacentTerrain(double radius) {
-		
+
 		int max = 0;
 		boolean found = false;
 		double[] coord = { 0, 0 };
@@ -934,14 +937,14 @@ public class World {
 	 * 			|return [XCO, YCO]
 	 */
 	private double[] checkPerimeter(double radius, double xCo, double yCo) {
-		
+
 		//This method gets the direction from the start position to the center
 		//of this world. Next this method checks every position (steps of 0.02)
 		//in the center direction. If one of these positions are passable and 
 		//adjacent to impassable terrain, the coordinates of this position are
 		//returned. If the function doesn't find any such position within 1000 steps
 		//the method returns the last checked position.
-		
+
 		double angleToCenter = getAngleToCenter(xCo, yCo);
 		boolean found = false;
 		int max = 0;
