@@ -27,7 +27,7 @@ public class Position {
 	@Raw
 	public Position(double xCoordinate, double yCoordinate) {
 		setXCoordinate(xCoordinate);
-		setYcoordinate(yCoordinate);
+		setYCoordinate(yCoordinate);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class Position {
 	 * 			|yCoordinate == Double.NaN
 	 */
 	@Raw
-	public void setYcoordinate(double yCoordinate) throws IllegalArgumentException{
+	public void setYCoordinate(double yCoordinate) throws IllegalArgumentException{
 		if (yCoordinate == Double.NaN) {
 			throw new IllegalArgumentException();
 		}

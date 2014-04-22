@@ -67,7 +67,7 @@ public class Entity {
 	@Model
 	protected void setPosition(double x, double y) {
 		this.position.setXCoordinate(x);
-		this.position.setYcoordinate(y);
+		this.position.setYCoordinate(y);
 	}
 
 	/**
