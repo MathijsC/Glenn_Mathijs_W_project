@@ -55,11 +55,11 @@ public class Position {
 	 * 			| new.getXCoordinate() == xCoordinate
 	 * @throws	IllegalArgumentException
 	 * 			The given xCoordinate is not a number
-	 * 			|xCoordinate == Double.NaN
+	 * 			|Double.isNaN(xCoordinate)
 	 */
 	@Raw
 	public void setXCoordinate(double xCoordinate) throws IllegalArgumentException{
-		if (xCoordinate == Double.NaN) {
+		if (Double.isNaN(xCoordinate)) {
 			throw new IllegalArgumentException();
 		}
 		this.xCoordinate = xCoordinate;
@@ -90,11 +90,11 @@ public class Position {
 	 * 			| new.getYCoordinate() == yCoordinate
 	 * @throws	IllegalArgumentException
 	 * 			The given yCoordinate is not a number
-	 * 			|yCoordinate == Double.NaN
+	 * 			|Double.isNaN(yCoordinate)
 	 */
 	@Raw
 	public void setYCoordinate(double yCoordinate) throws IllegalArgumentException{
-		if (yCoordinate == Double.NaN) {
+		if (Double.isNaN(yCoordinate)) {
 			throw new IllegalArgumentException();
 		}
 		this.yCoordinate = yCoordinate;

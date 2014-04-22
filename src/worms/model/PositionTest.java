@@ -40,7 +40,7 @@ public class PositionTest {
 	}
 
 	@Test (expected = IllegalArgumentException.class)
-	public void setX_InvalidArgument() {
+	public void setX_InvalidArgument() throws Exception{
 		pos.setXCoordinate(Double.NaN);
 
 	}
@@ -53,7 +53,7 @@ public class PositionTest {
 	}
 
 	@Test (expected = IllegalArgumentException.class)
-	public void setY_InvalidArgument() {
+	public void setY_InvalidArgument() throws Exception{
 		pos.setYCoordinate(Double.NaN);
 
 	}
