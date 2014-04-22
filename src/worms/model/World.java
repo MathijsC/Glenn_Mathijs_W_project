@@ -169,6 +169,10 @@ public class World {
 	 * @throws 	IllegalStateException
 	 * 			The world of the given entity is not this world.
 	 * 			|entity.getWorld() != this
+	 * @throws 	IllegalStateException
+	 * 			If the given entity is a projectile and he world has already a projectile.
+	 * 			|if(entity instanceof Projectile)
+	 * 			|	then getProjectile() != null
 	 * @throws 	IllegalArgumentException
 	 * 			If the given entity is an subobject of entity that cannot 
 	 * 			be added to this world.
@@ -183,6 +187,9 @@ public class World {
 		if (entity instanceof Worm) {
 			worms.add((Worm) entity);
 		} else if (entity instanceof Projectile) {
+			if (getProjectile() != null){
+				throw new IllegalStateException();
+			}
 			projectile = (Projectile) entity;
 		} else if (entity instanceof Food) {
 			foodList.add((Food) entity);
