@@ -312,7 +312,7 @@ public class Projectile extends Entity {
 		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
 				0, 2);
 		this.setPosition(newPosition[0], newPosition[1]);
-		if (this.getWorld().checkProjectileHitWorm(this)) {
+		if (this.getWorld().checkProjectileHitWorm(getPosition(),getRadius())) {
 			Worm wormHit = this.getWorld().getWormHit(this);
 			wormHit.addHealt(this.getWeapon().getDamage());
 		}
@@ -377,7 +377,7 @@ public class Projectile extends Entity {
 					tempPosition.getYCoordinate(), this.getRadius())) {
 				position = tempPosition;
 				time = time + timeStep;
-				if (this.getWorld().checkProjectileHitWorm(this)) {
+				if (this.getWorld().checkProjectileHitWorm(tempPosition,getRadius())) {
 					hit = true;
 				}
 			} else {

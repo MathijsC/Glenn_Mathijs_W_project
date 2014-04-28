@@ -567,8 +567,7 @@ public class World {
 	 * 			If the given projectile is not in this world.
 	 * 			|projectile.getWorld() != this
 	 */
-	public boolean checkProjectileHitWorm(Projectile projectile) {
-
+	public boolean checkProjectileHitWorm(Position position, double radius) {
 		if (projectile.getWorld() != this) {
 			throw new IllegalArgumentException();
 		}
@@ -578,8 +577,7 @@ public class World {
 		Worm worm = null;
 		while ((i < this.getWormList().size()) && (!hit)) {
 			worm = this.getWormAtIndex(i);
-			if (projectile.getPosition().distanceTo(worm.getPosition()) < (projectile
-					.getRadius() + worm.getRadius())
+			if (position.distanceTo(worm.getPosition()) < (radius + worm.getRadius())
 					&& (worm != this.getCurrentWorm())) {
 				hit = true;
 			}

@@ -788,7 +788,7 @@ public class Worm extends Entity {
 		boolean bestAdjFound = false;
 		boolean bestNAdjFound = false;
 
-		while ((!bestAdjFound) && (dist >= 0.9)) {
+		while ((!bestAdjFound) && (dist >= 0.1)) {
 			double angle = -0.75;
 
 			while (angle <= 0.75) {

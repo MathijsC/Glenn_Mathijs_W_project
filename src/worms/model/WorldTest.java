@@ -243,28 +243,28 @@ public class WorldTest {
 	public void checkProjectileHitWorm_TrueCase() {
 		Projectile pro = new Projectile(2.9, 1.6, worldBig, Weapon.Bazooka,
 				0.0, 3);
-		assertFalse(worldBig.checkProjectileHitWorm(pro));
+		assertFalse(worldBig.checkProjectileHitWorm(pro.getPosition(),pro.getRadius()));
 	}
 
 	@Test
 	public void checkProjectileHitWorm_FalseCase_HitCurrentWorm() {
 		Projectile pro = new Projectile(2.9, 1.6, worldBig, Weapon.Bazooka,
 				0.0, 3);
-		assertFalse(worldBig.checkProjectileHitWorm(pro));
+		assertFalse(worldBig.checkProjectileHitWorm(pro.getPosition(),pro.getRadius()));
 	}
 
 	@Test
 	public void checkProjectileHitWorm_FalseCase() {
 		Projectile pro = new Projectile(1.5, 2, worldBig, Weapon.Bazooka, 0.0,
 				3);
-		assertFalse(worldBig.checkProjectileHitWorm(pro));
+		assertFalse(worldBig.checkProjectileHitWorm(pro.getPosition(),pro.getRadius()));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void checkProjectileHitWorm_IllegalArg() throws Exception {
 		Projectile pro = new Projectile(1.5, 2, worldSmall, Weapon.Bazooka,
 				0.0, 3);
-		worldBig.checkProjectileHitWorm(pro);
+		worldBig.checkProjectileHitWorm(pro.getPosition(),pro.getRadius());
 	}
 
 	//Worm eating food
