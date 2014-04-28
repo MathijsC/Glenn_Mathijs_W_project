@@ -3,6 +3,10 @@ package worms.model;
 import java.util.Collection;
 import java.util.Random;
 
+import worms.gui.game.IActionHandler;
+import worms.model.programs.ParseOutcome;
+import worms.model.programs.ParseOutcome.Success;
+
 public class Facade implements IFacade {
 
 	/**
@@ -52,7 +56,7 @@ public class Facade implements IFacade {
 	 * The new worm can have an arbitrary (but valid) radius and direction.
 	 * The new worm may (but isn't required to) have joined a team.
 	 */
-	public void addNewWorm(World world) {
+	public void addNewWorm(World world, Program program) {
 		try {
 			new Worm(world);
 		} catch (IllegalStateException exc) {
@@ -150,7 +154,7 @@ public class Facade implements IFacade {
 	 * 			Throws a model exception when the given name, x,y or world are invalid.
 	 */
 	public Worm createWorm(World world, double x, double y, double direction,
-			double radius, String name) throws ModelException{
+			double radius, String name,Program program) throws ModelException{
 		try {
 			return new Worm(world, x, y, direction, radius, name);
 		} catch (IllegalArgumentException exc) {
@@ -645,6 +649,49 @@ public class Facade implements IFacade {
 	 */
 	public void turn(Worm worm, double angle) {
 		worm.turn(angle);
+	}
+	
+	/**
+	 * Try to parse the given program.
+	 * You can use an instance of the worms.model.programs.ProgramParser.
+	 * 
+	 * When the program is executed, the execution of an action statement
+	 * must call the corresponding method of the given action handler.
+	 * This executes the action as if a human player has initiated it, and
+	 * will eventually call the corresponding method on the facade. 
+	 * 
+	 * @param programText The program text to parse
+	 * @param handler The action handler on which to execute commands
+	 * 
+	 * @return the outcome of parsing the program, which can be a success or a failure.
+	 * You can create a ParseOutcome object by means of its two static methods, success and failure. 
+	 */
+	public ParseOutcome<?> parseProgram(String programText, IActionHandler handler){
+		Program program = new Program();
+		ParseOutcome<?> out = ParseOutcome.success(program);
+		return out;
+	}
+	
+	/**
+	 * Returns whether or not the given worm is controlled by a program. 
+	 * 
+	 * @return true if the given worm is controlled by a program, false otherwise
+	 */
+	public boolean hasProgram(Worm worm){
+		return false;
+	}
+	
+	/**
+	 * Returns whether or not the given program is well-formed.
+	 * A program is well-formed if a for-each statement does not (directly or
+	 * indirectly) contain one or more action statements.
+	 * 
+	 * @param program The program to check
+	 * 
+	 * @return true if the program is well-formed; false otherwise 
+	 */
+	public boolean isWellFormed(Program program){
+		return false;
 	}
 
 }
