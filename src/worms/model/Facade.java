@@ -5,6 +5,7 @@ import java.util.Random;
 
 import worms.gui.game.IActionHandler;
 import worms.model.programs.ParseOutcome;
+import worms.model.programs.ProgramParser;
 import worms.model.programs.ParseOutcome.Success;
 
 public class Facade implements IFacade {
@@ -667,7 +668,10 @@ public class Facade implements IFacade {
 	 * You can create a ParseOutcome object by means of its two static methods, success and failure. 
 	 */
 	public ParseOutcome<?> parseProgram(String programText, IActionHandler handler){
-		Program program = new Program();
+		ProgramFactoryImp factory = new ProgramFactoryImp();
+		ProgramParser<Expression, Statement, Type> parser = new ProgramParser<Expression, Statement, Type>(factory);
+		parser.parse(programText);
+		Program program = new Program(parser.getStatement(),parser.getGlobals(),handler);
 		ParseOutcome<?> out = ParseOutcome.success(program);
 		return out;
 	}
