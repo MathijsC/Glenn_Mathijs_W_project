@@ -691,7 +691,7 @@ public class Facade implements IFacade {
 	 * @return true if the program is well-formed; false otherwise 
 	 */
 	public boolean isWellFormed(Program program){
-		return false;
+		return true;
 	}
 
 }
