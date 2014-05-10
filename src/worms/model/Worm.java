@@ -89,6 +89,7 @@ public class Worm extends Entity {
 
 	}
 
+	// Computer controlled worm ?
 	/**
 	 * Initialize this new worm with a given world and a random position (x- and y-coordinate), looking direction,
 	 * radius name and with calculated mass, action points, hit points and random team and a weapon.
@@ -115,6 +116,34 @@ public class Worm extends Entity {
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
 		program = p;
+	}
+	
+	// player controlled worm ?
+	/**
+	 * Initialize this new worm with a given world and a random position (x- and y-coordinate), looking direction,
+	 * radius name and with calculated mass, action points, hit points and random team and a weapon.
+	 *
+	 * @param	world
+	 * 			The world of this new worm.
+	 * @effect	Initialize this new worm with the given world, a dummy position (x- and y-coordinate),
+	 * 			random direction,random radius and a dummy name.
+	 * 			|this(world,0.0,0.0,RANDOM DIRECTION, RANDOM RADIUS,"Dummyname")
+	 * @effect	Set the name of this new worm to a random name.
+	 * 			|setName(RANDOM NAME)
+	 * @effect	Set the position of this new worm to a random position in the given world.
+	 * 			|setPosition(RANDOM X,RANDOM Y)
+	 * 			
+	 */
+	@Raw
+	public Worm(World world) {
+		this(world, 0.0, 0.0, world.getSeed().nextDouble() * 2 * Math.PI,
+				(1 + (world.getSeed().nextDouble())) * getMinRadius(),
+				"Dummyname");
+		final String[] wormNames = { "Glenn", "Mathijs", "Siri", "Bernd",
+				"Tom", "Nick", "Toon", "Lieven", "Joeri", "Syd" };
+		setName(wormNames[world.getSeed().nextInt(wormNames.length)]);
+		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
+		this.setPosition(randCoord[0], randCoord[1]);
 	}
 	
 	public boolean hasProgram(){
