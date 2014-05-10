@@ -3,5 +3,6 @@
 double x;
 
 x := 0.5;
+x := 0.75;
 
 print x;

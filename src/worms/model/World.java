@@ -367,6 +367,11 @@ public class World {
 				startNextRound();
 			else
 				setCurrentWormIndex(getCurrentWormIndex() + 1);
+			System.out.println("checkprog");
+			if (getCurrentWorm().hasProgram()){
+				System.out.println("has program");
+				getCurrentWorm().getProgram().runProgram();
+			}
 		}
 	}
 
@@ -412,6 +417,10 @@ public class World {
 	public void startGame() {
 		isStarted = true;
 		setCurrentWormIndex(0);
+		if (getCurrentWorm().hasProgram()){
+			System.out.println("has program");
+			getCurrentWorm().getProgram().runProgram();
+		}
 	}
 
 	/**

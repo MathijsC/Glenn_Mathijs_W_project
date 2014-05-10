@@ -105,7 +105,7 @@ public class Worm extends Entity {
 	 * 			
 	 */
 	@Raw
-	public Worm(World world) {
+	public Worm(World world,Program p) {
 		this(world, 0.0, 0.0, world.getSeed().nextDouble() * 2 * Math.PI,
 				(1 + (world.getSeed().nextDouble())) * getMinRadius(),
 				"Dummyname");
@@ -114,6 +114,17 @@ public class Worm extends Entity {
 		setName(wormNames[world.getSeed().nextInt(wormNames.length)]);
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
+		program = p;
+	}
+	
+	public boolean hasProgram(){
+		return getProgram() != null;
+	}
+	
+	private Program program;
+	
+	public Program getProgram(){
+		return program;
 	}
 
 	/**

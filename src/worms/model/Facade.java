@@ -59,7 +59,7 @@ public class Facade implements IFacade {
 	 */
 	public void addNewWorm(World world, Program program) {
 		try {
-			new Worm(world);
+			new Worm(world,program);
 		} catch (IllegalStateException exc) {
 			throw new ModelException("Illegal State");
 		} catch (IllegalWorldException exc) {
@@ -668,10 +668,7 @@ public class Facade implements IFacade {
 	 * You can create a ParseOutcome object by means of its two static methods, success and failure. 
 	 */
 	public ParseOutcome<?> parseProgram(String programText, IActionHandler handler){
-		ProgramFactoryImp factory = new ProgramFactoryImp();
-		ProgramParser<Expression, Statement, Type> parser = new ProgramParser<Expression, Statement, Type>(factory);
-		parser.parse(programText);
-		Program program = new Program(parser.getStatement(),parser.getGlobals(),handler);
+		Program program = new Program(programText,handler);
 		ParseOutcome<?> out = ParseOutcome.success(program);
 		return out;
 	}
