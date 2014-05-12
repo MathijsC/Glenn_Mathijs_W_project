@@ -275,14 +275,20 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 
 		@Override
 		public Expression createOr(int line, int column, Expression e1, Expression e2) {
-			// TODO Auto-generated method stub
-			return null;
+			return new DoubleExpression<BooleanType>(line,column,e1,e2) {
+				public BooleanType getValue(){
+					return new BooleanType(((BooleanType)expression1.getValue()).toBoolean() || ((BooleanType)expression2.getValue()).toBoolean());
+				}
+			};
 		}
 
 		@Override
 		public Expression createNot(int line, int column, Expression e) {
-			// TODO Auto-generated method stub
-			return null;
+			return new SingleExpression<BooleanType>(line,column,e) {
+				public BooleanType getValue(){
+					return new BooleanType(!((BooleanType)expression.getValue()).toBoolean());
+				}
+			};
 		}
 
 		@Override
@@ -376,7 +382,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			return new VariableAcces(line,column,name){
 				public Type getValue(){
 					System.out.println(name);
-					return parser.getGlobals().get(name);
+					return globals.get(name);
 				}
 			};
 		}
@@ -497,17 +503,18 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 
 		@Override
 		public Statement createAssignment(int line, int column, String variableName, Expression rhs) {
-			System.out.println("Assignment:"+line+"|"+column+" name:"+variableName+" rhs:"+rhs.getValue());
+			System.out.println("Assignment:"+line+"|"+column+" name:"+variableName);
 			return new Assignment(line,column,rhs,variableName) {
 				public String getName(){
 					return "Assignment";
 				}
 				
 				public void run() {
-					if (parser.getGlobals().get(name).getClass().getName() == "worms.model.DoubleType"){
-						parser.getGlobals().put(name,new DoubleType(((DoubleType)expression.getValue()).toDouble()));
-					} else if (parser.getGlobals().get(name).getClass().getName() == "worms.model.BooleanType"){
-						parser.getGlobals().put(name,new BooleanType(((BooleanType)expression.getValue()).toBoolean()));
+					System.out.println("assign "+expression.getValue()+" to "+name);
+					if (globals.get(name).getClass().getName() == "worms.model.DoubleType"){
+						globals.put(name,new DoubleType(((DoubleType)expression.getValue()).toDouble()));
+					} else if (globals.get(name).getClass().getName() == "worms.model.BooleanType"){
+						globals.put(name,new BooleanType(((BooleanType)expression.getValue()).toBoolean()));
 					}
 				}
 			};

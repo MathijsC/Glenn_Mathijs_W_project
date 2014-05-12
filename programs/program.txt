@@ -1,10 +1,12 @@
 // Testprogram
 
-double x;
-double y;
+bool x;
+bool y;
 bool z;
 
-x := 0.5;
-y := 0.75;
+x := true;
+y := false;
 
 z := (x || y);
+
+print z;
