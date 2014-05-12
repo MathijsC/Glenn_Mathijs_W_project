@@ -14,7 +14,7 @@ abstract class  Expression {
 		column = c;
 	}
 	
-	abstract public <T> T getValue();
+	abstract public Type getValue();
 	
 	public String toString(){
 		return getValue().toString();
@@ -37,7 +37,7 @@ abstract class VariableAcces extends Expression {
 	
 }
 
-abstract class NoneExpression<T> extends Expression {
+abstract class NoneExpression<T extends Type> extends Expression {
 	
 	public NoneExpression(int l, int c, T t){
 		super(l,c);
@@ -49,7 +49,7 @@ abstract class NoneExpression<T> extends Expression {
 	
 }
 
-abstract class SingleExpression<T> extends Expression {
+abstract class SingleExpression<T extends Type> extends Expression {
 	
 	public SingleExpression(int l, int c,Expression e){
 		super(l,c);
@@ -59,7 +59,7 @@ abstract class SingleExpression<T> extends Expression {
 	public Expression expression;
 }
 
-abstract class DoubleExpression<T> extends Expression {
+abstract class DoubleExpression<T extends Type> extends Expression {
 	
 	public DoubleExpression(int l, int c,Expression e1,Expression e2){
 		super(l,c);
@@ -146,6 +146,18 @@ class DoubleType extends Type{
 		return ((Double)value).toString();
 	}
 	
+	public double toDouble(){
+		return value;
+	}
+	
+	public boolean toBoolean(){
+		if (value == 0.0){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	public double value;
 	
 }
@@ -168,15 +180,23 @@ class BooleanType extends Type{
 		return ((Boolean)value).toString();
 	}
 	
+	public double toDouble(){
+		if (value == false){
+			return 0.0;
+		} else {
+			return 1.0;
+		}		
+	}
+	
+	public boolean toBoolean(){
+		return value;
+	}
+	
 	public boolean value;
 	
 }
 
 class EntityType<T> extends Type{
-	
-	public void setValue(T v){
-		value = v;
-	}
 	
 	public T getValue(){
 		return value;
@@ -213,6 +233,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		private IActionHandler actionHandler;
 		private Map<String,Type> globals;
 		private Statement statement;
+		private ProgramParser<Expression, Statement, Type> parser;
 		
 		public void runProgram(){
 			System.out.println("Run");
@@ -225,8 +246,8 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		@Override
 		public Expression createDoubleLiteral(int line, int column, double d) {
 			System.out.println("DoubleLiteral:"+line+"|"+column+" double:"+d);
-			return  new NoneExpression<Double>(line, column, d){
-				public Double getValue() {
+			return  new NoneExpression<DoubleType>(line, column, new DoubleType(d)){
+				public DoubleType getValue() {
 					return value;
 				}
 			};
@@ -235,17 +256,21 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		@Override
 		public Expression createBooleanLiteral(int line, int column, boolean b) {
 			System.out.println("BooleanLiteral:"+line+"|"+column+" bool:"+b);
-			return new NoneExpression<Boolean>(line, column,b){
-				public Boolean getValue(){
+			return new NoneExpression<BooleanType>(line, column,new BooleanType(b)){
+				public BooleanType getValue(){
 					return value;
 				}
 			};
 		}
 
 		@Override
-		public Expression createAnd(int line, int column, Expression e1, Expression e2) {
-			// TODO Auto-generated method stub
-			return null;
+		public Expression createAnd(int line, int column, Expression e1, Expression e2){
+			System.out.println("BooleanLiteral:"+line+"|"+column);
+			return new DoubleExpression<BooleanType>(line,column,e1,e2) {
+				public BooleanType getValue(){
+					return new BooleanType(((BooleanType)expression1.getValue()).toBoolean() && ((BooleanType)expression2.getValue()).toBoolean());
+				}
+			};
 		}
 
 		@Override
@@ -351,7 +376,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			return new VariableAcces(line,column,name){
 				public Type getValue(){
 					System.out.println(name);
-					return globals.get(name);
+					return parser.getGlobals().get(name);
 				}
 			};
 		}
@@ -479,10 +504,10 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 				}
 				
 				public void run() {
-					if (globals.get(name).getClass().getName() == "worms.model.DoubleType"){
-						globals.put(name,new DoubleType((Double)expression.getValue()));
-					} else if (globals.get(name).getClass().getName() == "worms.model.BooleanType"){
-						globals.put(name,new BooleanType((Boolean)expression.getValue()));
+					if (parser.getGlobals().get(name).getClass().getName() == "worms.model.DoubleType"){
+						parser.getGlobals().put(name,new DoubleType(((DoubleType)expression.getValue()).toDouble()));
+					} else if (parser.getGlobals().get(name).getClass().getName() == "worms.model.BooleanType"){
+						parser.getGlobals().put(name,new BooleanType(((BooleanType)expression.getValue()).toBoolean()));
 					}
 				}
 			};

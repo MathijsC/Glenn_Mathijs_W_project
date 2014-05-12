@@ -1,8 +1,10 @@
 // Testprogram
 
 double x;
+double y;
+bool z;
 
 x := 0.5;
-x := 0.75;
+y := 0.75;
 
-print x;
+z := (x || y);
