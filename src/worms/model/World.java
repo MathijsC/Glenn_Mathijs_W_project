@@ -138,6 +138,27 @@ public class World {
 	 * A list containing all the worms who are currently in this world.
 	 */
 	private ArrayList<Worm> worms = new ArrayList<Worm>();
+	
+	public Entity getClosestTo(Worm worm) {
+		Position pos = worm.getPosition();
+		double dir = worm.getDirection();
+		double a = 0;
+		boolean found = false;
+		Worm result = null;
+		
+		while (entityInWorld(pos, Worm.getMinRadius()) &&(!(found))) {
+			for( Worm w : getWormList()) {
+				if(w.getPosition() == pos)
+					result = w;
+					found = true;
+			}
+			a+=0.1;
+			pos.setXCoordinate(pos.getXCoordinate()+a*Math.cos(dir));
+			pos.setYCoordinate(pos.getYCoordinate()+a*Math.sin(dir));
+		}
+		
+		return result;
+	}
 
 	/**
 	 * A variable holding the projectile that is active in this world
