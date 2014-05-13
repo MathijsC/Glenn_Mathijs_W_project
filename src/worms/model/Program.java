@@ -1,11 +1,13 @@
 package worms.model;
 
+
 import java.util.List;
 import java.util.Map;
 
 import worms.gui.game.IActionHandler;
 import worms.model.programs.ProgramFactory;
 import worms.model.programs.ProgramParser;
+import worms.model.programs.parser.PrintingProgramFactoryImpl;
 
 abstract class  Expression {
 	
@@ -85,8 +87,7 @@ abstract class Statement {
 	public int line;
 	public int column;
 	
-	abstract public void run(); 
-	abstract public String getName();
+	abstract public void run();
 }
 
 abstract class Sequence extends Statement{
@@ -107,6 +108,33 @@ abstract class ExpressionAction extends Statement{
 	}
 	
 	public Expression expression;
+}
+
+abstract class SingleExpressionCond extends Statement{
+	
+	public SingleExpressionCond(int l, int c, Expression cond, Statement b){
+		super(l,c);
+		condition = cond;
+		body = b;
+	}
+	
+	public Expression condition;
+	public Statement body;
+}
+
+abstract class DoubleExpressionCond extends Statement{
+	
+	public DoubleExpressionCond(int l, int c, Expression cond, Statement t, Statement f){
+		super(l,c);
+		condition = cond;
+		ifTrue = t;
+		ifFalse = f;
+	}
+	
+	public Expression condition;
+	public Statement ifTrue;
+	public Statement ifFalse;
+	
 }
 
 abstract class Assignment extends Statement{
@@ -221,26 +249,30 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		public Program(String programText, IActionHandler handler){
 			System.out.println("Parse");
 			ProgramParser<Expression, Statement, Type> parser = new ProgramParser<Expression, Statement, Type>(this);
+			//ProgramParser<PrintingObject, PrintingObject, PrintingObject> printParser = new ProgramParser<PrintingObject, PrintingObject, PrintingObject>(new PrintingProgramFactoryImpl());
 			parser.parse(programText);
 			actionHandler = handler;
 			globals = parser.getGlobals();
-			statement = parser.getStatement();
+			statement = parser.getStatement();			
 			System.out.println(globals);
 			System.out.println(globals.get("x").getValue());
-			System.out.println(statement.getName());
 		}
 		
 		private IActionHandler actionHandler;
 		private Map<String,Type> globals;
 		private Statement statement;
 		private ProgramParser<Expression, Statement, Type> parser;
+		private Worm worm;
+		
+		public void setWorm(Worm w){
+			worm = w;
+		}
 		
 		public void runProgram(){
 			System.out.println("Run");
 			statement.run();
 			System.out.println(globals);
 			System.out.println(globals.get("x").getValue());
-			System.out.println(statement.getName());
 		}
 		
 		@Override
@@ -522,14 +554,27 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 
 		@Override
 		public Statement createIf(int line, int column, Expression condition, Statement then, Statement otherwise) {
-			// TODO Auto-generated method stub
-			return null;
+			return new DoubleExpressionCond(line,column,condition,then,otherwise){
+				 
+				public void run(){
+					if (((BooleanType)condition.getValue()).toBoolean()){
+						ifTrue.run();
+					} else {
+						ifFalse.run();
+					}
+				}
+			};
 		}
 
 		@Override
 		public Statement createWhile(int line, int column, Expression condition, Statement body) {
-			// TODO Auto-generated method stub
-			return null;
+			return new SingleExpressionCond(line,column,condition,body){
+				 public void run(){
+					 while(((BooleanType)condition.getValue()).toBoolean()){
+						 body.run();
+					 }
+				 }
+			};
 		}
 
 		@Override
@@ -564,11 +609,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 				@Override
 				public void run() {
 					actionHandler.print(expression.toString());					
-				}
-				
-				@Override
-				public String getName() {
-					return "Print";
 				}
 			};
 		}
