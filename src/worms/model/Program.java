@@ -198,6 +198,10 @@ class BooleanType extends Type{
 
 class EntityType<T> extends Type{
 	
+	public EntityType(T t){
+		value = t;
+	}
+	
 	public T getValue(){
 		return value;
 	}
@@ -234,6 +238,8 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		private Map<String,Type> globals;
 		private Statement statement;
 		private ProgramParser<Expression, Statement, Type> parser;
+		//TODO
+		private Worm worm;
 		
 		public void runProgram(){
 			System.out.println("Run");
@@ -309,7 +315,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
 		@Override
 		public Expression createGetY(int line, int column, Expression e) {
 			// TODO Auto-generated method stub
