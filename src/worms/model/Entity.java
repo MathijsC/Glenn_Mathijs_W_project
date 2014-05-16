@@ -12,7 +12,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @author 	Glenn Cools & Mathijs Cuppens
  * @version	1.7
  */
-public class Entity {
+abstract class Entity {
 
 	/**
 	 * Initialize a new entity with a given position and world.
@@ -235,5 +235,14 @@ public class Entity {
 			oldWorld.removeEntity(this);
 		}
 	}
+	
+	/**
+	 * Return the radius of this worm.
+	 * 
+	 * @return	The radius of this worm.
+	 */
+	@Basic
+	@Raw
+	abstract public double getRadius();
 
 }

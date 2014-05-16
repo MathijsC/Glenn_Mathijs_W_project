@@ -1,19 +1,15 @@
 // Testprogram
 
-bool x;
-bool y;
-bool z;
+double a;
+double b;
 
-x := true;
-y := true;
-z := false;
+a := 0.5;
+b := 0.2;
 
-if(x) then {
-
-print y;
-
-} else {
-
-print z;
-
-}
+double c := (false + 0.5);
+if (a>0.3){
+print a;}
+if (b>0.3){
+print b;}
+if (c>0.3){
+print c;}
