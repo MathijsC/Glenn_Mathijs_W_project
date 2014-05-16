@@ -15,14 +15,10 @@ abstract class Expression {
 		column = c;
 	}
 
-	abstract public Type getValue();
-
-	public String toString() {
-		return getValue().toString();
-	}
-
 	public int line;
 	public int column;
+	
+	abstract public <T> T getValue();
 
 }
 
@@ -138,12 +134,13 @@ abstract class Assignment extends Statement {
 		expression = e;
 		name = n;
 	}
-
 	public Expression expression;
 	public String name;
+	
 }
 
-abstract class Type {
+	
+abstract class Type{
 	abstract public String toString();
 
 }
@@ -213,7 +210,6 @@ class BooleanType extends Type {
 	}
 
 	public boolean value;
-
 }
 
 class EntityType<T> extends Type {
@@ -238,55 +234,55 @@ class EntityType<T> extends Type {
 
 public class Program implements ProgramFactory<Expression, Statement, Type> {
 
-	public Program(String programText, IActionHandler handler) {
-		System.out.println("Parse");
-		ProgramParser<Expression, Statement, Type> parser = new ProgramParser<Expression, Statement, Type>(
-				this);
-		//ProgramParser<PrintingObject, PrintingObject, PrintingObject> printParser = new ProgramParser<PrintingObject, PrintingObject, PrintingObject>(new PrintingProgramFactoryImpl());
-		parser.parse(programText);
-		actionHandler = handler;
-		globals = parser.getGlobals();
-		statement = parser.getStatement();
-		System.out.println(globals);
-	}
+		public Program(String programText, IActionHandler handler) {
+			System.out.println("Parse");
+			ProgramParser<Expression, Statement, Type> parser = new ProgramParser<Expression, Statement, Type>(
+					this);
+			//ProgramParser<PrintingObject, PrintingObject, PrintingObject> printParser = new ProgramParser<PrintingObject, PrintingObject, PrintingObject>(new PrintingProgramFactoryImpl());
+			parser.parse(programText);
+			actionHandler = handler;
+			globals = parser.getGlobals();
+			statement = parser.getStatement();
+			System.out.println(globals);
+		}
+		
+		private IActionHandler actionHandler;
+		private Map<String,Type> globals;
+		private Statement statement;
+		private ProgramParser<Expression, Statement, Type> parser;
+		private Worm worm;
+		
+		public void setWorm(Worm w) {
+			worm = w;
+		}
+		
+		public void runProgram(){
+			System.out.println("Run");
+			statement.run();
+			System.out.println(globals);
 
-	private IActionHandler actionHandler;
-	private Map<String, Type> globals;
-	private Statement statement;
-	private ProgramParser<Expression, Statement, Type> parser;
-	private Worm worm;
+		}
+		
+		@Override
+		public Expression createDoubleLiteral(int line, int column, double d) {
+			System.out.println("DoubleLiteral:"+line+"|"+column+" double:"+d);
+			return  new NoneExpression<DoubleType>(line, column, new DoubleType(d)){
+				public DoubleType getValue() {
+					return value;
+				}
+			};
+		}
 
-	public void setWorm(Worm w) {
-		worm = w;
-	}
-
-	public void runProgram() {
-		System.out.println("Run");
-		statement.run();
-		System.out.println(globals);
-	}
-
-	@Override
-	public Expression createDoubleLiteral(int line, int column, double d) {
-		System.out.println("DoubleLiteral:" + line + "|" + column + " double:"
-				+ d);
-		return new NoneExpression<DoubleType>(line, column, new DoubleType(d)) {
-			public DoubleType getValue() {
-				return value;
-			}
-		};
-	}
-
-	@Override
-	public Expression createBooleanLiteral(int line, int column, boolean b) {
-		System.out.println("BooleanLiteral:" + line + "|" + column + " bool:"
-				+ b);
-		return new NoneExpression<BooleanType>(line, column, new BooleanType(b)) {
-			public BooleanType getValue() {
-				return value;
-			}
-		};
-	}
+		@Override
+		public Expression createBooleanLiteral(int line, int column, boolean b) {
+			System.out.println("BooleanLiteral:" + line + "|" + column + " bool:"
+					+ b);
+			return new NoneExpression<BooleanType>(line, column, new BooleanType(b)) {
+				public BooleanType getValue() {
+					return value;
+				}
+			};
+		}
 
 	@Override
 	public Expression createAnd(int line, int column, Expression e1,
@@ -332,6 +328,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		return null;
 	}
 
+	
 	@Override
 	public Expression createSelf(int line, int column) {
 		// TODO Auto-generated method stub
@@ -368,6 +365,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		return null;
 	}
 
+
 	@Override
 	public Expression createGetMaxAP(int line, int column, Expression e) {
 		// TODO Auto-generated method stub
@@ -392,11 +390,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		return null;
 	}
 
-	@Override
-	public Expression createSearchObj(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Expression createIsWorm(int line, int column, Expression e) {
@@ -409,17 +402,11 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
-	public Expression createVariableAccess(int line, int column, String name) {
-		System.out.println("CreateVariable:" + line + "|" + column + " name:"
-				+ name);
-		return new VariableAcces(line, column, name) {
-			public Type getValue() {
-				System.out.println(name);
-				return globals.get(name);
-			}
-		};
+	public Expression createSearchObj(int line, int column, Expression e) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -436,6 +423,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		return null;
 	}
 
+
 	@Override
 	public Expression createLessThanOrEqualTo(int line, int column,
 			Expression e1, Expression e2) {
@@ -450,13 +438,14 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		return null;
 	}
 
+
 	@Override
 	public Expression createEquality(int line, int column, Expression e1,
 			Expression e2) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public Expression createInequality(int line, int column, Expression e1,
 			Expression e2) {
@@ -464,6 +453,19 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		return null;
 	}
 
+	@Override
+	public Expression createVariableAccess(int line, int column, String name) {
+		System.out.println("CreateVariable:" + line + "|" + column + " name:"
+				+ name);
+		return new VariableAcces(line, column, name) {
+			public Type getValue() {
+				System.out.println(name);
+				return globals.get(name);
+			}
+		};
+	}
+
+	
 	@Override
 	public Expression createAdd(int line, int column, Expression e1,
 			Expression e2) {
@@ -565,9 +567,8 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			@Override
 			public void run() {
 				actionHandler.move(worm);
-
-			}
-		};
+				}
+			};
 	}
 
 	@Override
@@ -577,10 +578,11 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			@Override
 			public void run() {
 				actionHandler.jump(worm);
-
 			}
+			
 		};
 	}
+
 
 	@Override
 	public Statement createToggleWeap(int line, int column) {
@@ -652,6 +654,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		};
 	}
 
+
 	@Override
 	public Statement createWhile(int line, int column, Expression condition,
 			Statement body) {
@@ -663,7 +666,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			}
 		};
 	}
-
+	
 	@Override
 	public Statement createForeach(int line, int column,
 			worms.model.programs.ProgramFactory.ForeachType type,
@@ -671,6 +674,7 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 	@Override
 	public Statement createSequence(int line, int column,
@@ -681,7 +685,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 				for (Statement st : statements) {
 					st.run();
 				}
-
 			}
 		};
 	}
@@ -718,3 +721,4 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 	}
 
 }
+
