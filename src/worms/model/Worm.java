@@ -116,7 +116,9 @@ public class Worm extends Entity {
 		double[] randCoord = world.getRandAdjacentTerrain(this.getRadius());
 		this.setPosition(randCoord[0], randCoord[1]);
 		program = p;
-		p.setWorm(this);
+		if (p != null){
+			p.setWorm(this);
+		}
 	}
 	
 	// player controlled worm ?

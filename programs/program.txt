@@ -5,8 +5,15 @@ bool y;
 bool z;
 
 x := true;
-y := false;
+y := true;
+z := false;
 
-z := (x || y);
+if(x) then {
+
+print y;
+
+} else {
 
 print z;
+
+}

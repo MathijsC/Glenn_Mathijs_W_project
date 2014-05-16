@@ -467,22 +467,40 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 	@Override
 	public Expression createAdd(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DoubleExpression<DoubleType>(line, column, e1, e2) {
+			public DoubleType getValue() {
+				return new DoubleType(
+						(((DoubleType) expression1.getValue()).toDouble())
+								+ (((DoubleType) expression2.getValue())
+										.toDouble()));
+			}
+		};
 	}
 
 	@Override
 	public Expression createSubtraction(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DoubleExpression<DoubleType>(line, column, e1, e2) {
+			public DoubleType getValue() {
+				return new DoubleType(
+						(((DoubleType) expression1.getValue()).toDouble())
+								- (((DoubleType) expression2.getValue())
+										.toDouble()));
+			}
+		};
 	}
 
 	@Override
 	public Expression createMul(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DoubleExpression<DoubleType>(line, column, e1, e2) {
+			public DoubleType getValue() {
+				return new DoubleType(
+						(((DoubleType) expression1.getValue()).toDouble())
+								* (((DoubleType) expression2.getValue())
+										.toDouble()));
+			}
+		};
 	}
 
 	@Override
@@ -600,10 +618,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		System.out.println("Assignment:" + line + "|" + column + " name:"
 				+ variableName);
 		return new Assignment(line, column, rhs, variableName) {
-			public String getName() {
-				return "Assignment";
-			}
-
 			public void run() {
 				System.out.println("assign " + expression.getValue() + " to "
 						+ name);
@@ -663,10 +677,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			List<Statement> statements) {
 		System.out.println("CreateSequence:" + line + "|" + column);
 		return new Sequence(line, column, statements) {
-			public String getName() {
-				return "Sequence";
-			}
-
 			public void run() {
 				for (Statement st : statements) {
 					st.run();
