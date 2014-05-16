@@ -8,7 +8,7 @@ import worms.model.programs.ProgramFactory;
 import worms.model.programs.ProgramParser;
 import worms.model.programs.parser.PrintingProgramFactoryImpl;
 
-abstract class Expression {
+abstract class Expression<T extends Comparable<?>> {
 
 	public Expression(int l, int c) {
 		line = l;
@@ -17,12 +17,12 @@ abstract class Expression {
 
 	public int line;
 	public int column;
-	
-	abstract public <T> T getValue();
+
+	abstract public Type<T> getValue();
 
 }
 
-abstract class VariableAcces extends Expression {
+abstract class VariableAcces<T extends Comparable<?>> extends Expression<T> {
 
 	public VariableAcces(int l, int c, String n) {
 		super(l, c);
@@ -33,37 +33,37 @@ abstract class VariableAcces extends Expression {
 
 }
 
-abstract class NoneExpression<T extends Type> extends Expression {
+abstract class NoneExpression<T extends Comparable<?>> extends Expression<T> {
 
-	public NoneExpression(int l, int c, T t) {
+	public NoneExpression(int l, int c, Type<T> t) {
 		super(l, c);
 		value = t;
 	}
 
-	public T value;
+	public Type<T> value;
 
 }
 
-abstract class SingleExpression<T extends Type> extends Expression {
+abstract class SingleExpression<T extends Comparable<?>> extends Expression<T> {
 
-	public SingleExpression(int l, int c, Expression e) {
+	public SingleExpression(int l, int c, Expression<?> e) {
 		super(l, c);
 		expression = e;
 	}
 
-	public Expression expression;
+	public Expression<?> expression;
 }
 
-abstract class DoubleExpression<T extends Type> extends Expression {
+abstract class DoubleExpression<T extends Comparable<?>> extends Expression<T> {
 
-	public DoubleExpression(int l, int c, Expression e1, Expression e2) {
+	public DoubleExpression(int l, int c, Expression<?> e1, Expression<?> e2) {
 		super(l, c);
 		expression1 = e1;
 		expression2 = e2;
 	}
 
-	public Expression expression1;
-	public Expression expression2;
+	public Expression<?> expression1;
+	public Expression<?> expression2;
 }
 
 abstract class Statement {
@@ -91,29 +91,29 @@ abstract class Sequence extends Statement {
 
 abstract class ExpressionAction extends Statement {
 
-	public ExpressionAction(int l, int c, Expression e) {
+	public ExpressionAction(int l, int c, Expression<?> e) {
 		super(l, c);
 		expression = e;
 	}
 
-	public Expression expression;
+	public Expression<?> expression;
 }
 
 abstract class SingleExpressionCond extends Statement {
 
-	public SingleExpressionCond(int l, int c, Expression cond, Statement b) {
+	public SingleExpressionCond(int l, int c, Expression<Boolean> cond, Statement b) {
 		super(l, c);
 		condition = cond;
 		body = b;
 	}
 
-	public Expression condition;
+	public Expression<Boolean> condition;
 	public Statement body;
 }
 
 abstract class DoubleExpressionCond extends Statement {
 
-	public DoubleExpressionCond(int l, int c, Expression cond, Statement t,
+	public DoubleExpressionCond(int l, int c, Expression<Boolean> cond, Statement t,
 			Statement f) {
 		super(l, c);
 		condition = cond;
@@ -121,7 +121,7 @@ abstract class DoubleExpressionCond extends Statement {
 		ifFalse = f;
 	}
 
-	public Expression condition;
+	public Expression<Boolean> condition;
 	public Statement ifTrue;
 	public Statement ifFalse;
 
@@ -129,23 +129,47 @@ abstract class DoubleExpressionCond extends Statement {
 
 abstract class Assignment extends Statement {
 
-	public Assignment(int l, int c, Expression e, String n) {
+	public Assignment(int l, int c, Expression<?> e, String n) {
 		super(l, c);
 		expression = e;
 		name = n;
 	}
-	public Expression expression;
+
+	public Expression<?> expression;
 	public String name;
-	
-}
-
-	
-abstract class Type{
-	abstract public String toString();
 
 }
 
-class DoubleType extends Type {
+class Type<T extends Comparable<?>> {
+	
+	public Type(){
+		value = null;
+	}
+
+	public Type(T v) {
+		value = v;
+	}
+
+	private T value;
+
+	public T getValue() {
+		return value;
+	}
+
+	public void setValue(Expression<?> v) {
+		value = (T)v.getValue().getValue();
+	}
+	
+	public String toString(){
+		if (value == null){
+			return "null";
+		}
+		return value.toString();
+	}
+
+}
+
+/*class DoubleType extends Type {
 
 	public DoubleType() {
 		value = 0.0;
@@ -177,9 +201,9 @@ class DoubleType extends Type {
 
 	public double value;
 
-}
+}*/
 
-class BooleanType extends Type {
+/*class BooleanType extends Type {
 
 	public BooleanType() {
 		value = false;
@@ -210,113 +234,139 @@ class BooleanType extends Type {
 	}
 
 	public boolean value;
-}
+}*/
 
-class EntityType<T> extends Type {
+abstract class EntityType implements Comparable<Object> {
 
-	public T getValue() {
-		return value;
+	public EntityType() {
+		value = null;
 	}
 
+	public Object value;
+
+	public abstract String toString();
+
+}
+
+class WormType extends EntityType {
+
+	public Worm value;
+
+	@Override
+	public int compareTo(Object arg0) {
+		Worm w = (Worm) arg0;
+		return 0;
+	}
+
+	@Override
 	public String toString() {
-		if (value.getClass() == Worm.class) {
-			return ((Worm) value).getName();
-		} else if (value.getClass() == Food.class) {
-			return "A Hamburger";
-		} else {
-			return null;
-		}
+		return value.getName();
 	}
-
-	public T value;
 
 }
 
-public class Program implements ProgramFactory<Expression, Statement, Type> {
+class FoodType extends EntityType {
 
-		public Program(String programText, IActionHandler handler) {
-			System.out.println("Parse");
-			ProgramParser<Expression, Statement, Type> parser = new ProgramParser<Expression, Statement, Type>(
-					this);
-			//ProgramParser<PrintingObject, PrintingObject, PrintingObject> printParser = new ProgramParser<PrintingObject, PrintingObject, PrintingObject>(new PrintingProgramFactoryImpl());
-			parser.parse(programText);
-			actionHandler = handler;
-			globals = parser.getGlobals();
-			statement = parser.getStatement();
-			System.out.println(globals);
-		}
-		
-		private IActionHandler actionHandler;
-		private Map<String,Type> globals;
-		private Statement statement;
-		private ProgramParser<Expression, Statement, Type> parser;
-		private Worm worm;
-		
-		public void setWorm(Worm w) {
-			worm = w;
-		}
-		
-		public void runProgram(){
-			System.out.println("Run");
-			statement.run();
-			System.out.println(globals);
-
-		}
-		
-		@Override
-		public Expression createDoubleLiteral(int line, int column, double d) {
-			System.out.println("DoubleLiteral:"+line+"|"+column+" double:"+d);
-			return  new NoneExpression<DoubleType>(line, column, new DoubleType(d)){
-				public DoubleType getValue() {
-					return value;
-				}
-			};
-		}
-
-		@Override
-		public Expression createBooleanLiteral(int line, int column, boolean b) {
-			System.out.println("BooleanLiteral:" + line + "|" + column + " bool:"
-					+ b);
-			return new NoneExpression<BooleanType>(line, column, new BooleanType(b)) {
-				public BooleanType getValue() {
-					return value;
-				}
-			};
-		}
+	public Food value;
 
 	@Override
-	public Expression createAnd(int line, int column, Expression e1,
-			Expression e2) {
+	public int compareTo(Object arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return "A Hamburger";
+	}
+
+}
+
+public class Program implements
+		ProgramFactory<Expression<?>, Statement, Type<?>> {
+
+	public Program(String programText, IActionHandler handler) {
+		System.out.println("Parse");
+		ProgramParser<Expression<?>, Statement, Type<?>> parser = new ProgramParser<Expression<?>, Statement, Type<?>>(
+				this);
+		//ProgramParser<PrintingObject, PrintingObject, PrintingObject> printParser = new ProgramParser<PrintingObject, PrintingObject, PrintingObject>(new PrintingProgramFactoryImpl());
+		parser.parse(programText);
+		actionHandler = handler;
+		globals = parser.getGlobals();
+		statement = parser.getStatement();
+		System.out.println(globals);
+	}
+
+	private IActionHandler actionHandler;
+	private Map<String, Type<?>> globals;
+	private Statement statement;
+	private Worm worm;
+
+	public void setWorm(Worm w) {
+		worm = w;
+	}
+
+	public void runProgram() {
+		System.out.println("Run");
+		statement.run();
+		System.out.println(globals);
+
+	}
+
+	@Override
+	public Expression<Double> createDoubleLiteral(int line, int column, double d) {
+		System.out.println("DoubleLiteral:" + line + "|" + column + " double:"
+				+ d);
+		return new NoneExpression<Double>(line, column, new Type<Double>(d)) {
+			public Type<Double> getValue() {
+				return value;
+			}
+		};
+	}
+
+	@Override
+	public Expression<Boolean> createBooleanLiteral(int line, int column,
+			boolean b) {
+		System.out.println("BooleanLiteral:" + line + "|" + column + " bool:"
+				+ b);
+		return new NoneExpression<Boolean>(line, column, new Type<Boolean>(b)) {
+			public Type<Boolean> getValue() {
+				return value;
+			}
+		};
+	}
+
+	@Override
+	public Expression<Boolean> createAnd(int line, int column,
+			Expression<?> e1, Expression<?> e2) {
 		System.out.println("BooleanLiteral:" + line + "|" + column);
-		return new DoubleExpression<BooleanType>(line, column, e1, e2) {
-			public BooleanType getValue() {
-				return new BooleanType(
-						((BooleanType) expression1.getValue()).toBoolean()
-								&& ((BooleanType) expression2.getValue())
-										.toBoolean());
+		return new DoubleExpression<Boolean>(line, column, e1, e2) {
+			public Type<Boolean> getValue() {
+				return new Type<Boolean>(((Boolean) expression1.getValue()
+						.getValue())
+						&& ((Boolean) expression1.getValue().getValue()));
 			}
 		};
 	}
 
 	@Override
-	public Expression createOr(int line, int column, Expression e1,
-			Expression e2) {
-		return new DoubleExpression<BooleanType>(line, column, e1, e2) {
-			public BooleanType getValue() {
-				return new BooleanType(
-						((BooleanType) expression1.getValue()).toBoolean()
-								|| ((BooleanType) expression2.getValue())
-										.toBoolean());
+	public Expression<Boolean> createOr(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
+		return new DoubleExpression<Boolean>(line, column, e1, e2) {
+			public Type<Boolean> getValue() {
+				return new Type<Boolean>(((Boolean) expression1.getValue()
+						.getValue())
+						|| ((Boolean) expression1.getValue().getValue()));
 			}
 		};
 	}
 
 	@Override
-	public Expression createNot(int line, int column, Expression e) {
-		return new SingleExpression<BooleanType>(line, column, e) {
-			public BooleanType getValue() {
-				return new BooleanType(
-						!((BooleanType) expression.getValue()).toBoolean());
+	public Expression<Boolean> createNot(int line, int column, Expression<?> e) {
+		return new SingleExpression<Boolean>(line, column, e) {
+			public Type<Boolean> getValue() {
+				return new Type<Boolean>(
+						!((Boolean) expression.getValue().getValue()));
 			}
 		};
 	}
@@ -328,7 +378,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		return null;
 	}
 
-	
 	@Override
 	public Expression createSelf(int line, int column) {
 		// TODO Auto-generated method stub
@@ -336,119 +385,115 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 	}
 
 	@Override
-	public Expression createGetX(int line, int column, Expression e) {
+	public Expression createGetX(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGetY(int line, int column, Expression e) {
+	public Expression createGetY(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGetRadius(int line, int column, Expression e) {
+	public Expression createGetRadius(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGetDir(int line, int column, Expression e) {
+	public Expression createGetDir(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGetAP(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public Expression createGetMaxAP(int line, int column, Expression e) {
+	public Expression createGetAP(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGetHP(int line, int column, Expression e) {
+	public Expression createGetMaxAP(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGetMaxHP(int line, int column, Expression e) {
+	public Expression createGetHP(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createSameTeam(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public Expression createIsWorm(int line, int column, Expression e) {
+	public Expression createGetMaxHP(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createIsFood(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Expression createSearchObj(int line, int column, Expression e) {
+	public Expression createSameTeam(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createLessThan(int line, int column, Expression e1,
-			Expression e2) {
+	public Expression createIsWorm(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGreaterThan(int line, int column, Expression e1,
-			Expression e2) {
+	public Expression createIsFood(int line, int column, Expression<?> e) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public Expression createSearchObj(int line, int column, Expression<?> e) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createLessThan(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Expression createGreaterThan(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public Expression createLessThanOrEqualTo(int line, int column,
-			Expression e1, Expression e2) {
+			Expression<?> e1, Expression<?> e2) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Expression createGreaterThanOrEqualTo(int line, int column,
-			Expression e1, Expression e2) {
+			Expression<?> e1, Expression<?> e2) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
 	@Override
-	public Expression createEquality(int line, int column, Expression e1,
-			Expression e2) {
+	public Expression createEquality(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public Expression createInequality(int line, int column, Expression e1,
-			Expression e2) {
+	public Expression createInequality(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -465,97 +510,89 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		};
 	}
 
-	
 	@Override
-	public Expression createAdd(int line, int column, Expression e1,
-			Expression e2) {
-		return new DoubleExpression<DoubleType>(line, column, e1, e2) {
-			public DoubleType getValue() {
-				return new DoubleType(
-						(((DoubleType) expression1.getValue()).toDouble())
-								+ (((DoubleType) expression2.getValue())
-										.toDouble()));
+	public Expression<Double> createAdd(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
+		return new DoubleExpression<Double>(line, column, e1, e2) {
+			public Type<Double> getValue() {
+				return new Type<Double>(
+						((Double) expression1.getValue().getValue())
+								+ ((Double) expression2.getValue().getValue()));
 			}
 		};
 	}
 
 	@Override
-	public Expression createSubtraction(int line, int column, Expression e1,
-			Expression e2) {
-		return new DoubleExpression<DoubleType>(line, column, e1, e2) {
-			public DoubleType getValue() {
-				return new DoubleType(
-						(((DoubleType) expression1.getValue()).toDouble())
-								- (((DoubleType) expression2.getValue())
-										.toDouble()));
+	public Expression<Double> createSubtraction(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
+		return new DoubleExpression<Double>(line, column, e1, e2) {
+			public Type<Double> getValue() {
+				return new Type<Double>(
+						((Double) expression1.getValue().getValue())
+								- ((Double) expression2.getValue().getValue()));
 			}
 		};
 	}
 
 	@Override
-	public Expression createMul(int line, int column, Expression e1,
-			Expression e2) {
-		return new DoubleExpression<DoubleType>(line, column, e1, e2) {
-			public DoubleType getValue() {
-				return new DoubleType(
-						(((DoubleType) expression1.getValue()).toDouble())
-								* (((DoubleType) expression2.getValue())
-										.toDouble()));
+	public Expression<Double> createMul(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
+		return new DoubleExpression<Double>(line, column, e1, e2) {
+			public Type<Double> getValue() {
+				return new Type<Double>(
+						((Double) expression1.getValue().getValue())
+								* ((Double) expression2.getValue().getValue()));
 			}
 		};
 	}
 
 	@Override
-	public Expression createDivision(int line, int column, Expression e1,
-			Expression e2) {
-		return new DoubleExpression<DoubleType>(line, column, e1, e2) {
-			public DoubleType getValue() {
-				return new DoubleType(
-						(((DoubleType) expression1.getValue()).toDouble())
-								/ (((DoubleType) expression2.getValue())
-										.toDouble()));
+	public Expression<Double> createDivision(int line, int column, Expression<?> e1,
+			Expression<?> e2) {
+		return new DoubleExpression<Double>(line, column, e1, e2) {
+			public Type<Double> getValue() {
+				return new Type<Double>(
+						((Double) expression1.getValue().getValue())
+								/ ((Double) expression2.getValue().getValue()));
 			}
 		};
 	}
 
 	@Override
-	public Expression createSqrt(int line, int column, Expression e) {
-		return new SingleExpression<DoubleType>(line, column, e) {
-			public DoubleType getValue() {
-				return new DoubleType(Math.sqrt((((DoubleType) expression
-						.getValue()).toDouble())));
+	public Expression<Double> createSqrt(int line, int column, Expression<?> e) {
+		return new SingleExpression<Double>(line, column, e) {
+			public Type<Double> getValue() {
+				return new Type<Double>(Math.sqrt(((Double) expression.getValue().getValue())));
 			}
 		};
 	}
 
 	@Override
-	public Expression createSin(int line, int column, Expression e) {
-		return new SingleExpression<DoubleType>(line, column, e) {
-			public DoubleType getValue() {
-				return new DoubleType(Math.sin((((DoubleType) expression
-						.getValue()).toDouble())));
+	public Expression<Double> createSin(int line, int column, Expression<?> e) {
+		return new SingleExpression<Double>(line, column, e) {
+			public Type<Double> getValue() {
+				return new Type<Double>(Math.sin(((Double) expression.getValue().getValue())));
 			}
 		};
 	}
 
 	@Override
-	public Expression createCos(int line, int column, Expression e) {
-		return new SingleExpression<DoubleType>(line, column, e) {
-			public DoubleType getValue() {
-				return new DoubleType(Math.cos((((DoubleType) expression
-						.getValue()).toDouble())));
+	public Expression<Double> createCos(int line, int column, Expression<?> e) {
+		return new SingleExpression<Double>(line, column, e) {
+			public Type<Double> getValue() {
+				return new Type<Double>(Math.cos(((Double) expression.getValue().getValue())));
 			}
 		};
 	}
 
 	@Override
-	public Statement createTurn(int line, int column, Expression angle) {
+	public Statement createTurn(int line, int column, Expression<?> angle) {
 		return new ExpressionAction(line, column, angle) {
 
 			@Override
 			public void run() {
 				actionHandler.turn(worm,
-						((DoubleType) expression.getValue()).toDouble());
+						(Double) expression.getValue().getValue());
 			}
 		};
 	}
@@ -567,8 +604,8 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			@Override
 			public void run() {
 				actionHandler.move(worm);
-				}
-			};
+			}
+		};
 	}
 
 	@Override
@@ -579,10 +616,9 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 			public void run() {
 				actionHandler.jump(worm);
 			}
-			
+
 		};
 	}
-
 
 	@Override
 	public Statement createToggleWeap(int line, int column) {
@@ -594,13 +630,13 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 	}
 
 	@Override
-	public Statement createFire(int line, int column, Expression yield) {
+	public Statement createFire(int line, int column, Expression<?> yield) {
 		return new ExpressionAction(line, column, yield) {
 
 			@Override
 			public void run() {
 				actionHandler.fire(worm,
-						((DoubleType) expression.getValue()).toInteger());
+						((Double) expression.getValue().getValue()).intValue());
 			}
 		};
 	}
@@ -616,36 +652,26 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 
 	@Override
 	public Statement createAssignment(int line, int column,
-			String variableName, Expression rhs) {
+			String variableName, Expression<?> rhs) {
 		System.out.println("Assignment:" + line + "|" + column + " name:"
 				+ variableName);
 		return new Assignment(line, column, rhs, variableName) {
 			public void run() {
 				System.out.println("assign " + expression.getValue() + " to "
 						+ name);
-				if (globals.get(name).getClass().getName() == "worms.model.DoubleType") {
-					globals.put(
-							name,
-							new DoubleType(((DoubleType) expression.getValue())
-									.toDouble()));
-				} else if (globals.get(name).getClass().getName() == "worms.model.BooleanType") {
-					globals.put(
-							name,
-							new BooleanType(((BooleanType) expression
-									.getValue()).toBoolean()));
-				}
+				globals.get(name).setValue(expression);
 			}
 		};
 	}
 
 	@Override
-	public Statement createIf(int line, int column, Expression condition,
+	public Statement createIf(int line, int column, Expression<?> condition,
 			Statement then, Statement otherwise) {
-		return new DoubleExpressionCond(line, column, condition, then,
+		return new DoubleExpressionCond(line, column, (Expression<Boolean>)condition, then,
 				otherwise) {
 
 			public void run() {
-				if (((BooleanType) condition.getValue()).toBoolean()) {
+				if ((Boolean) condition.getValue().getValue()) {
 					ifTrue.run();
 				} else {
 					ifFalse.run();
@@ -654,19 +680,18 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		};
 	}
 
-
 	@Override
-	public Statement createWhile(int line, int column, Expression condition,
+	public Statement createWhile(int line, int column, Expression<?> condition,
 			Statement body) {
-		return new SingleExpressionCond(line, column, condition, body) {
+		return new SingleExpressionCond(line, column, (Expression<Boolean>)condition, body) {
 			public void run() {
-				while (((BooleanType) condition.getValue()).toBoolean()) {
+				while ((Boolean) condition.getValue().getValue()) {
 					body.run();
 				}
 			}
 		};
 	}
-	
+
 	@Override
 	public Statement createForeach(int line, int column,
 			worms.model.programs.ProgramFactory.ForeachType type,
@@ -674,7 +699,6 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	@Override
 	public Statement createSequence(int line, int column,
@@ -690,35 +714,33 @@ public class Program implements ProgramFactory<Expression, Statement, Type> {
 	}
 
 	@Override
-	public Statement createPrint(int line, int column, Expression e) {
+	public Statement createPrint(int line, int column, Expression<?> e) {
 		System.out.println("CreatePrint:" + line + "|" + column);
 		return new ExpressionAction(line, column, e) {
 
 			@Override
 			public void run() {
-				actionHandler.print(expression.toString());
+				actionHandler.print(expression.getValue().toString());
 			}
 		};
 	}
 
 	@Override
-	public Type createDoubleType() {
+	public Type<Double> createDoubleType() {
 		System.out.println("CreateDoubleType:");
-		return new DoubleType();
+		return new Type<Double>();
 	}
 
 	@Override
-	public Type createBooleanType() {
+	public Type<Boolean> createBooleanType() {
 		System.out.println("CreateBooleanType:");
-		return new BooleanType();
+		return new Type<Boolean>();
 	}
 
 	@Override
-	public Type createEntityType() {
-		// TODO Auto-generated method stub
+	public Type<EntityType> createEntityType() {
 		System.out.println("CreateEntityType:");
-		return null;
+		return new Type<EntityType>();
 	}
 
 }
-
