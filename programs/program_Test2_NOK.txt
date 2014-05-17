@@ -1,0 +1,16 @@
+double a;
+double b;
+double c := 0;
+
+a := 0.5;
+b := 0.2;
+
+while (a<10) do {
+  c := getx self;
+  print c;
+  //move;
+  print a;
+  a := a + 1;
+}
+
+skip;
