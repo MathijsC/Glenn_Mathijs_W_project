@@ -1,4 +1,4 @@
-// Testprogram
+// Test program error testing
 
 double a;
 double b;

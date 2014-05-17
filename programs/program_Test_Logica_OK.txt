@@ -1,0 +1,101 @@
+// test program And, Or, Not, Eq and Neq OK
+// testing L, LE, G, GE too OK
+
+
+if (1 == 1) then 
+	{ print 1; }
+else
+	{ print 0; }
+//expect 1 OK
+ 
+if (1 != 1) then 
+	{ print 11; }
+else 
+ 	{ print 10;}
+//expect 10 OK
+
+if (1 < 1) then 
+	{ print 111; }
+else
+	{ print 110; }
+//expect 110 OK
+ 
+if (1 >1) then 
+	{ print 1111; }
+else 
+ 	{ print 1110;}
+//expect 1110 OK
+ 	
+if (1 <= 1) then 
+	{ print 11; }
+else
+	{ print 10; }
+//expect 11 OK
+ 
+if (1 >= 1) then 
+	{ print 111; }
+else 
+ 	{ print 110;}
+//expect 111 OK
+
+if (!(1 == 1)) then 
+	{ print 21; }
+else 
+ 	{ print 20;}
+//expect 20 OK
+
+if (!(0 == 1)) then 
+	{ print 21; }
+else 
+ 	{ print 20;}
+//expect 21 OK
+ 
+if ((1 == 1) && (1 == 1)) then 
+	{ print 221; }
+else
+	{ print 220; }
+//expect 221 OK
+
+if ((1 == 1) && (!(1 == 1))) then 
+	{ print 221; }
+else
+	{ print 220; }
+//expect 220 OK
+
+if ((!(1 == 1)) && (1 == 1)) then 
+	{ print 221; }
+else
+	{ print 222; }
+//expect 222 OK
+
+if ((!(1 == 1)) && (!(1 == 1))) then 
+	{ print 221; }
+else
+	{ print 223; }
+//expect 223 OK
+
+if ((1 == 1) || (1 == 1)) then 
+	{ print 2221; }
+else
+	{ print 220; }
+//expect 2221 OK
+
+if ((1 == 1) || (!(1 == 1))) then 
+	{ print 2222; }
+else
+	{ print 2220; }
+//expect 2222 OK
+
+if ((!(1 == 1)) || (1 == 1)) then 
+	{ print 2223; }
+else
+	{ print 2220; }
+//expect 2223 OK
+
+if ((!(1 == 1)) || (!(1 == 1))) then 
+	{ print 2224; }
+else
+	{ print 2220; }
+//expect 2220 OK
+
+ 

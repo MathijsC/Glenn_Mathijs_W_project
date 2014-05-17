@@ -1,0 +1,11 @@
+//test program IF en While
+
+double a := 0;
+
+while (a<11) do {
+	if(a < 5) then 
+	{ print a; }
+	else
+	{ print (a - 5); }
+ 	a := a + 1;
+}
