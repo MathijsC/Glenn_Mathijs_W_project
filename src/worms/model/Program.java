@@ -1,5 +1,5 @@
 package worms.model;
-
+//TODO fout in oude code bij doodgaan van wormen!!
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +63,10 @@ abstract class Statement {
 	public Statement(int l, int c) {
 		line = l;
 		column = c;
+		executed = false;
 	}
+	
+	public boolean executed;
 
 	public int line;
 	public int column;
@@ -178,6 +181,10 @@ class WormType extends EntityType {
 	public WormType(Worm w){
 		value = w;
 	}
+	
+	public Worm getValue(){
+		return value;
+	}
 
 
 	@Override
@@ -195,6 +202,9 @@ class FoodType extends EntityType {
 		value = f;
 	}
 
+	public Food getValue(){
+		return value;
+	}
 
 	@Override
 	public String toString() {
@@ -339,11 +349,11 @@ public class Program implements
 
 	@Override
 	public Expression<WormType> createSelf(int line, int column) {
-		return new Expression<WormType>(line,column,new Type<WormType>(new WormType(worm))){
+		return new Expression<WormType>(line,column){
 
 			@Override
 			public Type<WormType> getValue() {
-				return value;
+				return new Type<WormType>(new WormType(worm));
 			}
 
 			@Override
@@ -363,7 +373,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>(((Entity)expression1.getValue().getValue()).getXCoordinate());
+				return new Type<Double>((((WormType)expression1.getValue().getValue()).getValue()).getXCoordinate());
 			}
 
 			@Override
