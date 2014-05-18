@@ -1,5 +1,6 @@
 package worms.model;
 //TODO fout in oude code bij doodgaan van wormen!!
+//TODO fout in oude cobe bij wormen die van de map willen springen (endless loop)
 import java.util.List;
 import java.util.Map;
 
@@ -235,9 +236,9 @@ public class Program implements
 			executionCheck = !executionCheck;
 		} catch (Exception exc){
 			System.out.println("error");
-			worm.getWorld().startNextTurn();
+			
 		}
-
+		worm.getWorld().startNextTurn();
 	}
 
 	@Override
