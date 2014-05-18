@@ -217,6 +217,7 @@ public class Program implements
 		actionHandler = handler;
 		globals = parser.getGlobals();
 		statement = parser.getStatement();
+		errors = parser.getErrors();
 	}
 
 	private IActionHandler actionHandler;
@@ -224,6 +225,11 @@ public class Program implements
 	private Statement statement;
 	private Worm worm;
 	private boolean executionCheck;
+	private List<String> errors;
+	
+	public List<String> getErrors(){
+		return errors;
+	}
 
 	public void setWorm(Worm w) {
 		worm = w;

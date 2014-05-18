@@ -669,7 +669,12 @@ public class Facade implements IFacade {
 	 */
 	public ParseOutcome<?> parseProgram(String programText, IActionHandler handler){
 		Program program = new Program(programText,handler);
-		ParseOutcome<?> out = ParseOutcome.success(program);
+		ParseOutcome<?> out;
+		if (!program.getErrors().isEmpty()){
+			out = ParseOutcome.failure(program.getErrors());
+		} else {
+			out = ParseOutcome.success(program);
+		}
 		return out;
 	}
 	

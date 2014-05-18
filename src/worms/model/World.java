@@ -360,12 +360,19 @@ public class World {
 	}
 
 	/**
-	 * Get the worm who is currently at turn in this world.
+	 * Get the worm who is currently at turn in this world. If there are no worms
+	 * in this world, return null.
 	 * 
+	 * @return 	If there are no worms in this world, return null.
+	 * 			|if (getWormList().isEmpty())
+	 * 			|	null
 	 * @return 	The worm who is currently at turn in this world.
 	 * 			|getWormList().get(getCurrentWormIndex())
 	 */
 	public Worm getCurrentWorm() {
+		if (getWormList().isEmpty()){
+			return null;
+		}
 		return getWormList().get(this.getCurrentWormIndex());
 	}
 
