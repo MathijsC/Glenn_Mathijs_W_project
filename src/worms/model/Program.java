@@ -74,14 +74,14 @@ abstract class Statement {
 	public void execute(boolean exeCheck){
 		System.out.println("execute with check:"+ exeCheck+" and executed: "+executed);
 		if (executed != exeCheck){
-			System.out.println("notExecuted");
-			run();
+			System.out.println("not yet Executed");
+			run(exeCheck);
 		} else {
-			System.out.println("Executed");
+			System.out.println("Alraedy executed");
 		}
 	}
 	
-	abstract public void run();
+	abstract public void run(boolean exeCheck);
 }
 
 abstract class Sequence extends Statement {
@@ -235,6 +235,7 @@ public class Program implements
 			executionCheck = !executionCheck;
 		} catch (Exception exc){
 			System.out.println("error");
+			worm.getWorld().startNextTurn();
 		}
 
 	}
@@ -898,12 +899,12 @@ public class Program implements
 		return new ExpressionAction(line, column, angle) {
 
 			@Override
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("Turn:");
 				if(worm.canTurn((Double) expression.getValue().getValue())){
 					actionHandler.turn(worm,
 						(Double) expression.getValue().getValue());
-					executed = executionCheck;
+					executed = exeCheck;
 				} else {
 					System.out.println("cannotTurn");
 					throw new IllegalStateException();
@@ -918,11 +919,11 @@ public class Program implements
 		return new Statement(line, column) {
 
 			@Override
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("move:");
 				if(worm.canMove()){
 					actionHandler.move(worm);
-					executed = executionCheck;
+					executed = exeCheck;
 				} else {
 					System.out.println("cannotMove");
 					throw new IllegalStateException();
@@ -936,12 +937,12 @@ public class Program implements
 		return new Statement(line, column) {
 
 			@Override
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("Jump:");
 				if(worm.canJump()){
 					System.out.println("canJump");
 					actionHandler.jump(worm);
-					executed = executionCheck;
+					executed = exeCheck;
 				} else {
 					System.out.println("cannotJump");
 					throw new IllegalStateException();
@@ -954,10 +955,10 @@ public class Program implements
 	@Override
 	public Statement createToggleWeap(int line, int column) {
 		return new Statement(line, column) {
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("toggelWeapon");
 				actionHandler.toggleWeapon(worm);
-				executed = executionCheck;
+				executed = exeCheck;
 			}
 		};
 	}
@@ -970,12 +971,12 @@ public class Program implements
 		return new ExpressionAction(line, column, yield) {
 
 			@Override
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("fire:");
 				if (worm.canShoot(worm.getWeapon())){
 					actionHandler.fire(worm,
 						((Double) expression.getValue().getValue()).intValue());
-					executed = executionCheck;
+					executed = exeCheck;
 				} else {
 					System.out.println("cannotJump");
 					throw new IllegalStateException();
@@ -987,10 +988,10 @@ public class Program implements
 	@Override
 	public Statement createSkip(int line, int column) {
 		return new Statement(line, column) {
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("Skip:");
 				worm.getWorld().startNextTurn();
-				executed = executionCheck;
+				executed = exeCheck;
 			}
 		};
 	}
@@ -999,11 +1000,11 @@ public class Program implements
 	public Statement createAssignment(int line, int column,
 			String variableName, Expression<?> rhs) {
 		return new Assignment(line, column, rhs, variableName) {
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("assign");
 				//TODO runtime error handling bij verkeerde assignment
 				globals.get(name).setValue(expression);
-				executed = executionCheck;
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1014,14 +1015,14 @@ public class Program implements
 		return new DoubleExpressionCond(line, column, (Expression<Boolean>)condition, then,
 				otherwise) {
 
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("if:");
 				if ((Boolean) condition.getValue().getValue()) {
-					ifTrue.execute(executionCheck);
+					ifTrue.execute(exeCheck);
 				} else {
-					ifFalse.execute(executionCheck);
+					ifFalse.execute(exeCheck);
 				}
-				executed = executionCheck;
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1030,13 +1031,21 @@ public class Program implements
 	public Statement createWhile(int line, int column, Expression<?> condition,
 			Statement body) {
 		return new SingleExpressionCond(line, column, (Expression<Boolean>)condition, body) {
-			public void run() {
+			
+			private boolean whileExecutionCheck = true;
+			
+			public void run(boolean exeCheck) {
 				System.out.println("while");
 				while ((Boolean) condition.getValue().getValue()) {
-					body.execute(executionCheck);
+					System.out.println("Ex body");
+					body.execute(whileExecutionCheck);
+					body.executed = whileExecutionCheck;
+					System.out.println("whileExecutionCheck: "+whileExecutionCheck);
+					whileExecutionCheck = !whileExecutionCheck;
+					System.out.println("whileExecutionCheck: "+whileExecutionCheck);
 				}
 				System.out.println("endWhile");
-				executed = executionCheck;
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1053,13 +1062,13 @@ public class Program implements
 	public Statement createSequence(int line, int column,
 			List<Statement> statements) {
 		return new Sequence(line, column, statements) {
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("runSequence with check: "+executionCheck);
 				for (Statement st : statements) {
-					st.execute(executionCheck);
+					st.execute(exeCheck);
 				}
 				System.out.println("end Sequence");
-				executed = executionCheck;
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1069,10 +1078,10 @@ public class Program implements
 		return new ExpressionAction(line, column, e) {
 
 			@Override
-			public void run() {
+			public void run(boolean exeCheck) {
 				System.out.println("print");
 				actionHandler.print(expression.getValue().toString());
-				executed = executionCheck;
+				executed = exeCheck;
 			}
 		};
 	}

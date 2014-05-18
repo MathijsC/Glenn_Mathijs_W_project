@@ -1,8 +1,12 @@
-turn 2;
-print 0;
-jump;
-print 1;
-jump;
-print 2;
-jump;
-print 3;
+double x;
+x := 0;
+while (x < 10) {
+print ((x * 10) + 0);
+turn 3.14;
+print ((x * 10) + 1);
+turn 3.14;
+print ((x * 10) + 2);
+turn 3.14;
+print ((x * 10) + 3);
+x := x + 1;
+}
