@@ -179,47 +179,27 @@ class EntityType {
 	public EntityType() {
 		value = null;
 	}
+	
+	public EntityType(Entity ent){
+		value = ent;
+	}
+	
+	public Entity getValue(){
+		return value;
+	}
+	
+	@Override
+	public String toString() {
+		if (value instanceof Worm ){
+			return ((Worm)value).getName();
+		} else if (value instanceof Food ){
+			return "A Hamburger";
+		} else {
+			return "False enity";
+		}
+	}
 
 	public Entity value;
-
-}
-
-class WormType extends EntityType {
-
-	public Worm value;
-
-	public WormType(Worm w){
-		value = w;
-	}
-	
-	public Worm getValue(){
-		return value;
-	}
-
-
-	@Override
-	public String toString() {
-		return value.getName();
-	}
-
-}
-
-class FoodType extends EntityType {
-
-	public Food value;
-	
-	public FoodType(Food f){
-		value = f;
-	}
-
-	public Food getValue(){
-		return value;
-	}
-
-	@Override
-	public String toString() {
-		return "A Hamburger";
-	}
 
 }
 
@@ -363,12 +343,12 @@ public class Program implements
 	}
 
 	@Override
-	public Expression<WormType> createSelf(int line, int column) {
-		return new Expression<WormType>(line,column){
+	public Expression<EntityType> createSelf(int line, int column) {
+		return new Expression<EntityType>(line,column){
 
 			@Override
-			public Type<WormType> getValue() {
-				return new Type<WormType>(new WormType(worm));
+			public Type<EntityType> getValue() {
+				return new Type<EntityType>(new EntityType(worm));
 			}
 
 			@Override
@@ -388,7 +368,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>((((WormType)expression1.getValue().getValue()).getValue()).getXCoordinate());
+				return new Type<Double>((((EntityType)expression1.getValue().getValue()).getValue()).getXCoordinate());
 			}
 
 			@Override
@@ -407,7 +387,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>(((Entity)expression1.getValue().getValue()).getYCoordinate());
+				return new Type<Double>((((EntityType)expression1.getValue().getValue()).getValue()).getYCoordinate());
 			}
 
 			@Override
@@ -599,14 +579,20 @@ public class Program implements
 
 			@Override
 			public Type<EntityType> getValue() {
-				// TODO Auto-generated method stub
+				/*Entity ent = worm.getWorld().search((Double)expression1.getValue().getValue());
+				return new Type<EntityType>(new EntityType(ent));*/
 				return null;
 			}
 
 			@Override
 			public String getType() {
-				// TODO Auto-generated method stub
-				return null;
+				if (value.getValue().getValue() instanceof Worm ){
+					return "worm";
+				} else if (value.getValue().getValue() instanceof Food ){
+					return "food";
+				} else {
+					return "False enity";
+				}
 			}
 			
 		};
