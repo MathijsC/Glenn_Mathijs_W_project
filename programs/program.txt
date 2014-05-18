@@ -1,16 +1,8 @@
-double a;
-double b;
-double c := 0;
-
-a := 0.5;
-b := 0.2;
-
-while (a<10) do {
-  c := getx self;
-  print c;
-  //move;
-  print a;
-  a := a + 1;
-}
-
-skip;
+turn 2;
+print 0;
+jump;
+print 1;
+jump;
+print 2;
+jump;
+print 3;

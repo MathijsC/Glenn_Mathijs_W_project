@@ -71,6 +71,16 @@ abstract class Statement {
 	public int line;
 	public int column;
 
+	public void execute(boolean exeCheck){
+		System.out.println("execute with check:"+ exeCheck+" and executed: "+executed);
+		if (executed != exeCheck){
+			System.out.println("notExecuted");
+			run();
+		} else {
+			System.out.println("Executed");
+		}
+	}
+	
 	abstract public void run();
 }
 
@@ -218,6 +228,7 @@ public class Program implements
 
 	public Program(String programText, IActionHandler handler) {
 		System.out.println("Parse");
+		executionCheck = true;
 		ProgramParser<Expression<?>, Statement, Type<?>> parser = new ProgramParser<Expression<?>, Statement, Type<?>>(
 				this);
 		//ProgramParser<PrintingObject, PrintingObject, PrintingObject> printParser = new ProgramParser<PrintingObject, PrintingObject, PrintingObject>(new PrintingProgramFactoryImpl());
@@ -225,22 +236,26 @@ public class Program implements
 		actionHandler = handler;
 		globals = parser.getGlobals();
 		statement = parser.getStatement();
-		System.out.println(globals);
 	}
 
 	private IActionHandler actionHandler;
 	private Map<String, Type<?>> globals;
 	private Statement statement;
 	private Worm worm;
+	private boolean executionCheck;
 
 	public void setWorm(Worm w) {
 		worm = w;
 	}
 
 	public void runProgram() {
-		System.out.println("Run");
-		statement.run();
-		System.out.println(globals);
+		System.out.println("Run with check: "+executionCheck);
+		try{
+			statement.execute(executionCheck);
+			executionCheck = !executionCheck;
+		} catch (Exception exc){
+			System.out.println("error");
+		}
 
 	}
 
@@ -749,11 +764,8 @@ public class Program implements
 
 	@Override
 	public Expression<?> createVariableAccess(int line, int column, String name) {
-		System.out.println("CreateVariable:" + line + "|" + column + " name:"
-				+ name);
 		return new VariableAcces(line, column, name) {
 			public Type<?> getValue() {
-				System.out.println(name);
 				return globals.get(name);
 			}
 		};
@@ -901,8 +913,15 @@ public class Program implements
 
 			@Override
 			public void run() {
-				actionHandler.turn(worm,
+				System.out.println("Turn:");
+				if(worm.canTurn((Double) expression.getValue().getValue())){
+					actionHandler.turn(worm,
 						(Double) expression.getValue().getValue());
+					executed = executionCheck;
+				} else {
+					System.out.println("cannotTurn");
+					throw new IllegalStateException();
+				}
 			}
 			
 		};
@@ -914,7 +933,14 @@ public class Program implements
 
 			@Override
 			public void run() {
-				actionHandler.move(worm);
+				System.out.println("move:");
+				if(worm.canMove()){
+					actionHandler.move(worm);
+					executed = executionCheck;
+				} else {
+					System.out.println("cannotMove");
+					throw new IllegalStateException();
+				}
 			}
 		};
 	}
@@ -925,7 +951,15 @@ public class Program implements
 
 			@Override
 			public void run() {
-				actionHandler.jump(worm);
+				System.out.println("Jump:");
+				if(worm.canJump()){
+					System.out.println("canJump");
+					actionHandler.jump(worm);
+					executed = executionCheck;
+				} else {
+					System.out.println("cannotJump");
+					throw new IllegalStateException();
+				}
 			}
 
 		};
@@ -935,7 +969,9 @@ public class Program implements
 	public Statement createToggleWeap(int line, int column) {
 		return new Statement(line, column) {
 			public void run() {
+				System.out.println("toggelWeapon");
 				actionHandler.toggleWeapon(worm);
+				executed = executionCheck;
 			}
 		};
 	}
@@ -949,8 +985,15 @@ public class Program implements
 
 			@Override
 			public void run() {
-				actionHandler.fire(worm,
+				System.out.println("fire:");
+				if (worm.canShoot(worm.getWeapon())){
+					actionHandler.fire(worm,
 						((Double) expression.getValue().getValue()).intValue());
+					executed = executionCheck;
+				} else {
+					System.out.println("cannotJump");
+					throw new IllegalStateException();
+				}
 			}
 		};
 	}
@@ -959,7 +1002,9 @@ public class Program implements
 	public Statement createSkip(int line, int column) {
 		return new Statement(line, column) {
 			public void run() {
+				System.out.println("Skip:");
 				worm.getWorld().startNextTurn();
+				executed = executionCheck;
 			}
 		};
 	}
@@ -967,13 +1012,12 @@ public class Program implements
 	@Override
 	public Statement createAssignment(int line, int column,
 			String variableName, Expression<?> rhs) {
-		System.out.println("Assignment:" + line + "|" + column + " name:"
-				+ variableName);
 		return new Assignment(line, column, rhs, variableName) {
 			public void run() {
-				System.out.println("assign " + expression.getValue() + " to "
-						+ name);
+				System.out.println("assign");
+				//TODO runtime error handling bij verkeerde assignment
 				globals.get(name).setValue(expression);
+				executed = executionCheck;
 			}
 		};
 	}
@@ -985,11 +1029,13 @@ public class Program implements
 				otherwise) {
 
 			public void run() {
+				System.out.println("if:");
 				if ((Boolean) condition.getValue().getValue()) {
-					ifTrue.run();
+					ifTrue.execute(executionCheck);
 				} else {
-					ifFalse.run();
+					ifFalse.execute(executionCheck);
 				}
+				executed = executionCheck;
 			}
 		};
 	}
@@ -999,9 +1045,12 @@ public class Program implements
 			Statement body) {
 		return new SingleExpressionCond(line, column, (Expression<Boolean>)condition, body) {
 			public void run() {
+				System.out.println("while");
 				while ((Boolean) condition.getValue().getValue()) {
-					body.run();
+					body.execute(executionCheck);
 				}
+				System.out.println("endWhile");
+				executed = executionCheck;
 			}
 		};
 	}
@@ -1017,43 +1066,43 @@ public class Program implements
 	@Override
 	public Statement createSequence(int line, int column,
 			List<Statement> statements) {
-		System.out.println("CreateSequence:" + line + "|" + column);
 		return new Sequence(line, column, statements) {
 			public void run() {
+				System.out.println("runSequence with check: "+executionCheck);
 				for (Statement st : statements) {
-					st.run();
+					st.execute(executionCheck);
 				}
+				System.out.println("end Sequence");
+				executed = executionCheck;
 			}
 		};
 	}
 
 	@Override
 	public Statement createPrint(int line, int column, Expression<?> e) {
-		System.out.println("CreatePrint:" + line + "|" + column);
 		return new ExpressionAction(line, column, e) {
 
 			@Override
 			public void run() {
+				System.out.println("print");
 				actionHandler.print(expression.getValue().toString());
+				executed = executionCheck;
 			}
 		};
 	}
 
 	@Override
 	public Type<Double> createDoubleType() {
-		System.out.println("CreateDoubleType:");
 		return new Type<Double>(new Double(0.0));
 	}
 
 	@Override
 	public Type<Boolean> createBooleanType() {
-		System.out.println("CreateBooleanType:");
 		return new Type<Boolean>(new Boolean(false));
 	}
 
 	@Override
 	public Type<EntityType> createEntityType() {
-		System.out.println("CreateEntityType:");
 		return new Type<EntityType>();
 	}
 
