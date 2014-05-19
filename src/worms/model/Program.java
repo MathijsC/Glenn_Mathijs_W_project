@@ -82,10 +82,10 @@ abstract class Statement {
 	public int line;
 	public int column;
 
-	public void execute(boolean programState,boolean exeCheck) {
+	public void execute(boolean exeCheck) {
 		System.out.println("execute with check:" + exeCheck + " and executed: "
 				+ executed);
-		if ((executed != exeCheck) && programState) {
+		if (executed != exeCheck) {
 			System.out.println("not yet Executed");
 			run(exeCheck);
 		} else {
@@ -222,7 +222,6 @@ public class Program implements
 	public Program(String programText, IActionHandler handler) {
 		System.out.println("Parse");
 		executionCheck = true;
-		programRunning = false;
 		ProgramParser<Expression<?>, Statement, Type<?>> parser = new ProgramParser<Expression<?>, Statement, Type<?>>(
 				this);
 		// ProgramParser<PrintingObject, PrintingObject, PrintingObject>
@@ -241,7 +240,6 @@ public class Program implements
 	private Worm worm;
 	private boolean executionCheck;
 	private List<String> errors;
-	private boolean programRunning;
 
 	public List<String> getErrors() {
 		return errors;
@@ -252,13 +250,12 @@ public class Program implements
 	}
 
 	public void runProgram() {
-		programRunning = true;
 		System.out.println("Run with check: " + executionCheck);
 		try {
-			statement.execute(programRunning,executionCheck);
+			statement.execute(executionCheck);
 			executionCheck = !executionCheck;
-			if (programRunning){
-				programRunning = false;
+			System.out.println("PROGRAM ENDED!!");
+			if (worm.getWorld().getCurrentWorm() == worm){
 				worm.getWorld().startNextTurn();
 			}
 		} catch (IllegalStateException exc) {
@@ -975,9 +972,6 @@ public class Program implements
 				if (worm.canTurn((Double) expression.getValue().getValue())) {
 					actionHandler.turn(worm, (Double) expression.getValue()
 							.getValue());
-					if (worm.getActionPoints() == 0){
-						programRunning = false;
-					}
 					executed = exeCheck;
 				} else {
 					System.out.println("cannotTurn");
@@ -997,9 +991,6 @@ public class Program implements
 				System.out.println("move:");
 				if (worm.canMove()) {
 					actionHandler.move(worm);
-					if (worm.getActionPoints() == 0){
-						programRunning = false;
-					}
 					executed = exeCheck;
 				} else {
 					System.out.println("cannotMove");
@@ -1019,7 +1010,7 @@ public class Program implements
 					System.out.println("canJump");
 					actionHandler.jump(worm);
 					executed = exeCheck;
-					programRunning = false; 
+					System.out.println("end jump");
 				} else {
 					System.out.println("cannotJump");
 					throw new IllegalStateException();
@@ -1053,9 +1044,6 @@ public class Program implements
 				if (worm.canShoot(worm.getWeapon())) {
 					actionHandler.fire(worm, ((Double) expression.getValue()
 							.getValue()).intValue());
-					if (worm.getActionPoints() == 0){
-						programRunning = false;
-					}
 					executed = exeCheck;
 				} else {
 					System.out.println("cannotShoot");
@@ -1070,9 +1058,8 @@ public class Program implements
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
 				System.out.println("Skip:");
-				worm.getWorld().startNextTurn();
-				executed = exeCheck;				
-				programRunning = false;
+				executed = exeCheck;
+				throw new IllegalStateException();
 			}
 		};
 	}
@@ -1099,13 +1086,11 @@ public class Program implements
 			public void run(boolean exeCheck) {
 				System.out.println("if:");
 				if ((Boolean) condition.getValue().getValue()) {
-					ifTrue.execute(programRunning,exeCheck);
+					ifTrue.execute(exeCheck);
 				} else {
-					ifFalse.execute(programRunning,exeCheck);
+					ifFalse.execute(exeCheck);
 				}
-				if (programRunning) {
-					executed = exeCheck;
-				}
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1120,9 +1105,9 @@ public class Program implements
 
 			public void run(boolean exeCheck) {
 				System.out.println("while");
-				while (((Boolean) condition.getValue().getValue()) && programRunning) {
+				while ((Boolean) condition.getValue().getValue()) {
 					System.out.println("Ex body");
-					body.execute(programRunning,whileExecutionCheck);
+					body.execute(whileExecutionCheck);
 					body.executed = whileExecutionCheck;
 					System.out.println("whileExecutionCheck: "
 							+ whileExecutionCheck);
@@ -1131,10 +1116,7 @@ public class Program implements
 							+ whileExecutionCheck);
 				}
 				System.out.println("endWhile");
-				
-				if (programRunning) {
-					executed = exeCheck;
-				}
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1154,14 +1136,10 @@ public class Program implements
 			public void run(boolean exeCheck) {
 				System.out.println("runSequence with check: " + executionCheck);
 				for (Statement st : statements) {
-					if (programRunning) {
-						st.execute(programRunning,exeCheck);
-					}
+					st.execute(exeCheck);
 				}
 				System.out.println("end Sequence");
-				if (programRunning) {
-					executed = exeCheck;
-				}
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1192,6 +1170,12 @@ public class Program implements
 	@Override
 	public Type<EntityType> createEntityType() {
 		return new Type<EntityType>();
+	}
+
+	@Override
+	public Expression<?> createVariableAccess(int line, int column,
+			String name, Type<?> type) {
+		return null;
 	}
 
 }
