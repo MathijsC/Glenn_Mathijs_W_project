@@ -1,0 +1,15 @@
+// Test program search objects , entity naar worm of food classcastexc
+
+double d := 0.01;
+entity w;
+
+while(true) {
+	  w := searchobj(0);
+	  if (isworm(w)) then {
+	    fire 100;
+	  } else {
+	    turn d;
+	    d := d + 0.01;
+	  }
+  }
+

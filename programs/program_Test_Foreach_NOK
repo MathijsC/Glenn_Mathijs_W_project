@@ -1,0 +1,17 @@
+// test program foreach, entity naar womr of food classcastexc
+
+entity w;
+double wx;
+double wy;
+double wr;
+double distance;
+
+foreach(worm, w) do {
+    if (w != self) {
+      wx := getx w;
+      wy := gety w;
+      wr := getradius w;
+      distance := sqrt((((x - wx) * (x - wx)) + ((y - wy) * (y - wy))));
+      print distance;
+     }
+}

@@ -1,9 +1,27 @@
-print 0.0;
-skip;
-print 1.0;
-turn 2;
-move;
-move;
-move;
-print 2.0;
-print 3.0;
+// Test Program +,-,*,/,sqrt,sin,cos  OK
+
+double x := (4 * 3);
+
+print x;
+
+x := (12 / 3);
+
+print x;
+
+x := (4 - 1);
+
+print x;
+
+x := (1 + 1);
+
+print x;
+
+x:= sqrt(25);
+
+print x;
+
+x := 3.14/2;
+
+print sin(x);
+
+print cos(3.14);
