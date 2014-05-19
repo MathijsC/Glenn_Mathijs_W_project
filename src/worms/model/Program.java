@@ -1,8 +1,5 @@
 package worms.model;
 
-//TODO fout in oude code bij doodgaan van wormen!!
-//TODO check op TODO's in entity, world en  worm
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
