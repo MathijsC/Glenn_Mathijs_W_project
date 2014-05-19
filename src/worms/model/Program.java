@@ -82,10 +82,10 @@ abstract class Statement {
 	public int line;
 	public int column;
 
-	public void execute(boolean exeCheck) {
+	public void execute(boolean programState,boolean exeCheck) {
 		System.out.println("execute with check:" + exeCheck + " and executed: "
 				+ executed);
-		if (executed != exeCheck) {
+		if ((executed != exeCheck) && programState) {
 			System.out.println("not yet Executed");
 			run(exeCheck);
 		} else {
@@ -222,6 +222,7 @@ public class Program implements
 	public Program(String programText, IActionHandler handler) {
 		System.out.println("Parse");
 		executionCheck = true;
+		programRunning = false;
 		ProgramParser<Expression<?>, Statement, Type<?>> parser = new ProgramParser<Expression<?>, Statement, Type<?>>(
 				this);
 		// ProgramParser<PrintingObject, PrintingObject, PrintingObject>
@@ -240,6 +241,7 @@ public class Program implements
 	private Worm worm;
 	private boolean executionCheck;
 	private List<String> errors;
+	private boolean programRunning;
 
 	public List<String> getErrors() {
 		return errors;
@@ -250,14 +252,18 @@ public class Program implements
 	}
 
 	public void runProgram() {
+		programRunning = true;
 		System.out.println("Run with check: " + executionCheck);
 		try {
-			statement.execute(executionCheck);
+			statement.execute(programRunning,executionCheck);
 			executionCheck = !executionCheck;
-			worm.getWorld().startNextTurn();
+			if (programRunning){
+				programRunning = false;
+				worm.getWorld().startNextTurn();
+			}
 		} catch (IllegalStateException exc) {
 			System.out.println("error");
-
+			worm.getWorld().startNextTurn();
 		}
 		
 	}
@@ -969,6 +975,9 @@ public class Program implements
 				if (worm.canTurn((Double) expression.getValue().getValue())) {
 					actionHandler.turn(worm, (Double) expression.getValue()
 							.getValue());
+					if (worm.getActionPoints() == 0){
+						programRunning = false;
+					}
 					executed = exeCheck;
 				} else {
 					System.out.println("cannotTurn");
@@ -988,6 +997,9 @@ public class Program implements
 				System.out.println("move:");
 				if (worm.canMove()) {
 					actionHandler.move(worm);
+					if (worm.getActionPoints() == 0){
+						programRunning = false;
+					}
 					executed = exeCheck;
 				} else {
 					System.out.println("cannotMove");
@@ -1007,6 +1019,7 @@ public class Program implements
 					System.out.println("canJump");
 					actionHandler.jump(worm);
 					executed = exeCheck;
+					programRunning = false; 
 				} else {
 					System.out.println("cannotJump");
 					throw new IllegalStateException();
@@ -1040,9 +1053,12 @@ public class Program implements
 				if (worm.canShoot(worm.getWeapon())) {
 					actionHandler.fire(worm, ((Double) expression.getValue()
 							.getValue()).intValue());
+					if (worm.getActionPoints() == 0){
+						programRunning = false;
+					}
 					executed = exeCheck;
 				} else {
-					System.out.println("cannotJump");
+					System.out.println("cannotShoot");
 					throw new IllegalStateException();
 				}
 			}
@@ -1055,7 +1071,8 @@ public class Program implements
 			public void run(boolean exeCheck) {
 				System.out.println("Skip:");
 				worm.getWorld().startNextTurn();
-				executed = exeCheck;
+				executed = exeCheck;				
+				programRunning = false;
 			}
 		};
 	}
@@ -1082,11 +1099,13 @@ public class Program implements
 			public void run(boolean exeCheck) {
 				System.out.println("if:");
 				if ((Boolean) condition.getValue().getValue()) {
-					ifTrue.execute(exeCheck);
+					ifTrue.execute(programRunning,exeCheck);
 				} else {
-					ifFalse.execute(exeCheck);
+					ifFalse.execute(programRunning,exeCheck);
 				}
-				executed = exeCheck;
+				if (programRunning) {
+					executed = exeCheck;
+				}
 			}
 		};
 	}
@@ -1101,9 +1120,9 @@ public class Program implements
 
 			public void run(boolean exeCheck) {
 				System.out.println("while");
-				while ((Boolean) condition.getValue().getValue()) {
+				while (((Boolean) condition.getValue().getValue()) && programRunning) {
 					System.out.println("Ex body");
-					body.execute(whileExecutionCheck);
+					body.execute(programRunning,whileExecutionCheck);
 					body.executed = whileExecutionCheck;
 					System.out.println("whileExecutionCheck: "
 							+ whileExecutionCheck);
@@ -1112,7 +1131,10 @@ public class Program implements
 							+ whileExecutionCheck);
 				}
 				System.out.println("endWhile");
-				executed = exeCheck;
+				
+				if (programRunning) {
+					executed = exeCheck;
+				}
 			}
 		};
 	}
@@ -1132,10 +1154,14 @@ public class Program implements
 			public void run(boolean exeCheck) {
 				System.out.println("runSequence with check: " + executionCheck);
 				for (Statement st : statements) {
-					st.execute(exeCheck);
+					if (programRunning) {
+						st.execute(programRunning,exeCheck);
+					}
 				}
 				System.out.println("end Sequence");
-				executed = exeCheck;
+				if (programRunning) {
+					executed = exeCheck;
+				}
 			}
 		};
 	}
