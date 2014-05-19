@@ -982,9 +982,15 @@ public class Worm extends Entity {
 		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
 				0, 2);
 		this.setPosition(newPosition[0], newPosition[1]);
+		
 		setActionPoints(0);
 		if (getWorld().checkWormCanEatFood(this)) {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
+		}
+		if(!(getWorld().entityInWorld(getPosition(), getRadius()))) {
+			System.out.println("OUT");
+			//TODO FIX
+			//terminate();
 		}
 	}
 
@@ -1020,7 +1026,7 @@ public class Worm extends Entity {
 	 * @param 	timeStep 
 	 * 			An elementary time interval used to calculate the jumptime.
 	 * @return	The position where the jump of this worm will end (by reaching terrain
-	 * 			that is impassable) and the time it will take to perform that jump.
+	 * 			that is impassable or leaving the world) and the time it will take to perform that jump.
 	 * @Throws	IllegalArgumentException
 	 * 			The given timestep is not a number.
 	 * 			| timeStep == Double.NaN
@@ -1047,8 +1053,8 @@ public class Worm extends Entity {
 
 		while (jumping) {
 			tempPosition = this.jumpStep(time);
-			if (getWorld().isPassable(tempPosition.getXCoordinate(),
-					tempPosition.getYCoordinate(), this.getRadius())) {
+			if ((getWorld().isPassable(tempPosition.getXCoordinate(),
+					tempPosition.getYCoordinate(), this.getRadius())) && (getWorld().entityInWorld(position, this.getRadius()))) {
 				position = tempPosition;
 				time = time + timeStep;
 			} else {
@@ -1105,7 +1111,7 @@ public class Worm extends Entity {
 	 */
 	@Override
 	public boolean canHaveAsWorld(World world) {
-
+		
 		if (world.isGameStarted()) {
 			return false;
 		}

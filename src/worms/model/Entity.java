@@ -48,7 +48,8 @@ abstract class Entity {
 	@Basic
 	@Raw
 	public Position getPosition() {
-		return new Position(position.getXCoordinate(), position.getYCoordinate());
+		return new Position(position.getXCoordinate(),
+				position.getYCoordinate());
 	}
 
 	/**
@@ -92,7 +93,7 @@ abstract class Entity {
 		return position.getYCoordinate();
 	}
 
-	//STATE
+	// STATE
 
 	/**
 	 * A variable containing if this entity is terminated.
@@ -124,7 +125,7 @@ abstract class Entity {
 		unsetWorld();
 	}
 
-	//WORLD
+	// WORLD
 
 	/**
 	 * A variable containing the world where this entity is lives.
@@ -231,15 +232,19 @@ abstract class Entity {
 	private void unsetWorld() {
 		if ((isTerminated()) && (hasWorld())) {
 			World oldWorld = getWorld();
-			setWorld(null);
+			try {
+				setWorld(null);
+			} catch (NullPointerException exc) {
+				//TODO fix
+			}
 			oldWorld.removeEntity(this);
 		}
 	}
-	
+
 	/**
-	 * Return the radius of this worm.
+	 * Return the radius of this entity.
 	 * 
-	 * @return	The radius of this worm.
+	 * @return	The radius of this entity.
 	 */
 	@Basic
 	@Raw

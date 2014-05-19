@@ -771,7 +771,9 @@ public class World {
 		// false. If the circle is fully outside this world, the method returns
 		// true.
 
-		if (!(entityInWorld(new Position(xCo, yCo), radius))) {
+		//TODO !EntityInWorld ipv heel deze reeks hieronder? 
+		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
+				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {
 			return true;
 		}
 		double boxHeight = this.getHeight() / this.getPassableMap().length;
@@ -836,8 +838,11 @@ public class World {
 		// inside a square around the circle. If the 'box' (one element of the
 		// matrix) is inside
 		// the circle, the method checks the passability of that box.
+		
+		//TODO !EntityInWorld ipv heel deze reeks hieronder? 
 
-		if (!(entityInWorld(new Position(xCo, yCo), radius))) {
+		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
+				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {
 			return true;
 		}
 

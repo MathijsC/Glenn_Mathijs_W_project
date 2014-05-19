@@ -1,0 +1,7 @@
+double a:= 0;
+
+while(true){
+print a;
+skip;
+a := a + 1;
+}

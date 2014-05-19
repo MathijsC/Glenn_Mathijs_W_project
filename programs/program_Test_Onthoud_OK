@@ -1,0 +1,14 @@
+//test program, hij onthoud waar hij is gebleven als hij geen actiepunten meer heeft
+
+double x;
+x := 0;
+while (x < 10) {
+print ((x * 10) + 0);
+turn (3.14);
+print ((x * 10) + 1);
+turn (3.14);
+print ((x * 10) + 2);
+turn (3.14);
+print ((x * 10) + 3);
+x := x + 1;
+}
