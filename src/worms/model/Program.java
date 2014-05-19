@@ -3,6 +3,7 @@ package worms.model;
 //TODO fout in oude code bij doodgaan van wormen!!
 //TODO check op TODO's in entity, world en  worm
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -108,9 +109,9 @@ abstract class ExpressionAction extends Statement {
 	public Expression<?> expression;
 }
 
-abstract class SingleExpressionCond extends Statement {
+abstract class WhileStatement extends Statement {
 
-	public SingleExpressionCond(int l, int c, Expression<Boolean> cond,
+	public WhileStatement(int l, int c, Expression<Boolean> cond,
 			Statement b) {
 		super(l, c);
 		condition = cond;
@@ -121,9 +122,23 @@ abstract class SingleExpressionCond extends Statement {
 	public Statement body;
 }
 
-abstract class DoubleExpressionCond extends Statement {
+abstract class ForeachStatement extends Statement {
 
-	public DoubleExpressionCond(int l, int c, Expression<Boolean> cond,
+	public ForeachStatement(int l, int c,worms.model.programs.ProgramFactory.ForeachType t, String varName, Statement b) {
+		super(l, c);
+		variableName = varName;
+		body = b;
+		type = t;
+	}
+
+	public String variableName;
+	public Statement body;
+	public worms.model.programs.ProgramFactory.ForeachType type;
+}
+
+abstract class IfStatement extends Statement {
+
+	public IfStatement(int l, int c, Expression<Boolean> cond,
 			Statement t, Statement f) {
 		super(l, c);
 		condition = cond;
@@ -168,6 +183,10 @@ class Type<T> {
 
 	public void setValue(Expression<?> v) {
 		value = (T) v.getValue().getValue();
+	}
+	
+	public void putValue(T t){
+		value = t;
 	}
 
 	public String toString() {
@@ -1072,7 +1091,7 @@ public class Program implements
 	@Override
 	public Statement createIf(int line, int column, Expression<?> condition,
 			Statement then, Statement otherwise) {
-		return new DoubleExpressionCond(line, column,
+		return new IfStatement(line, column,
 				(Expression<Boolean>) condition, then, otherwise) {
 
 			public void run(boolean exeCheck) {
@@ -1090,7 +1109,7 @@ public class Program implements
 	@Override
 	public Statement createWhile(int line, int column, Expression<?> condition,
 			Statement body) {
-		return new SingleExpressionCond(line, column,
+		return new WhileStatement(line, column,
 				(Expression<Boolean>) condition, body) {
 
 			private boolean whileExecutionCheck = true;
@@ -1117,8 +1136,37 @@ public class Program implements
 	public Statement createForeach(int line, int column,
 			worms.model.programs.ProgramFactory.ForeachType type,
 			String variableName, Statement body) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ForeachStatement(line,column,type,variableName,body) {
+			
+			private boolean foreachExecutionCheck = true;
+			
+			@Override
+			public void run(boolean exeCheck) {
+				boolean any = false;
+				Type<?> oldVar = globals.get(variableName);
+				if (type == worms.model.programs.ProgramFactory.ForeachType.ANY){
+					any = true;
+				}
+				if ((any) || (type == worms.model.programs.ProgramFactory.ForeachType.WORM)){
+					ArrayList<Worm> worms = worm.getWorld().getWormList();
+					for(Worm w: worms){
+						globals.put(variableName,new Type<EntityType>(new EntityType(w)));
+					}
+					body.execute(foreachExecutionCheck);
+					foreachExecutionCheck = !foreachExecutionCheck;
+				}
+				if ((any) || (type == worms.model.programs.ProgramFactory.ForeachType.FOOD)){
+					ArrayList<Food> foods = worm.getWorld().getFoodList();
+					for(Food f:foods){
+						globals.put(variableName,new Type<EntityType>(new EntityType(f)));
+					}
+					body.execute(foreachExecutionCheck);
+					foreachExecutionCheck = !foreachExecutionCheck;
+				}
+				globals.put(variableName,oldVar);
+				executed = exeCheck;				
+			}
+		};
 	}
 
 	@Override
