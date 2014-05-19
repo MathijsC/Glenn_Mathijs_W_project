@@ -232,11 +232,7 @@ abstract class Entity {
 	private void unsetWorld() {
 		if ((isTerminated()) && (hasWorld())) {
 			World oldWorld = getWorld();
-			try {
-				setWorld(null);
-			} catch (NullPointerException exc) {
-				//TODO fix
-			}
+			setWorld(null);
 			oldWorld.removeEntity(this);
 		}
 	}

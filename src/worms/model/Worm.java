@@ -988,9 +988,7 @@ public class Worm extends Entity {
 			getWorld().getFoodEatenBy(this).getEatenBy(this);
 		}
 		if(!(getWorld().entityInWorld(getPosition(), getRadius()))) {
-			System.out.println("OUT");
-			//TODO FIX
-			//terminate();
+			terminate();
 		}
 	}
 
@@ -1112,7 +1110,7 @@ public class Worm extends Entity {
 	@Override
 	public boolean canHaveAsWorld(World world) {
 		
-		if (world.isGameStarted()) {
+		if (!isTerminated() && world.isGameStarted()) {
 			return false;
 		}
 		return super.canHaveAsWorld(world);

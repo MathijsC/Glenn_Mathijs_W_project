@@ -771,7 +771,6 @@ public class World {
 		// false. If the circle is fully outside this world, the method returns
 		// true.
 
-		//TODO !EntityInWorld ipv heel deze reeks hieronder? 
 		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
 				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {
 			return true;
@@ -838,8 +837,6 @@ public class World {
 		// inside a square around the circle. If the 'box' (one element of the
 		// matrix) is inside
 		// the circle, the method checks the passability of that box.
-		
-		//TODO !EntityInWorld ipv heel deze reeks hieronder? 
 
 		if (((xCo - radius) >= getWidth()) || ((yCo - radius) >= getHeight())
 				|| ((yCo + radius) <= 0.00000) || ((xCo + radius) <= 0.00000)) {

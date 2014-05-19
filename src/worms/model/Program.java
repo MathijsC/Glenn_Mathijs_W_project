@@ -1,15 +1,7 @@
 package worms.model;
 
 //TODO fout in oude code bij doodgaan van wormen!!
-//TODO fout in oude cobe bij wormen die van de map willen springen (endless loop)
 //TODO check op TODO's in entity, world en  worm
-//TODO skip werkt niet, programma blijft runnen, volgende worm komt ook aan beurt,
-// dus er zijn 2 wormen tegelijkertijd aan beurt, en ik krijg een stackoverflow op mijn geheugen wrs
-//TODO assertion error op 'move', hij springt niet,
-
-/*
- * als een worm op het einde van zijn programma komt stop die automatisch!
- */
 
 import java.util.List;
 import java.util.Map;
