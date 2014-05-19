@@ -3,23 +3,37 @@ double b := 0;
 double c := 0;
 double d := 0;
 double e := 0;
+double f := 0;
+double g := 0;
+double h := 0;
+double i := 0;
+
 
 a := 0.5;
-turn 2;
 
-while (a<12) do {
-  //b := getradius self; //NOK
+while (a<4) do {
+  //b := getradius self; //OK
   //print b;
-  //c := getx self; //OK
+  //c := getdir self; // OK
   //print c;
-  //d := gety self; //OK
-  //print d;
-  e := getradius self;
-  print e;
+  //d := getx self; //OK
+  //print cd;
+  //e := gety self; //OK
+  //print e;
+  //f := getap self; //OK
+  //print f;
+  //g := getmaxap self; // OK
+  //print g;
+  //h := gethp self; // OK
+  //print h;
+  //i := getmaxhp self; // OK
+  //print i;
+
   
-  //turn 3.14/12; //OK
+  
+  turn 3.14; //OK
   //move; //NOK assertion error
-  //jump;
+  //jump; //OK
   //toggleweap; //OK
   //fire 100; //OK
   
