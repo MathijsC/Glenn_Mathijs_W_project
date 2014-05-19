@@ -11,7 +11,7 @@ double i := 0;
 
 a := 0.5;
 
-while (a<4) do {
+while (a<8) do {
   //b := getradius self; //OK
   //print b;
   //c := getdir self; // OK
@@ -36,6 +36,7 @@ while (a<4) do {
   //jump; //OK
   //toggleweap; //OK
   //fire 100; //OK
+  //skip; //
   
   print a;
   a := a + 1;
