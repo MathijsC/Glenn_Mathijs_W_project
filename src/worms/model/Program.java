@@ -50,15 +50,24 @@ abstract class Expression<T> {
 abstract class VariableAcces<T> extends Expression<T> {
 
 	public String getType() {
-		return "double";
+		if (type == EntityType.class){
+			return "entity";
+		} else if (type == Double.class){
+			return "double";
+		} else {
+			return "boolean";
+		}
 	}
 
-	public VariableAcces(int l, int c, String n) {
+	public VariableAcces(int l, int c, String n, Type<?> t) {
 		super(l, c);
-		name = n;
+		varName = n;
+		type = t.getT();
 	}
+	
+	private Class<?> type;
 
-	public String name;
+	public String varName;
 
 }
 
@@ -185,8 +194,8 @@ class Type<T> {
 		value = (T) v.getValue().getValue();
 	}
 	
-	public void putValue(T t){
-		value = t;
+	public Class<?> getT(){
+		return value.getClass();
 	}
 
 	public String toString() {
@@ -270,7 +279,10 @@ public class Program implements
 				worm.getWorld().startNextTurn();
 			}
 		} catch (IllegalStateException exc) {
-			System.out.println("error");
+			System.out.println("Illegal State error!");
+			worm.getWorld().startNextTurn();
+		} catch (ClassCastException exc) {
+			System.out.println("ClassCastException! |"+exc.getMessage());
 			worm.getWorld().startNextTurn();
 		}
 		
@@ -307,7 +319,7 @@ public class Program implements
 	public Expression<Boolean> createAnd(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
 		if ((e1.getType() != "boolean") || (e2.getType() != "boolean")) {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected a expressions with a boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 			public Type<Boolean> getValue() {
@@ -327,7 +339,7 @@ public class Program implements
 	public Expression<Boolean> createOr(int line, int column, Expression<?> e1,
 			Expression<?> e2) {
 		if ((e1.getType() != "boolean") || (e2.getType() != "boolean")) {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected a expressions with a boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 			public Type<Boolean> getValue() {
@@ -346,7 +358,7 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createNot(int line, int column, Expression<?> e) {
 		if ((e.getType() != "boolean")) {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expression with a boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e) {
 			public Type<Boolean> getValue() {
@@ -389,7 +401,7 @@ public class Program implements
 
 			@Override
 			public String getType() {
-				return "worm";
+				return "entity";
 			}
 
 		};
@@ -397,8 +409,8 @@ public class Program implements
 
 	@Override
 	public Expression<Double> createGetX(int line, int column, Expression<?> e) {
-		if ((e.getType() != "worm") && (e.getType() != "food")) {
-			throw new ClassCastException();
+		if (e.getType() != "entity"){
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
@@ -417,8 +429,8 @@ public class Program implements
 
 	@Override
 	public Expression<Double> createGetY(int line, int column, Expression<?> e) {
-		if ((e.getType() != "worm") && (e.getType() != "food")) {
-			throw new ClassCastException();
+		if (e.getType() != "entity"){
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
@@ -438,9 +450,8 @@ public class Program implements
 	@Override
 	public Expression<Double> createGetRadius(int line, int column,
 			Expression<?> e) {
-		if ((e.getType() != "worm") && (e.getType() != "food")) {
-			System.out.println("classcast");
-			throw new ClassCastException();
+		if (e.getType() != "entity"){
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
@@ -460,13 +471,16 @@ public class Program implements
 
 	@Override
 	public Expression<Double> createGetDir(int line, int column, Expression<?> e) {
-		if (e.getType() != "worm") {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
 			@Override
 			public Type<Double> getValue() {
+				if (expression1.getValue().getValue().getClass() != Worm.class){
+					throw new ClassCastException("Expected an expression with a worm value!");
+				}
 				return new Type<Double>(((Worm)((EntityType) expression1.getValue()
 						.getValue()).getValue()).getDirection());
 			}
@@ -480,13 +494,16 @@ public class Program implements
 
 	@Override
 	public Expression<Double> createGetAP(int line, int column, Expression<?> e) {
-		if (e.getType() != "worm") {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
 			@Override
 			public Type<Double> getValue() {
+				if (expression1.getValue().getValue().getClass() != Worm.class){
+					throw new ClassCastException("Expected an expression with a worm value!");
+				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
 						.getValue()).getValue()).getActionPoints()));
 			}
@@ -501,13 +518,16 @@ public class Program implements
 	@Override
 	public Expression<Double> createGetMaxAP(int line, int column,
 			Expression<?> e) {
-		if (e.getType() != "worm") {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
 			@Override
 			public Type<Double> getValue() {
+				if (expression1.getValue().getValue().getClass() != Worm.class){
+					throw new ClassCastException("Expected an expression with a worm value!");
+				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
 						.getValue()).getValue()).getMaxActionPoints()));
 			}
@@ -521,13 +541,16 @@ public class Program implements
 
 	@Override
 	public Expression<Double> createGetHP(int line, int column, Expression<?> e) {
-		if (e.getType() != "worm") {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
 			@Override
 			public Type<Double> getValue() {
+				if (expression1.getValue().getValue().getClass() != Worm.class){
+					throw new ClassCastException("Expected an expression with a worm value!");
+				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
 						.getValue()).getValue()).getHitPoints()));
 			}
@@ -542,13 +565,16 @@ public class Program implements
 	@Override
 	public Expression<Double> createGetMaxHP(int line, int column,
 			Expression<?> e) {
-		if (e.getType() != "worm") {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Double>(line, column, e) {
 
 			@Override
 			public Type<Double> getValue() {
+				if (expression1.getValue().getValue().getClass() != Worm.class){
+					throw new ClassCastException("Expected an expression with a worm value!");
+				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
 						.getValue()).getValue()).getMaxHitPoints()));
 			}
@@ -563,13 +589,16 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createSameTeam(int line, int column,
 			Expression<?> e) {
-		if (e.getType() != "worm") {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Boolean>(line, column, e) {
 
 			@Override
 			public Type<Boolean> getValue() {
+				if (expression1.getValue().getValue().getClass() != Worm.class){
+					throw new ClassCastException("Expected an expression with a worm value!");
+				}
 				return new Type<Boolean>(((Worm) expression1.getValue()
 						.getValue()).getTeam() == worm.getTeam());
 			}
@@ -584,8 +613,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createIsWorm(int line, int column,
 			Expression<?> e) {
-		if ((e.getType() != "worm") || (e.getType() != "food")) {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Boolean>(line, column, e) {
 
@@ -606,8 +635,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createIsFood(int line, int column,
 			Expression<?> e) {
-		if ((e.getType() != "worm") || (e.getType() != "food")) {
-			throw new ClassCastException();
+		if (e.getType() != "entity") {
+			throw new IllegalArgumentException("Expected an expression with an entity value!");
 		}
 		return new Expression<Boolean>(line, column, e) {
 
@@ -629,7 +658,7 @@ public class Program implements
 	public Expression<EntityType> createSearchObj(int line, int column,
 			Expression<?> e) {
 		if (e.getType() != "double") {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expression with a double value!");
 		}
 		return new Expression<EntityType>(line, column, e) {
 
@@ -643,13 +672,7 @@ public class Program implements
 
 			@Override
 			public String getType() {
-				if (value.getValue().getValue() instanceof Worm) {
-					return "worm";
-				} else if (value.getValue().getValue() instanceof Food) {
-					return "food";
-				} else {
-					return "False enity";
-				}
+				return "entity";
 			}
 
 		};
@@ -658,9 +681,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createLessThan(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "worm")
-				&& (e1.getType() == "food")) {
-			throw new ClassCastException();
+		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
+			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
@@ -689,9 +711,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createGreaterThan(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "worm")
-				|| (e1.getType() == "food")) {
-			throw new ClassCastException();
+		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
+			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
@@ -720,9 +741,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createLessThanOrEqualTo(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "worm")
-				|| (e1.getType() == "food")) {
-			throw new ClassCastException();
+		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
+			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
@@ -751,9 +771,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createGreaterThanOrEqualTo(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "worm")
-				|| (e1.getType() == "food")) {
-			throw new ClassCastException();
+		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
+			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
@@ -782,9 +801,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createEquality(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "worm")
-				|| (e1.getType() == "food")) {
-			throw new ClassCastException();
+		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
+			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
@@ -805,9 +823,8 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createInequality(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "worm")
-				|| (e1.getType() == "food")) {
-			throw new ClassCastException();
+		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
+			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
@@ -827,18 +844,14 @@ public class Program implements
 
 	@Override
 	public Expression<?> createVariableAccess(int line, int column, String name) {
-		return new VariableAcces(line, column, name) {
-			public Type<?> getValue() {
-				return globals.get(name);
-			}
-		};
+		return null;
 	}
 
 	@Override
 	public Expression<Double> createAdd(int line, int column, Expression<?> e1,
 			Expression<?> e2) {
 		if ((e1.getType() != "double") || (e2.getType() != "double")) {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expressions with a double value!");
 		}
 		return new Expression<Double>(line, column, e1, e2) {
 			public Type<Double> getValue() {
@@ -857,7 +870,7 @@ public class Program implements
 	public Expression<Double> createSubtraction(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
 		if ((e1.getType() != "double") || (e2.getType() != "double")) {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expressions with a double value!");
 		}
 		return new Expression<Double>(line, column, e1, e2) {
 			public Type<Double> getValue() {
@@ -877,7 +890,7 @@ public class Program implements
 	public Expression<Double> createMul(int line, int column, Expression<?> e1,
 			Expression<?> e2) {
 		if ((e1.getType() != "double") || (e2.getType() != "double")) {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expressions with a double value!");
 		}
 		return new Expression<Double>(line, column, e1, e2) {
 			public Type<Double> getValue() {
@@ -897,7 +910,7 @@ public class Program implements
 	public Expression<Double> createDivision(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
 		if ((e1.getType() != "double") || (e2.getType() != "double")) {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expressions with a double value!");
 		}
 		return new Expression<Double>(line, column, e1, e2) {
 			public Type<Double> getValue() {
@@ -916,7 +929,7 @@ public class Program implements
 	@Override
 	public Expression<Double> createSqrt(int line, int column, Expression<?> e) {
 		if (e.getType() != "double") {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expression with a double value!");
 		}
 		return new Expression<Double>(line, column, e) {
 			public Type<Double> getValue() {
@@ -935,7 +948,7 @@ public class Program implements
 	@Override
 	public Expression<Double> createSin(int line, int column, Expression<?> e) {
 		if (e.getType() != "double") {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expression with a double value!");
 		}
 		return new Expression<Double>(line, column, e) {
 			public Type<Double> getValue() {
@@ -954,7 +967,7 @@ public class Program implements
 	@Override
 	public Expression<Double> createCos(int line, int column, Expression<?> e) {
 		if (e.getType() != "double") {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expression with a double value!");
 		}
 		return new Expression<Double>(line, column, e) {
 			public Type<Double> getValue() {
@@ -1045,7 +1058,7 @@ public class Program implements
 	@Override
 	public Statement createFire(int line, int column, Expression<?> yield) {
 		if (yield.getType() != "double") {
-			throw new ClassCastException();
+			throw new IllegalArgumentException("Expected an expression with a double value!");
 		}
 		return new ExpressionAction(line, column, yield) {
 
@@ -1209,13 +1222,17 @@ public class Program implements
 
 	@Override
 	public Type<EntityType> createEntityType() {
-		return new Type<EntityType>();
+		return new Type<EntityType>(new EntityType());
 	}
 
 	@Override
-	public Expression<?> createVariableAccess(int line, int column,
+	public Expression<Object> createVariableAccess(int line, int column,
 			String name, Type<?> type) {
-		return null;
+		return new VariableAcces<Object>(line, column, name, type) {
+			public Type<Object> getValue() {
+				return (Type<Object>)globals.get(varName);
+			}
+		};
 	}
 
 }

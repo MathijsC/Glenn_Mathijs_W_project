@@ -158,6 +158,7 @@ public class World {
 				for (Worm w : getWormList()) {
 					if (w.getPosition() == pos && (w != worm))
 						result = w;
+					System.out.println("Worm found");
 					found = true;
 				}
 				pos.setXCoordinate(pos.getXCoordinate() + step
@@ -170,6 +171,9 @@ public class World {
 					* Math.cos(delta));
 			pos.setYCoordinate(worm.getYCoordinate() + worm.getRadius()
 					* Math.sin(delta));
+		}
+		if (!found){
+			System.out.println("not found");
 		}
 
 		return result;
