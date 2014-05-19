@@ -254,11 +254,12 @@ public class Program implements
 		try {
 			statement.execute(executionCheck);
 			executionCheck = !executionCheck;
+			worm.getWorld().startNextTurn();
 		} catch (IllegalStateException exc) {
 			System.out.println("error");
 
 		}
-		worm.getWorld().startNextTurn();
+		
 	}
 
 	@Override
@@ -620,13 +621,10 @@ public class Program implements
 
 			@Override
 			public Type<EntityType> getValue() {
-				/*
-				 * Entity ent =
-				 * worm.getWorld().search((Double)expression1.getValue
-				 * ().getValue()); return new Type<EntityType>(new
-				 * EntityType(ent));
-				 */
-				return null;
+				 Entity ent =
+				 worm.getWorld().searchObjects(worm,(Double)expression1.getValue
+				 ().getValue()); 
+				 return new Type<EntityType>(new EntityType(ent));
 			}
 
 			@Override
