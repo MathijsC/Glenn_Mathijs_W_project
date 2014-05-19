@@ -5,6 +5,7 @@ double d := 0;
 double e := 0;
 
 a := 0.5;
+turn 2;
 
 while (a<12) do {
   //b := getradius self; //NOK
@@ -13,14 +14,14 @@ while (a<12) do {
   //print c;
   //d := gety self; //OK
   //print d;
-  //e := getap self; //NOK
-  //print e;
+  e := getradius self;
+  print e;
   
   //turn 3.14/12; //OK
   //move; //NOK assertion error
-  //jump; //NOK geen sprong opgeroepen
-  toggleweap; //OK
-  fire 100; //OK
+  //jump;
+  //toggleweap; //OK
+  //fire 100; //OK
   
   print a;
   a := a + 1;

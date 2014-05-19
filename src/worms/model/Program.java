@@ -254,7 +254,7 @@ public class Program implements
 		try {
 			statement.execute(executionCheck);
 			executionCheck = !executionCheck;
-		} catch (Exception exc) {
+		} catch (IllegalStateException exc) {
 			System.out.println("error");
 
 		}
@@ -424,14 +424,16 @@ public class Program implements
 	public Expression<Double> createGetRadius(int line, int column,
 			Expression<?> e) {
 		if ((e.getType() != "worm") && (e.getType() != "food")) {
+			System.out.println("classcast");
 			throw new ClassCastException();
 		}
 		return new Expression<Double>(line, column, e) {
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>(((Entity) expression1.getValue()
-						.getValue()).getRadius());
+				System.out.println("getV");
+				return new Type<Double>(((EntityType) expression1.getValue()
+						.getValue()).getValue().getRadius());
 			}
 
 			@Override
@@ -450,8 +452,8 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>(((Worm) expression1.getValue()
-						.getValue()).getDirection());
+				return new Type<Double>(((Worm)((EntityType) expression1.getValue()
+						.getValue()).getValue()).getDirection());
 			}
 
 			@Override
@@ -470,8 +472,8 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>((double) ((Worm) expression1.getValue()
-						.getValue()).getActionPoints());
+				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
+						.getValue()).getValue()).getActionPoints()));
 			}
 
 			@Override
@@ -491,8 +493,8 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>((double) ((Worm) expression1.getValue()
-						.getValue()).getMaxActionPoints());
+				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
+						.getValue()).getValue()).getMaxActionPoints()));
 			}
 
 			@Override
@@ -511,8 +513,8 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>((double) ((Worm) expression1.getValue()
-						.getValue()).getHitPoints());
+				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
+						.getValue()).getValue()).getHitPoints()));
 			}
 
 			@Override
@@ -532,8 +534,8 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				return new Type<Double>((double) ((Worm) expression1.getValue()
-						.getValue()).getMaxHitPoints());
+				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
+						.getValue()).getValue()).getMaxHitPoints()));
 			}
 
 			@Override
