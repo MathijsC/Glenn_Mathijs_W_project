@@ -139,13 +139,42 @@ public class World {
 	 */
 	private ArrayList<Worm> worms = new ArrayList<Worm>();
 
-	public Entity searchObjects(Worm worm, double deltaAngle) {
+	/**
+	 * The function searches for object's the direction of the given worm plus the deviation 'deltaAngle'.
+	 * As soon as it finds an object in that direction, the function stops and returns that object,
+	 * else it continues the search step by step until there can't be an object in that direction that is still in this world.
+	 * 
+	 * @param worm
+	 * 			the worm that is searching for other objects in his world
+	 * @param deltaAngle
+	 * 			the deviation to the worm's direction wherein the worm searches for other objects
+	 * @return the closest object 'e' it finds it the direction the worm is searching,
+	 * 				if there are no objects in that direction 'null' is returned instead
+	 * 			| if(found)
+	 * 			|	return e
+	 * 			| else
+	 * 			|	return null
+	 * @throws IllegalWorldException
+	 * 			if the given worm ins't in this world
+	 * @throws IllegalArgumentException
+	 * 			if the given deltaAngle isn't a number.
+	 */
+
+	protected Entity searchObjects(Worm worm, double deltaAngle)
+			throws IllegalWorldException, IllegalArgumentException {
+		if (worm.getWorld() != this) {
+			throw new IllegalWorldException(worm, this);
+		}
+		if (deltaAngle == Double.NaN) {
+			throw new IllegalArgumentException();
+		}
 		double dir = worm.getDirection() + deltaAngle;
-		Position pos = new Position(worm.getXCoordinate(), worm.getYCoordinate());
+		Position pos = new Position(worm.getXCoordinate(),
+				worm.getYCoordinate());
 		double step = 0.01;
 		boolean found = false;
 		Entity result = null;
-		
+
 		ArrayList<Entity> entityList = new ArrayList<Entity>();
 		entityList.addAll(getWormList());
 		entityList.addAll(getFoodList());
@@ -169,7 +198,7 @@ public class World {
 
 		return result;
 	}
-	
+
 	/**
 	 * A variable holding the projectile that is active in this world
 	 */
