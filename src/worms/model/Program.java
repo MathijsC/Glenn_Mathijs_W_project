@@ -241,9 +241,6 @@ public class Program implements
 		executionCheck = true;
 		ProgramParser<Expression<?>, Statement, Type<?>> parser = new ProgramParser<Expression<?>, Statement, Type<?>>(
 				this);
-		// ProgramParser<PrintingObject, PrintingObject, PrintingObject>
-		// printParser = new ProgramParser<PrintingObject, PrintingObject,
-		// PrintingObject>(new PrintingProgramFactoryImpl());
 		parser.parse(programText);
 		actionHandler = handler;
 		globals = parser.getGlobals();
@@ -596,8 +593,7 @@ public class Program implements
 				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
 				}
-				return new Type<Boolean>(((Worm) expression1.getValue()
-						.getValue()).getTeam() == worm.getTeam());
+				return new Type<Boolean>((worm.getTeam() != null) && (((Worm) ((EntityType)expression1.getValue().getValue()).getValue()).getTeam() == worm.getTeam()));
 			}
 
 			@Override
@@ -796,16 +792,19 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createEquality(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
-			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
-			//TODO kunnen kijken of 2 wormen al dan niet gelijk zijn!
+		if (e1.getType() != e2.getType()) {
+			throw new IllegalArgumentException("Expected two expressions with the same value type!");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
 			@Override
 			public Type<Boolean> getValue() {
-				return new Type<Boolean>(expression1.getValue().getValue()
+				if (expression1.getValue().getValue().getClass() != EntityType.class) {
+					return new Type<Boolean>(expression1.getValue().getValue()
 						.equals(expression2.getValue().getValue()));
+				} else {
+					return new Type<Boolean>(((EntityType)expression1.getValue().getValue()).getValue().equals(((EntityType)expression2.getValue().getValue()).getValue()));
+				}
 			}
 
 			@Override
@@ -819,16 +818,19 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createInequality(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
+		if (e1.getType() != e2.getType()) {
 			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
-			//TODO kunnen kijken of 2 wormen al dan niet gelijk zijn!
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
 			@Override
 			public Type<Boolean> getValue() {
-				return new Type<Boolean>(!expression1.getValue().getValue()
+				if (expression1.getValue().getValue().getClass() != EntityType.class) {
+					return new Type<Boolean>(!expression1.getValue().getValue()
 						.equals(expression2.getValue().getValue()));
+				} else {
+					return new Type<Boolean>(!((EntityType)expression1.getValue().getValue()).getValue().equals(((EntityType)expression2.getValue().getValue()).getValue()));
+				}
 			}
 
 			@Override
