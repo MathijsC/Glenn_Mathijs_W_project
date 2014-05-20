@@ -1,0 +1,20 @@
+// test program foreach, sameteam OK
+//, isworm, isfood OK
+
+entity e;
+
+foreach(any, e) do {   
+      if(isworm(e)) then {
+	    if(sameteam(e)) then {
+	      	print 1000000;
+	      } else {
+	      print 5000;
+	      } ; 
+      } else {
+	      if(isfood(e)) then {
+	      print 250;
+	      };
+      		
+      };
+      print 0;
+}

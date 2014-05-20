@@ -1,27 +1,2 @@
 
-double x;
-double y;
-entity w;
-double wx;
-double wy;
-double wr;
-double distance;
-
-x := getx self;
-x := true;
-y := gety self;
-
-foreach(worm, w) do {
-      wx := getx w;
-      print wx;
-      wy := gety w;
-      print wy;
-      wr := getradius w;
-      print wr;
-      distance := sqrt((((x - wx) * (x - wx)) + ((y - wy) * (y - wy))));
-      print distance;
-      if(sameteam(w)) then {
-      print 1000000;
-      };
-}
 
