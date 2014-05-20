@@ -139,47 +139,37 @@ public class World {
 	 */
 	private ArrayList<Worm> worms = new ArrayList<Worm>();
 
-	public Worm searchObjects(Worm worm, double deltaAngle) {
-		double dir = worm.getDirection();
-		double delta = dir - deltaAngle;
-		Position pos = new Position(worm.getXCoordinate() + worm.getRadius()
-				* Math.cos(delta), worm.getYCoordinate() + worm.getRadius()
-				* Math.sin(delta));
-
+	public Entity searchObjects(Worm worm, double deltaAngle) {
+		double dir = worm.getDirection() + deltaAngle;
+		Position pos = new Position(worm.getXCoordinate(), worm.getYCoordinate());
 		double step = 0.01;
 		boolean found = false;
-		Worm result = null;
+		Entity result = null;
+		
+		ArrayList<Entity> entityList = new ArrayList<Entity>();
+		entityList.addAll(getWormList());
+		entityList.addAll(getFoodList());
 
-		while (delta <= (dir + deltaAngle) && (!(found))) {
-			while (entityInWorld(pos, Worm.getMinRadius())
-					&& (!(found))
-					&& (isPassable(pos.getXCoordinate(), pos.getYCoordinate(),
-							0))) {
-				for (Worm w : getWormList()) {
-					if ((w.getPosition().distanceTo(pos) <= w.getRadius()) && (w != worm)) {
-						result = w;
-						System.out.println("Worm found");
-						found = true;
-						}
+		while (entityInWorld(pos, Worm.getMinRadius()) && (!(found))
+				&& (isPassable(pos.getXCoordinate(), pos.getYCoordinate(), 0))) {
+			for (Entity e : entityList) {
+				if ((e.getPosition().distanceTo(pos) <= e.getRadius())
+						&& (e != worm)) {
+					result = e;
+					System.out.println("Worm found");
+					found = true;
 				}
-				pos.setXCoordinate(pos.getXCoordinate() + step
-						* Math.cos(delta));
-				pos.setYCoordinate(pos.getYCoordinate() + step
-						* Math.sin(delta));
 			}
-			delta = delta + 0.01;
-			pos.setXCoordinate(worm.getXCoordinate() + worm.getRadius()
-					* Math.cos(delta));
-			pos.setYCoordinate(worm.getYCoordinate() + worm.getRadius()
-					* Math.sin(delta));
+			pos.setXCoordinate(pos.getXCoordinate() + step * Math.cos(dir));
+			pos.setYCoordinate(pos.getYCoordinate() + step * Math.sin(dir));
 		}
-		if (!found){
+		if (!found) {
 			System.out.println("not found");
 		}
 
 		return result;
 	}
-
+	
 	/**
 	 * A variable holding the projectile that is active in this world
 	 */
