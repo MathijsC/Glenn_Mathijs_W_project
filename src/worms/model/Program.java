@@ -475,7 +475,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				if (expression1.getValue().getValue().getClass() != Worm.class){
+				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
 				}
 				return new Type<Double>(((Worm)((EntityType) expression1.getValue()
@@ -498,7 +498,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				if (expression1.getValue().getValue().getClass() != Worm.class){
+				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
 				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
@@ -522,7 +522,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				if (expression1.getValue().getValue().getClass() != Worm.class){
+				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
 				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
@@ -545,7 +545,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				if (expression1.getValue().getValue().getClass() != Worm.class){
+				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
 				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
@@ -569,7 +569,7 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				if (expression1.getValue().getValue().getClass() != Worm.class){
+				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
 				}
 				return new Type<Double>((double) (((Worm)((EntityType) expression1.getValue()
@@ -593,9 +593,8 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
-				if (expression1.getValue().getValue().getClass() != Worm.class){
+				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
-					//TODO Classcast exception als je wel een worm mee geeft ... :s
 				}
 				return new Type<Boolean>(((Worm) expression1.getValue()
 						.getValue()).getTeam() == worm.getTeam());
@@ -618,11 +617,7 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
-				System.out.println(expression1.getValue().getValue()
-						.getClass() == Worm.class);
-				return new Type<Boolean>(expression1.getValue().getValue()
-						.getClass() == Worm.class);
-				//TODO returned altijd false!
+				return new Type<Boolean>(((EntityType)expression1.getValue().getValue()).getValue().getClass() == Worm.class);
 			}
 
 			@Override
@@ -643,9 +638,7 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
-				return new Type<Boolean>(expression1.getValue().getValue()
-						.getClass() == Food.class);
-				//TODO returned altijd false!
+				return new Type<Boolean>(((EntityType)expression1.getValue().getValue()).getValue().getClass() == Food.class);
 			}
 
 			@Override
