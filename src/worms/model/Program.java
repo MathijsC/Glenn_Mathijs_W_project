@@ -621,6 +621,7 @@ public class Program implements
 						.getClass() == Worm.class);
 				return new Type<Boolean>(expression1.getValue().getValue()
 						.getClass() == Worm.class);
+				//TODO returned altijd false!
 			}
 
 			@Override
@@ -643,6 +644,7 @@ public class Program implements
 			public Type<Boolean> getValue() {
 				return new Type<Boolean>(expression1.getValue().getValue()
 						.getClass() == Food.class);
+				//TODO returned altijd false!
 			}
 
 			@Override
@@ -802,6 +804,7 @@ public class Program implements
 			Expression<?> e1, Expression<?> e2) {
 		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
 			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
+			//TODO kunnen kijken of 2 wormen al dan niet gelijk zijn!
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
@@ -824,6 +827,7 @@ public class Program implements
 			Expression<?> e1, Expression<?> e2) {
 		if ((e1.getType() != e2.getType()) || (e1.getType() == "entity")) {
 			throw new IllegalArgumentException("Expected an expressions with a double or boolean value!");
+			//TODO kunnen kijken of 2 wormen al dan niet gelijk zijn!
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 

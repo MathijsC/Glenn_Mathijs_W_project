@@ -19,5 +19,8 @@ foreach(worm, w) do {
       print wr;
       distance := sqrt((((x - wx) * (x - wx)) + ((y - wy) * (y - wy))));
       print distance;
+      if(sameteam(w)) then {
+      print 1000000;
+      };
 }
 
