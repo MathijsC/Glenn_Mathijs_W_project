@@ -1,15 +1,19 @@
-// Test program search objects , entity naar worm of food classcastexc
+// Test program search objects 
 
+double a := 0;
 double d := 0.01;
 entity w;
 
-while(true) {
+while(a<10) {
 	  w := searchobj(0);
 	  if (isworm(w)) then {
 	    fire 100;
+	    print 5;
 	  } else {
+	  	print 0;
 	    turn d;
 	    d := d + 0.01;
 	  }
+	  a := a + 1;
   }
 

@@ -146,7 +146,7 @@ public class World {
 				* Math.cos(delta), worm.getYCoordinate() + worm.getRadius()
 				* Math.sin(delta));
 
-		double step = 0.1;
+		double step = 0.01;
 		boolean found = false;
 		Worm result = null;
 
@@ -156,17 +156,18 @@ public class World {
 					&& (isPassable(pos.getXCoordinate(), pos.getYCoordinate(),
 							0))) {
 				for (Worm w : getWormList()) {
-					if (w.getPosition() == pos && (w != worm))
+					if ((w.getPosition().distanceTo(pos) <= w.getRadius()) && (w != worm)) {
 						result = w;
-					System.out.println("Worm found");
-					found = true;
+						System.out.println("Worm found");
+						found = true;
+						}
 				}
 				pos.setXCoordinate(pos.getXCoordinate() + step
 						* Math.cos(delta));
 				pos.setYCoordinate(pos.getYCoordinate() + step
 						* Math.sin(delta));
 			}
-			delta = delta + 0.1;
+			delta = delta + 0.01;
 			pos.setXCoordinate(worm.getXCoordinate() + worm.getRadius()
 					* Math.cos(delta));
 			pos.setYCoordinate(worm.getYCoordinate() + worm.getRadius()

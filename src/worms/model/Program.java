@@ -617,6 +617,8 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
+				System.out.println(expression1.getValue().getValue()
+						.getClass() == Worm.class);
 				return new Type<Boolean>(expression1.getValue().getValue()
 						.getClass() == Worm.class);
 			}
@@ -1160,18 +1162,18 @@ public class Program implements
 				if ((any) || (type == worms.model.programs.ProgramFactory.ForeachType.WORM)){
 					ArrayList<Worm> worms = worm.getWorld().getWormList();
 					for(Worm w: worms){
-						globals.put(variableName,new Type<EntityType>(new EntityType(w)));
+						globals.put(variableName,new Type<EntityType>(new EntityType(w)));			
+						body.execute(foreachExecutionCheck);
+						foreachExecutionCheck = !foreachExecutionCheck;
 					}
-					body.execute(foreachExecutionCheck);
-					foreachExecutionCheck = !foreachExecutionCheck;
 				}
 				if ((any) || (type == worms.model.programs.ProgramFactory.ForeachType.FOOD)){
 					ArrayList<Food> foods = worm.getWorld().getFoodList();
 					for(Food f:foods){
 						globals.put(variableName,new Type<EntityType>(new EntityType(f)));
+						body.execute(foreachExecutionCheck);
+						foreachExecutionCheck = !foreachExecutionCheck;
 					}
-					body.execute(foreachExecutionCheck);
-					foreachExecutionCheck = !foreachExecutionCheck;
 				}
 				globals.put(variableName,oldVar);
 				executed = exeCheck;				
