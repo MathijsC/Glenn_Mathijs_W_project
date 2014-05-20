@@ -8,6 +8,7 @@ double wr;
 double distance;
 
 x := getx self;
+x := true;
 y := gety self;
 
 foreach(worm, w) do {
