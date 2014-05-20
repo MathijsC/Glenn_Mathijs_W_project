@@ -1,5 +1,4 @@
 package worms.model;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +6,7 @@ import java.util.Map;
 import worms.gui.game.IActionHandler;
 import worms.model.programs.ProgramFactory;
 import worms.model.programs.ProgramParser;
+
 
 abstract class Expression<T> {
 
@@ -47,22 +47,16 @@ abstract class Expression<T> {
 abstract class VariableAcces<T> extends Expression<T> {
 
 	public String getType() {
-		if (type == EntityType.class){
-			return "entity";
-		} else if (type == Double.class){
-			return "double";
-		} else {
-			return "boolean";
-		}
+		return type;
 	}
 
 	public VariableAcces(int l, int c, String n, Type<?> t) {
 		super(l, c);
 		varName = n;
-		type = t.getT();
+		type = t.getType();
 	}
 	
-	private Class<?> type;
+	private String type;
 
 	public String varName;
 
@@ -82,14 +76,15 @@ abstract class Statement {
 	public int column;
 
 	public void execute(boolean exeCheck) {
-		System.out.println("execute with check:" + exeCheck + " and executed: "
-				+ executed);
 		if (executed != exeCheck) {
-			System.out.println("not yet Executed");
 			run(exeCheck);
 		} else {
-			System.out.println("Alraedy executed");
+			System.out.println("already executed");
 		}
+	}
+	
+	protected void setExecuted(boolean exeSet){
+		executed = exeSet;
 	}
 
 	abstract public void run(boolean exeCheck);
@@ -101,6 +96,14 @@ abstract class Sequence extends Statement {
 		super(l, c);
 		statements = st;
 	}
+	
+	@Override
+	protected void setExecuted(boolean exeSet){
+		for(Statement st:statements){
+			st.setExecuted(exeSet);
+		}
+		executed = exeSet;
+	}
 
 	public List<Statement> statements;
 }
@@ -110,6 +113,11 @@ abstract class ExpressionAction extends Statement {
 	public ExpressionAction(int l, int c, Expression<?> e) {
 		super(l, c);
 		expression = e;
+	}
+	
+	@Override
+	protected void setExecuted(boolean exeSet){
+		executed = exeSet;
 	}
 
 	public Expression<?> expression;
@@ -123,6 +131,12 @@ abstract class WhileStatement extends Statement {
 		condition = cond;
 		body = b;
 	}
+	
+	@Override
+	protected void setExecuted(boolean exeSet){
+		body.setExecuted(exeSet);
+		executed = exeSet;
+	}
 
 	public Expression<Boolean> condition;
 	public Statement body;
@@ -135,6 +149,12 @@ abstract class ForeachStatement extends Statement {
 		variableName = varName;
 		body = b;
 		type = t;
+	}
+	
+	@Override
+	protected void setExecuted(boolean exeSet){
+		body.setExecuted(exeSet);
+		executed = exeSet;
 	}
 
 	public String variableName;
@@ -151,6 +171,13 @@ abstract class IfStatement extends Statement {
 		ifTrue = t;
 		ifFalse = f;
 	}
+	
+	@Override
+	protected void setExecuted(boolean exeSet){
+		ifTrue.setExecuted(exeSet);
+		ifFalse.setExecuted(exeSet);
+		executed = exeSet;
+	}
 
 	public Expression<Boolean> condition;
 	public Statement ifTrue;
@@ -165,6 +192,11 @@ abstract class Assignment extends Statement {
 		expression = e;
 		name = n;
 	}
+	
+	@Override
+	protected void setExecuted(boolean exeSet){
+		executed = exeSet;
+	}
 
 	public Expression<?> expression;
 	public String name;
@@ -172,10 +204,6 @@ abstract class Assignment extends Statement {
 }
 
 class Type<T> {
-
-	public Type() {
-		value = null;
-	}
 
 	public Type(T v) {
 		value = v;
@@ -191,8 +219,19 @@ class Type<T> {
 		value = (T) v.getValue().getValue();
 	}
 	
-	public Class<?> getT(){
-		return value.getClass();
+	public String getType(){
+		if (value == null){
+			System.out.println("val is null");
+			return "null";
+		} else if (value.getClass() == Double.class){
+			return "double";
+		} else if (value.getClass() == Boolean.class){
+			return "boolean";
+		} else if (value.getClass() == EntityType.class){
+			return "entity";
+		} else {
+			return "unkown";
+		}
 	}
 
 	public String toString() {
@@ -224,6 +263,8 @@ class EntityType {
 			return ((Worm) value).getName();
 		} else if (value instanceof Food) {
 			return "A Hamburger";
+		} else if (value == null){
+			return "null";
 		} else {
 			return "False enity";
 		}
@@ -254,6 +295,7 @@ public class Program implements
 	private Worm worm;
 	private boolean executionCheck;
 	private List<String> errors;
+	public int count = 0;
 
 	public List<String> getErrors() {
 		return errors;
@@ -264,8 +306,12 @@ public class Program implements
 	}
 
 	public void runProgram() {
-		System.out.println("Run with check: " + executionCheck);
+		System.out.println("Run");
 		try {
+			if (count >= 1000){
+				throw new RuntimeException("Last runtime, you executed 1000 statements. We suppose you are in an endless loop!");
+			}
+			count = 0;
 			statement.execute(executionCheck);
 			executionCheck = !executionCheck;
 			System.out.println("PROGRAM ENDED!!");
@@ -277,6 +323,9 @@ public class Program implements
 			worm.getWorld().startNextTurn();
 		} catch (ClassCastException exc) {
 			System.out.println("ClassCastException! |"+exc.getMessage());
+			worm.getWorld().startNextTurn();
+		} catch (RuntimeException exc) {
+			System.out.println("RuntimeException! |"+exc.getMessage());
 			worm.getWorld().startNextTurn();
 		}
 		
@@ -373,7 +422,7 @@ public class Program implements
 
 			@Override
 			public Type<Object> getValue() {
-				return null;
+				return new Type<Object>(null);
 			}
 
 			@Override
@@ -451,7 +500,6 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
-				System.out.println("getV");
 				return new Type<Double>(((EntityType) expression1.getValue()
 						.getValue()).getValue().getRadius());
 			}
@@ -792,18 +840,23 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createEquality(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if (e1.getType() != e2.getType()) {
-			throw new IllegalArgumentException("Expected two expressions with the same value type!");
+		if ((e1.getType() != "null") && (e2.getType() != "null") && (e1.getType() != e2.getType())) {
+			throw new IllegalArgumentException("Expected two expressions with the same value type! | line: "+line+" column: "+column+" in your program.");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
 			@Override
 			public Type<Boolean> getValue() {
-				if (expression1.getValue().getValue().getClass() != EntityType.class) {
-					return new Type<Boolean>(expression1.getValue().getValue()
-						.equals(expression2.getValue().getValue()));
+				System.out.println("GetV equality "+line + " "+ column+" "+ expression1.getType() + " "+ expression2.getType() + " "+ expression1.getValue() + " "+ expression2.getValue());
+				if ((expression1.getType()=="null") || (expression2.getType()=="null")){
+					return new Type<Boolean>(expression2.getValue().getValue() == expression1.getValue().getValue());
 				} else {
-					return new Type<Boolean>(((EntityType)expression1.getValue().getValue()).getValue().equals(((EntityType)expression2.getValue().getValue()).getValue()));
+					if (expression1.getValue().getType() != "entity") {
+						return new Type<Boolean>(expression1.getValue().getValue()
+							.equals(expression2.getValue().getValue()));
+					} else {
+						return new Type<Boolean>(((EntityType)expression1.getValue().getValue()).getValue().equals(((EntityType)expression2.getValue().getValue()).getValue()));
+					}
 				}
 			}
 
@@ -818,21 +871,26 @@ public class Program implements
 	@Override
 	public Expression<Boolean> createInequality(int line, int column,
 			Expression<?> e1, Expression<?> e2) {
-		if (e1.getType() != e2.getType()) {
-			throw new IllegalArgumentException("Expected an expressions with a double or boolean value! | line: "+line+" column: "+column+" in your program.");
+		if ((e1.getType() != "null") && (e2.getType() != "null") && (e1.getType() != e2.getType())) {
+			throw new IllegalArgumentException("Expected two expressions with the same value type! | line: "+line+" column: "+column+" in your program.");
 		}
 		return new Expression<Boolean>(line, column, e1, e2) {
 
 			@Override
 			public Type<Boolean> getValue() {
-				if (expression1.getValue().getValue().getClass() != EntityType.class) {
-					return new Type<Boolean>(!expression1.getValue().getValue()
-						.equals(expression2.getValue().getValue()));
+				System.out.println("GetV INequality "+line + " "+ column+" "+ expression1.getType() + " "+ expression2.getType() + " "+ expression1.getValue() + " "+ expression2.getValue());
+				if ((expression1.getType()=="null") || (expression2.getType()=="null")){
+					return new Type<Boolean>(!(expression2.getValue().getValue() == expression1.getValue().getValue()));
 				} else {
-					return new Type<Boolean>(!((EntityType)expression1.getValue().getValue()).getValue().equals(((EntityType)expression2.getValue().getValue()).getValue()));
+					if (expression1.getValue().getType() != "entity") {
+						return new Type<Boolean>(!expression1.getValue().getValue()
+							.equals(expression2.getValue().getValue()));
+					} else {
+						return new Type<Boolean>(!((EntityType)expression1.getValue().getValue()).getValue().equals(((EntityType)expression2.getValue().getValue()).getValue()));
+					}
 				}
 			}
-
+			
 			@Override
 			public String getType() {
 				return "boolean";
@@ -932,6 +990,7 @@ public class Program implements
 		}
 		return new Expression<Double>(line, column, e) {
 			public Type<Double> getValue() {
+				System.out.println("SQRT");
 				return new Type<Double>(Math.sqrt(((Double) expression1
 						.getValue().getValue())));
 			}
@@ -991,13 +1050,15 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				System.out.println("Turn:");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
 				if (worm.canTurn((Double) expression.getValue().getValue())) {
 					actionHandler.turn(worm, (Double) expression.getValue()
 							.getValue());
-					executed = exeCheck;
+					this.setExecuted(exeCheck);
 				} else {
-					System.out.println("cannotTurn");
 					throw new IllegalStateException();
 				}
 			}
@@ -1011,12 +1072,14 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				System.out.println("move:");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
 				if (worm.canMove()) {
 					actionHandler.move(worm);
-					executed = exeCheck;
+					this.setExecuted(exeCheck);
 				} else {
-					System.out.println("cannotMove");
 					throw new IllegalStateException();
 				}
 			}
@@ -1028,14 +1091,14 @@ public class Program implements
 		return new Statement(line, column) {
 
 			public void run(boolean exeCheck) {
-				System.out.println("Jump:");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
 				if (worm.canJump()) {
-					System.out.println("canJump");
 					actionHandler.jump(worm);
-					executed = exeCheck;
-					System.out.println("end jump");
+					this.setExecuted(exeCheck);
 				} else {
-					System.out.println("cannotJump");
 					throw new IllegalStateException();
 				}
 			}
@@ -1047,9 +1110,12 @@ public class Program implements
 	public Statement createToggleWeap(int line, int column) {
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
-				System.out.println("toggleWeapon");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
 				actionHandler.toggleWeapon(worm);
-				executed = exeCheck;
+				this.setExecuted(exeCheck);
 			}
 		};
 	}
@@ -1063,13 +1129,15 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				System.out.println("fire:");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
 				if (worm.canShoot(worm.getWeapon())) {
 					actionHandler.fire(worm, ((Double) expression.getValue()
 							.getValue()).intValue());
-					executed = exeCheck;
+					this.setExecuted(exeCheck);
 				} else {
-					System.out.println("cannotShoot");
 					throw new IllegalStateException();
 				}
 			}
@@ -1080,8 +1148,11 @@ public class Program implements
 	public Statement createSkip(int line, int column) {
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
-				System.out.println("Skip:");
-				executed = exeCheck;
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
+				this.setExecuted(exeCheck);
 				throw new IllegalStateException();
 			}
 		};
@@ -1092,18 +1163,33 @@ public class Program implements
 			String variableName, Expression<?> rhs) {
 		return new Assignment(line, column, rhs, variableName) {
 			public void run(boolean exeCheck) {
-				System.out.println("assign");
-				if ((globals.get(name).getValue().getClass() == Double.class) && (expression.getType() !="double")){
-					throw new IllegalArgumentException("Expected an expression with a double value! | line: "+line+" column: "+column+" in your program.");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
-				if ((globals.get(name).getValue().getClass() == Boolean.class) && (expression.getType() !="boolean")){
-					throw new IllegalArgumentException("Expected an expression with a boolean value! | line: "+line+" column: "+column+" in your program.");
+				count += 1;
+				if (expression.getType() != "null"){
+					if ((globals.get(name).getType() == "double") && (expression.getType() !="double")){
+						throw new IllegalArgumentException("Expected an expression with a double value! | line: "+line+" column: "+column+" in your program.");
+					}
+					if ((globals.get(name).getType() == "boolean") && (expression.getType() !="boolean")){
+						throw new IllegalArgumentException("Expected an expression with a boolean value! | line: "+line+" column: "+column+" in your program.");
+					}
+					if ((globals.get(name).getType() == "entity") && (expression.getType() !="entity")){
+						throw new IllegalArgumentException("Expected an expression with an entity value! | line: "+line+" column: "+column+" in your program.");
+					}
+					globals.get(name).setValue(expression);
+				} else {
+					if (globals.get(name).getType() == "double"){
+						globals.put(name,new Type<Double>(new Double(null)));
+					}
+					if (globals.get(name).getType() == "boolean"){
+						globals.put(name,new Type<Boolean>(new Boolean(null)));
+					}
+					if (globals.get(name).getType() == "entity"){
+						globals.put(name,new Type<EntityType>(new EntityType(null)));
+					}
 				}
-				if ((globals.get(name).getValue().getClass() == EntityType.class) && (expression.getType() !="entity")){
-					throw new IllegalArgumentException("Expected an expression with an entity value! | line: "+line+" column: "+column+" in your program.");
-				}
-				globals.get(name).setValue(expression);
-				executed = exeCheck;
+				this.setExecuted(exeCheck);
 			}
 		};
 	}
@@ -1118,13 +1204,16 @@ public class Program implements
 				(Expression<Boolean>) condition, then, otherwise) {
 
 			public void run(boolean exeCheck) {
-				System.out.println("if:");
-				if ((Boolean) condition.getValue().getValue()) {
-					ifTrue.execute(exeCheck);
-				} else {
-					ifFalse.execute(exeCheck);
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
-				executed = exeCheck;
+				count += 1;
+				if ((Boolean) condition.getValue().getValue()) {
+					ifTrue.execute(exeCheck);					
+				} else {
+					ifFalse.execute(exeCheck);					
+				}
+				this.setExecuted(exeCheck);
 			}
 		};
 	}
@@ -1141,19 +1230,16 @@ public class Program implements
 			private boolean whileExecutionCheck = true;
 
 			public void run(boolean exeCheck) {
-				System.out.println("while");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
 				while ((Boolean) condition.getValue().getValue()) {
-					System.out.println("Ex body");
 					body.execute(whileExecutionCheck);
 					body.executed = whileExecutionCheck;
-					System.out.println("whileExecutionCheck: "
-							+ whileExecutionCheck);
 					whileExecutionCheck = !whileExecutionCheck;
-					System.out.println("whileExecutionCheck: "
-							+ whileExecutionCheck);
 				}
-				System.out.println("endWhile");
-				executed = exeCheck;
+				this.setExecuted(exeCheck);
 			}
 		};
 	}
@@ -1168,6 +1254,10 @@ public class Program implements
 			
 			@Override
 			public void run(boolean exeCheck) {
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
 				boolean any = false;
 				Type<?> oldVar = globals.get(variableName);
 				if (type == worms.model.programs.ProgramFactory.ForeachType.ANY){
@@ -1190,7 +1280,7 @@ public class Program implements
 					}
 				}
 				globals.put(variableName,oldVar);
-				executed = exeCheck;				
+				this.setExecuted(exeCheck);				
 			}
 		};
 	}
@@ -1199,13 +1289,20 @@ public class Program implements
 	public Statement createSequence(int line, int column,
 			List<Statement> statements) {
 		return new Sequence(line, column, statements) {
+			
+			public boolean started = false;
+			
 			public void run(boolean exeCheck) {
-				System.out.println("runSequence with check: " + executionCheck);
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;
+				started = true;
+				count = count +1;
 				for (Statement st : statements) {
 					st.execute(exeCheck);
 				}
-				System.out.println("end Sequence");
-				executed = exeCheck;
+				this.setExecuted(exeCheck);
 			}
 		};
 	}
@@ -1216,9 +1313,12 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				System.out.println("print");
+				if (count >= 1000){
+					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+				}
+				count += 1;				
 				actionHandler.print(expression.getValue().toString());
-				executed = exeCheck;
+				this.setExecuted(exeCheck);
 			}
 		};
 	}

@@ -159,7 +159,6 @@ public class World {
 	 * @throws IllegalArgumentException
 	 * 			if the given deltaAngle isn't a number.
 	 */
-
 	protected Entity searchObjects(Worm worm, double deltaAngle)
 			throws IllegalWorldException, IllegalArgumentException {
 		if (worm.getWorld() != this) {
