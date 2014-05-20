@@ -595,6 +595,7 @@ public class Program implements
 			public Type<Boolean> getValue() {
 				if (expression1.getValue().getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value!");
+					//TODO Classcast exception als je wel een worm mee geeft ... :s
 				}
 				return new Type<Boolean>(((Worm) expression1.getValue()
 						.getValue()).getTeam() == worm.getTeam());
