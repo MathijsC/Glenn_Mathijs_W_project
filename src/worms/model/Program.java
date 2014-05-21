@@ -77,11 +77,7 @@ abstract class Statement {
 
 	public void execute(boolean exeCheck) {
 		if (executed != exeCheck) {
-			System.out.println("Run statement whith: " + executed + " check: "
-					+ exeCheck);
 			run(exeCheck);
-		} else {
-			System.out.println("already executed");
 		}
 	}
 
@@ -227,7 +223,6 @@ class Type<T> {
 
 	public String getType() {
 		if (value == null) {
-			System.out.println("val is null");
 			return "null";
 		} else if (value.getClass() == Double.class) {
 			return "double";
@@ -330,8 +325,10 @@ public class Program implements
 				System.out
 						.println("StopProgramException! |" + exc.getMessage());
 			} catch (IllegalStateException exc) {
-				System.out.println("Illegal State error!");
+				System.out.println("Illegal State error! |" + exc.getMessage());
 				if (worm.getActionPoints() != 0) {
+					System.out.println("start new turn");
+					System.out.println(worm.getName());
 					worm.getWorld().startNextTurn();
 				}
 			} catch (ClassCastException exc) {
@@ -992,17 +989,12 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
-				System.out.println("GetV equality " + line + " " + column + " "
-						+ expression1.getType() + " " + expression2.getType()
-						+ " " + expression1.getValue() + " "
-						+ expression2.getValue());
 				if ((expression1.getType() == "null")
 						|| (expression2.getType() == "null")) {
 					return new Type<Boolean>(
 							(expression2.getValue().toString() == expression1
 									.getValue().toString()));
 				} else {
-					System.out.println("else");
 					if (expression1.getValue().getType() != "entity") {
 						return new Type<Boolean>(expression1.getValue()
 								.getValue()
@@ -1037,10 +1029,6 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
-				System.out.println("GetV INequality " + line + " " + column
-						+ " " + expression1.getType() + " "
-						+ expression2.getType() + " " + expression1.getValue()
-						+ " " + expression2.getValue());
 				if ((expression1.getType() == "null")
 						|| (expression2.getType() == "null")) {
 					return new Type<Boolean>(!(expression2.getValue()
@@ -1168,7 +1156,6 @@ public class Program implements
 		}
 		return new Expression<Double>(line, column, e) {
 			public Type<Double> getValue() {
-				System.out.println("SQRT");
 				return new Type<Double>(Math.sqrt(((Double) expression1
 						.getValue().getValue())));
 			}
@@ -1232,6 +1219,9 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1242,7 +1232,7 @@ public class Program implements
 							.getValue());
 					executed = exeCheck;
 				} else {
-					throw new IllegalStateException();
+					throw new IllegalStateException("Worm cannot turn!");
 				}
 			}
 
@@ -1255,6 +1245,9 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1264,7 +1257,7 @@ public class Program implements
 					actionHandler.move(worm);
 					executed = exeCheck;
 				} else {
-					throw new IllegalStateException();
+					throw new IllegalStateException("Worm cannot move!");
 				}
 			}
 		};
@@ -1275,18 +1268,20 @@ public class Program implements
 		return new Statement(line, column) {
 
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
-				System.out.println("try jump");
 				if (worm.canJump()) {
 					actionHandler.jump(worm);
 					executed = exeCheck;
 					throw new StopProgramException();
 				} else {
-					throw new IllegalStateException();
+					throw new IllegalStateException("Worm cannot jump!");
 				}
 			}
 
@@ -1297,6 +1292,9 @@ public class Program implements
 	public Statement createToggleWeap(int line, int column) {
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1319,6 +1317,9 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1329,7 +1330,7 @@ public class Program implements
 							.getValue()).intValue());
 					executed = exeCheck;
 				} else {
-					throw new IllegalStateException();
+					throw new IllegalStateException("Worm cannot fire!");
 				}
 			}
 		};
@@ -1339,13 +1340,16 @@ public class Program implements
 	public Statement createSkip(int line, int column) {
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				executed = exeCheck;
-				throw new IllegalStateException();
+				throw new IllegalStateException("NewSkip!");
 			}
 		};
 	}
@@ -1355,6 +1359,9 @@ public class Program implements
 			String variableName, Expression<?> rhs) {
 		return new Assignment(line, column, rhs, variableName) {
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1412,6 +1419,9 @@ public class Program implements
 				then, otherwise) {
 
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1443,13 +1453,15 @@ public class Program implements
 			private boolean whileExecutionCheck = true;
 
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				while ((Boolean) condition.getValue().getValue()) {
-					System.out.println("New WHILE LOOP");
 					body.execute(whileExecutionCheck);
 					body.executed = whileExecutionCheck;
 					whileExecutionCheck = !whileExecutionCheck;
@@ -1473,6 +1485,9 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1513,6 +1528,9 @@ public class Program implements
 			public boolean started = false;
 
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");
@@ -1534,6 +1552,9 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
+				if (worm.getWorld().isGameFinished()){
+					throw new StopProgramException();
+				}
 				if (count >= 1000) {
 					throw new StackOverflowError(
 							"You executed 1000 statements. We suppose you are in an endless loop!");

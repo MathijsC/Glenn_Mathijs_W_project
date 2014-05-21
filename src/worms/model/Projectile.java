@@ -309,13 +309,16 @@ public class Projectile extends Entity {
 	* 			| terminate()
 	*/
 	public void jump(double timeStep) {
+		System.out.println("new pos");
 		double[] newPosition = Arrays.copyOfRange(this.possibleJump(timeStep),
 				0, 2);
 		this.setPosition(newPosition[0], newPosition[1]);
+		System.out.println("check hit");
 		if (this.getWorld().checkProjectileHitWorm(getPosition(),getRadius())) {
 			Worm wormHit = this.getWorld().getWormHit(this);
 			wormHit.addHealt(-this.getWeapon().getDamage());
 		}
+		System.out.println("terminate");
 		terminate();
 
 	}

@@ -1,0 +1,29 @@
+// Worm that prints the distance to the nearest other worm, turns and fires.
+
+double a;
+entity w;
+entity me;
+double delta;
+double dir;
+bool isw;
+bool samet;
+
+me := self;
+delta := 0.1;
+
+while(a<100) do {
+	w := searchobj(0);
+	isw:= isworm(w);
+	samet:= sameteam(w);
+	if (isw && !samet){
+		fire 100;
+		//print gethp(w);
+	} else {
+		turn delta;
+		//dir := getdir(me);		
+		//if (dir<1.5){
+			//jump;
+		//}
+	}
+	a := a + 1;
+}

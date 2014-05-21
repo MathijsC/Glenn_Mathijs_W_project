@@ -247,7 +247,7 @@ public class World {
 			worms.add((Worm) entity);
 		} else if (entity instanceof Projectile) {
 			if (getProjectile() != null) {
-				throw new IllegalStateException();
+				throw new IllegalStateException("Projectile is not null"+getProjectile());
 			}
 			projectile = (Projectile) entity;
 		} else if (entity instanceof Food) {
@@ -429,10 +429,11 @@ public class World {
 	 */
 	public void startNextTurn() {
 		if (isGameStarted()) {
-			if (getCurrentWormIndex() >= (worms.size() - 1))
+			if (getCurrentWormIndex() >= (worms.size() - 1)) {
 				startNextRound();
-			else
+			} else {
 				setCurrentWormIndex(getCurrentWormIndex() + 1);
+			}
 			System.out.println("checkprog");
 			if (getCurrentWorm().hasProgram()) {
 				System.out.println("has program");
@@ -761,8 +762,8 @@ public class World {
 	public boolean entityInWorld(Position pos, double radius) {
 		return (0 < (pos.getXCoordinate() - radius))
 				&& (0 < (pos.getYCoordinate() - radius))
-				&& ((pos.getXCoordinate() - radius) < this.getWidth())
-				&& ((pos.getYCoordinate() - radius) < this.getHeight());
+				&& ((pos.getXCoordinate() + radius) < this.getWidth())
+				&& ((pos.getYCoordinate() + radius) < this.getHeight());
 	}
 
 	/**
