@@ -77,6 +77,7 @@ abstract class Statement {
 
 	public void execute(boolean exeCheck) {
 		if (executed != exeCheck) {
+			System.out.println("Run statement whith: "+executed + " check: "+exeCheck);
 			run(exeCheck);
 		} else {
 			System.out.println("already executed");
@@ -149,7 +150,10 @@ abstract class ForeachStatement extends Statement {
 		variableName = varName;
 		body = b;
 		type = t;
+		
 	}
+	
+	private ArrayList<Entity> entList;
 	
 	@Override
 	protected void setExecuted(boolean exeSet){
@@ -309,7 +313,7 @@ public class Program implements
 		System.out.println("Run");
 		try {
 			if (count >= 1000){
-				throw new RuntimeException("Last runtime, you executed 1000 statements. We suppose you are in an endless loop!");
+				throw new StackOverflowError("Last runtime, you executed 1000 statements. We suppose you are in an endless loop!");
 			}
 			count = 0;
 			statement.execute(executionCheck);
@@ -318,14 +322,18 @@ public class Program implements
 			if (worm.getWorld().getCurrentWorm() == worm){
 				worm.getWorld().startNextTurn();
 			}
+		} catch (StopProgramException exc) {
+			System.out.println("StopProgramException! |"+exc.getMessage());
 		} catch (IllegalStateException exc) {
 			System.out.println("Illegal State error!");
-			worm.getWorld().startNextTurn();
+			if (worm.getActionPoints() != 0){
+				worm.getWorld().startNextTurn();
+			}
 		} catch (ClassCastException exc) {
 			System.out.println("ClassCastException! |"+exc.getMessage());
 			worm.getWorld().startNextTurn();
-		} catch (RuntimeException exc) {
-			System.out.println("RuntimeException! |"+exc.getMessage());
+		} catch (StackOverflowError exc) {
+			System.out.println("StackOverflowError! |"+exc.getMessage());
 			worm.getWorld().startNextTurn();
 		}
 		
@@ -459,6 +467,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				return new Type<Double>((((EntityType) expression1.getValue()
 						.getValue()).getValue()).getXCoordinate());
 			}
@@ -479,6 +490,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				return new Type<Double>((((EntityType) expression1.getValue()
 						.getValue()).getValue()).getYCoordinate());
 			}
@@ -500,6 +514,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				return new Type<Double>(((EntityType) expression1.getValue()
 						.getValue()).getValue().getRadius());
 			}
@@ -520,6 +537,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value! | line: "+line+" column: "+column+" in your program.");
 				}
@@ -543,6 +563,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value! | line: "+line+" column: "+column+" in your program.");
 				}
@@ -567,6 +590,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value! | line: "+line+" column: "+column+" in your program.");
 				}
@@ -590,6 +616,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value! | line: "+line+" column: "+column+" in your program.");
 				}
@@ -614,6 +643,9 @@ public class Program implements
 
 			@Override
 			public Type<Double> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					throw new IllegalArgumentException("Expected an expression with an entity value which is not NULL! | line: "+line+" column: "+column+" in your program.");
+				}
 				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value! | line: "+line+" column: "+column+" in your program.");
 				}
@@ -635,9 +667,12 @@ public class Program implements
 			throw new IllegalArgumentException("Expected an expression with an entity value! | line: "+line+" column: "+column+" in your program.");
 		}
 		return new Expression<Boolean>(line, column, e) {
-
+			
 			@Override
 			public Type<Boolean> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					return new Type<Boolean>(false);
+				}
 				if (((EntityType)expression1.getValue().getValue()).getValue().getClass() != Worm.class){
 					throw new ClassCastException("Expected an expression with a worm value! | line: "+line+" column: "+column+" in your program.");
 				}
@@ -661,6 +696,9 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					return new Type<Boolean>(false);
+				}
 				return new Type<Boolean>(((EntityType)expression1.getValue().getValue()).getValue().getClass() == Worm.class);
 			}
 
@@ -682,6 +720,9 @@ public class Program implements
 
 			@Override
 			public Type<Boolean> getValue() {
+				if (((EntityType)expression1.getValue().getValue()).getValue() == null){
+					return new Type<Boolean>(false);
+				}
 				return new Type<Boolean>(((EntityType)expression1.getValue().getValue()).getValue().getClass() == Food.class);
 			}
 
@@ -849,8 +890,9 @@ public class Program implements
 			public Type<Boolean> getValue() {
 				System.out.println("GetV equality "+line + " "+ column+" "+ expression1.getType() + " "+ expression2.getType() + " "+ expression1.getValue() + " "+ expression2.getValue());
 				if ((expression1.getType()=="null") || (expression2.getType()=="null")){
-					return new Type<Boolean>(expression2.getValue().getValue() == expression1.getValue().getValue());
+					return new Type<Boolean>((expression2.getValue().toString() == expression1.getValue().toString()));
 				} else {
+					System.out.println("else");
 					if (expression1.getValue().getType() != "entity") {
 						return new Type<Boolean>(expression1.getValue().getValue()
 							.equals(expression2.getValue().getValue()));
@@ -880,7 +922,7 @@ public class Program implements
 			public Type<Boolean> getValue() {
 				System.out.println("GetV INequality "+line + " "+ column+" "+ expression1.getType() + " "+ expression2.getType() + " "+ expression1.getValue() + " "+ expression2.getValue());
 				if ((expression1.getType()=="null") || (expression2.getType()=="null")){
-					return new Type<Boolean>(!(expression2.getValue().getValue() == expression1.getValue().getValue()));
+					return new Type<Boolean>(!(expression2.getValue().toString() == expression1.getValue().toString()));
 				} else {
 					if (expression1.getValue().getType() != "entity") {
 						return new Type<Boolean>(!expression1.getValue().getValue()
@@ -1051,13 +1093,13 @@ public class Program implements
 			@Override
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				if (worm.canTurn((Double) expression.getValue().getValue())) {
 					actionHandler.turn(worm, (Double) expression.getValue()
 							.getValue());
-					this.setExecuted(exeCheck);
+					executed = exeCheck;
 				} else {
 					throw new IllegalStateException();
 				}
@@ -1073,12 +1115,12 @@ public class Program implements
 			@Override
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				if (worm.canMove()) {
 					actionHandler.move(worm);
-					this.setExecuted(exeCheck);
+					executed = exeCheck;
 				} else {
 					throw new IllegalStateException();
 				}
@@ -1092,12 +1134,14 @@ public class Program implements
 
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
+				System.out.println("try jump");
 				if (worm.canJump()) {
 					actionHandler.jump(worm);
-					this.setExecuted(exeCheck);
+					executed = exeCheck;
+					throw new StopProgramException();
 				} else {
 					throw new IllegalStateException();
 				}
@@ -1111,11 +1155,11 @@ public class Program implements
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				actionHandler.toggleWeapon(worm);
-				this.setExecuted(exeCheck);
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1130,13 +1174,13 @@ public class Program implements
 			@Override
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				if (worm.canShoot(worm.getWeapon())) {
 					actionHandler.fire(worm, ((Double) expression.getValue()
 							.getValue()).intValue());
-					this.setExecuted(exeCheck);
+					executed = exeCheck;
 				} else {
 					throw new IllegalStateException();
 				}
@@ -1149,10 +1193,10 @@ public class Program implements
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
-				this.setExecuted(exeCheck);
+				executed = exeCheck;
 				throw new IllegalStateException();
 			}
 		};
@@ -1164,7 +1208,7 @@ public class Program implements
 		return new Assignment(line, column, rhs, variableName) {
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				if (expression.getType() != "null"){
@@ -1189,7 +1233,7 @@ public class Program implements
 						globals.put(name,new Type<EntityType>(new EntityType(null)));
 					}
 				}
-				this.setExecuted(exeCheck);
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1205,15 +1249,17 @@ public class Program implements
 
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				if ((Boolean) condition.getValue().getValue()) {
-					ifTrue.execute(exeCheck);					
+					ifTrue.execute(exeCheck);
+					ifFalse.setExecuted(exeCheck);
 				} else {
-					ifFalse.execute(exeCheck);					
+					ifFalse.execute(exeCheck);
+					ifTrue.setExecuted(exeCheck);
 				}
-				this.setExecuted(exeCheck);
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1231,15 +1277,16 @@ public class Program implements
 
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				while ((Boolean) condition.getValue().getValue()) {
+					System.out.println("New WHILE LOOP");
 					body.execute(whileExecutionCheck);
 					body.executed = whileExecutionCheck;
 					whileExecutionCheck = !whileExecutionCheck;
 				}
-				this.setExecuted(exeCheck);
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1252,10 +1299,14 @@ public class Program implements
 			
 			private boolean foreachExecutionCheck = true;
 			
+			private int index = 0;
+			
+			private ArrayList<Entity> entList = new ArrayList<Entity>();
+			
 			@Override
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				boolean any = false;
@@ -1264,23 +1315,20 @@ public class Program implements
 					any = true;
 				}
 				if ((any) || (type == worms.model.programs.ProgramFactory.ForeachType.WORM)){
-					ArrayList<Worm> worms = worm.getWorld().getWormList();
-					for(Worm w: worms){
-						globals.put(variableName,new Type<EntityType>(new EntityType(w)));			
-						body.execute(foreachExecutionCheck);
-						foreachExecutionCheck = !foreachExecutionCheck;
-					}
+					entList.addAll(worm.getWorld().getWormList());
 				}
 				if ((any) || (type == worms.model.programs.ProgramFactory.ForeachType.FOOD)){
-					ArrayList<Food> foods = worm.getWorld().getFoodList();
-					for(Food f:foods){
-						globals.put(variableName,new Type<EntityType>(new EntityType(f)));
-						body.execute(foreachExecutionCheck);
-						foreachExecutionCheck = !foreachExecutionCheck;
-					}
+					entList.addAll(worm.getWorld().getFoodList());
+				}
+				while (index < entList.size()){
+					globals.put(variableName,new Type<EntityType>(new EntityType(entList.get(index))));
+					body.execute(foreachExecutionCheck);
+					foreachExecutionCheck = !foreachExecutionCheck;
+					index ++;
 				}
 				globals.put(variableName,oldVar);
-				this.setExecuted(exeCheck);				
+				executed = exeCheck;
+				index = 0;
 			}
 		};
 	}
@@ -1294,7 +1342,7 @@ public class Program implements
 			
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;
 				started = true;
@@ -1302,7 +1350,7 @@ public class Program implements
 				for (Statement st : statements) {
 					st.execute(exeCheck);
 				}
-				this.setExecuted(exeCheck);
+				executed = exeCheck;
 			}
 		};
 	}
@@ -1314,11 +1362,11 @@ public class Program implements
 			@Override
 			public void run(boolean exeCheck) {
 				if (count >= 1000){
-					throw new RuntimeException("You executed 1000 statements. We suppose you are in an endless loop!");
+					throw new StackOverflowError("You executed 1000 statements. We suppose you are in an endless loop!");
 				}
 				count += 1;				
 				actionHandler.print(expression.getValue().toString());
-				this.setExecuted(exeCheck);
+				executed = exeCheck;
 			}
 		};
 	}
