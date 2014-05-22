@@ -8,278 +8,16 @@ import worms.gui.game.IActionHandler;
 import worms.model.programs.ProgramFactory;
 import worms.model.programs.ProgramParser;
 
-abstract class Expression<T> {
-
-	public int line;
-	public int column;
-
-	public Expression(int l, int c) {
-		line = l;
-		column = c;
-	}
-
-	public Expression(int line, int column, Type<T> d) {
-		this(line, column);
-		value = d;
-	}
-
-	public Expression(int line, int column, Expression<?> e) {
-		this(line, column);
-		expression1 = e;
-	}
-
-	public Expression(int line, int column, Expression<?> e1, Expression<?> e2) {
-		this(line, column);
-		expression1 = e1;
-		expression2 = e2;
-	}
-
-	public Expression<?> expression1;
-	public Expression<?> expression2;
-	public Type<T> value;
-
-	abstract public Type<T> getValue();
-
-	abstract public String getType();
-
-}
-
-abstract class VariableAcces<T> extends Expression<T> {
-
-	public String getType() {
-		return type;
-	}
-
-	public VariableAcces(int l, int c, String n, Type<?> t) {
-		super(l, c);
-		varName = n;
-		type = t.getType();
-	}
-
-	private String type;
-
-	public String varName;
-
-}
-
-abstract class Statement {
-
-	public Statement(int l, int c) {
-		line = l;
-		column = c;
-		executed = false;
-	}
-
-	public boolean executed;
-
-	public int line;
-	public int column;
-
-	public void execute(boolean exeCheck) {
-		if (executed != exeCheck) {
-			run(exeCheck);
-		}
-	}
-
-	protected void setExecuted(boolean exeSet) {
-		executed = exeSet;
-	}
-
-	abstract public void run(boolean exeCheck);
-}
-
-abstract class Sequence extends Statement {
-
-	public Sequence(int l, int c, List<Statement> st) {
-		super(l, c);
-		statements = st;
-	}
-
-	@Override
-	protected void setExecuted(boolean exeSet) {
-		for (Statement st : statements) {
-			st.setExecuted(exeSet);
-		}
-		executed = exeSet;
-	}
-
-	public List<Statement> statements;
-}
-
-abstract class ExpressionAction extends Statement {
-
-	public ExpressionAction(int l, int c, Expression<?> e) {
-		super(l, c);
-		expression = e;
-	}
-
-	@Override
-	protected void setExecuted(boolean exeSet) {
-		executed = exeSet;
-	}
-
-	public Expression<?> expression;
-}
-
-abstract class WhileStatement extends Statement {
-
-	public WhileStatement(int l, int c, Expression<Boolean> cond, Statement b) {
-		super(l, c);
-		condition = cond;
-		body = b;
-	}
-
-	@Override
-	protected void setExecuted(boolean exeSet) {
-		body.setExecuted(exeSet);
-		executed = exeSet;
-	}
-
-	public Expression<Boolean> condition;
-	public Statement body;
-}
-
-abstract class ForeachStatement extends Statement {
-
-	public ForeachStatement(int l, int c,
-			worms.model.programs.ProgramFactory.ForeachType t, String varName,
-			Statement b) {
-		super(l, c);
-		variableName = varName;
-		body = b;
-		type = t;
-
-	}
-
-	private ArrayList<Entity> entList;
-
-	@Override
-	protected void setExecuted(boolean exeSet) {
-		body.setExecuted(exeSet);
-		executed = exeSet;
-	}
-
-	public String variableName;
-	public Statement body;
-	public worms.model.programs.ProgramFactory.ForeachType type;
-}
-
-abstract class IfStatement extends Statement {
-
-	public IfStatement(int l, int c, Expression<Boolean> cond, Statement t,
-			Statement f) {
-		super(l, c);
-		condition = cond;
-		ifTrue = t;
-		ifFalse = f;
-	}
-
-	@Override
-	protected void setExecuted(boolean exeSet) {
-		ifTrue.setExecuted(exeSet);
-		ifFalse.setExecuted(exeSet);
-		executed = exeSet;
-	}
-
-	public Expression<Boolean> condition;
-	public Statement ifTrue;
-	public Statement ifFalse;
-
-}
-
-abstract class Assignment extends Statement {
-
-	public Assignment(int l, int c, Expression<?> e, String n) {
-		super(l, c);
-		expression = e;
-		name = n;
-	}
-
-	@Override
-	protected void setExecuted(boolean exeSet) {
-		executed = exeSet;
-	}
-
-	public Expression<?> expression;
-	public String name;
-
-}
-
-class Type<T> {
-
-	public Type(T v) {
-		value = v;
-	}
-
-	private T value;
-
-	public T getValue() {
-		return value;
-	}
-
-	public void setValue(Expression<?> v) {
-		value = (T) v.getValue().getValue();
-	}
-
-	public String getType() {
-		if (value == null) {
-			return "null";
-		} else if (value.getClass() == Double.class) {
-			return "double";
-		} else if (value.getClass() == Boolean.class) {
-			return "boolean";
-		} else if (value.getClass() == EntityType.class) {
-			return "entity";
-		} else {
-			return "unkown";
-		}
-	}
-
-	public String toString() {
-		if (value == null) {
-			return "null";
-		}
-		return value.toString();
-	}
-
-}
-
-class EntityType {
-
-	public EntityType() {
-		value = null;
-	}
-
-	public EntityType(Entity ent) {
-		value = ent;
-	}
-
-	public Entity getValue() {
-		return value;
-	}
-
-	@Override
-	public String toString() {
-		if (value instanceof Worm) {
-			return ((Worm) value).getName();
-		} else if (value instanceof Food) {
-			return "A Hamburger";
-		} else if (value == null) {
-			return "null";
-		} else {
-			return "False enity";
-		}
-	}
-
-	public Entity value;
-
-}
-
+/**
+ * This is a class of programs used in the game of worms to represend a program
+ * of a worm. This class also implements a method to run this program.
+ * 
+ * @author Glenn Cools & Mathijs Cuppens *
+ */
 public class Program implements
 		ProgramFactory<Expression<?>, Statement, Type<?>> {
 
 	public Program(String programText, IActionHandler handler) {
-		System.out.println("Parse");
 		executionCheck = true;
 		ProgramParser<Expression<?>, Statement, Type<?>> parser = new ProgramParser<Expression<?>, Statement, Type<?>>(
 				this);
@@ -306,8 +44,10 @@ public class Program implements
 		worm = w;
 	}
 
+	/**
+	 * This method runs this programs statements.
+	 */
 	public void runProgram() {
-		System.out.println("Run");
 		if (!(worm.getWorld().isGameFinished())) {
 			try {
 				if (count >= 1000) {
@@ -317,7 +57,6 @@ public class Program implements
 				count = 0;
 				statement.execute(executionCheck);
 				executionCheck = !executionCheck;
-				System.out.println("PROGRAM ENDED!!");
 				if (worm.getWorld().getCurrentWorm() == worm) {
 					worm.getWorld().startNextTurn();
 				}
@@ -327,8 +66,6 @@ public class Program implements
 			} catch (IllegalStateException exc) {
 				System.out.println("Illegal State error! |" + exc.getMessage());
 				if (worm.getActionPoints() != 0) {
-					System.out.println("start new turn");
-					System.out.println(worm.getName());
 					worm.getWorld().startNextTurn();
 				}
 			} catch (ClassCastException exc) {
@@ -1219,7 +956,7 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1233,6 +970,7 @@ public class Program implements
 					executed = exeCheck;
 				} else {
 					throw new IllegalStateException("Worm cannot turn!");
+					
 				}
 			}
 
@@ -1245,7 +983,7 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1268,7 +1006,7 @@ public class Program implements
 		return new Statement(line, column) {
 
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1292,7 +1030,7 @@ public class Program implements
 	public Statement createToggleWeap(int line, int column) {
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1317,7 +1055,7 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1340,7 +1078,7 @@ public class Program implements
 	public Statement createSkip(int line, int column) {
 		return new Statement(line, column) {
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1359,7 +1097,7 @@ public class Program implements
 			String variableName, Expression<?> rhs) {
 		return new Assignment(line, column, rhs, variableName) {
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1419,7 +1157,7 @@ public class Program implements
 				then, otherwise) {
 
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1453,7 +1191,7 @@ public class Program implements
 			private boolean whileExecutionCheck = true;
 
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1485,7 +1223,7 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1528,7 +1266,7 @@ public class Program implements
 			public boolean started = false;
 
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {
@@ -1552,7 +1290,7 @@ public class Program implements
 
 			@Override
 			public void run(boolean exeCheck) {
-				if (worm.getWorld().isGameFinished()){
+				if ((worm.isTerminated()) || (worm.getWorld().isGameFinished())){
 					throw new StopProgramException();
 				}
 				if (count >= 1000) {

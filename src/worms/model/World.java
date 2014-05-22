@@ -184,17 +184,12 @@ public class World {
 				if ((e.getPosition().distanceTo(pos) <= e.getRadius())
 						&& (e != worm)) {
 					result = e;
-					System.out.println("Worm found");
 					found = true;
 				}
 			}
 			pos.setXCoordinate(pos.getXCoordinate() + step * Math.cos(dir));
 			pos.setYCoordinate(pos.getYCoordinate() + step * Math.sin(dir));
 		}
-		if (!found) {
-			System.out.println("not found");
-		}
-
 		return result;
 	}
 
@@ -416,6 +411,7 @@ public class World {
 
 	/**
 	 * Start the turn of the next worm if the game in this world is started.
+	 * If the next worm has a program, run the program.
 	 * 
 	 * @effect	If the game in this world is started and if the last worm has 
 	 * 			finished its turn, start a new round.
@@ -425,6 +421,9 @@ public class World {
 	 * @effect	If the game in this world is started and else set the next worm to the current worm.
 	 * 			|	else
 	 * 			|		then setCurrentWormIndex(next worm index)
+	 * @effect	If the next worm of this world who's turn starts, has a program, run the program.
+	 * 			|if (getCurrenWorm().hasProgram())
+	 * 			|	then getCurrenWorm().getProgram.runProgram()
 	 * @post	If the game in this world is not started, do nothing.
 	 */
 	public void startNextTurn() {
@@ -434,9 +433,7 @@ public class World {
 			} else {
 				setCurrentWormIndex(getCurrentWormIndex() + 1);
 			}
-			System.out.println("checkprog");
 			if (getCurrentWorm().hasProgram()) {
-				System.out.println("has program");
 				getCurrentWorm().getProgram().runProgram();
 			}
 		}
@@ -476,16 +473,18 @@ public class World {
 	}
 
 	/**
-	 * Start a new game.
+	 * Start a new game. If the first worm has a program, run the program.
 	 * 
 	 * @effect	The current worm is set to the first worm (index = 0) in this world.
 	 * 			|setCurrentWormIndex(0)
+	 * @effect	If the next worm of this world who's turn starts, has a program, run the program.
+	 * 			|if (getCurrenWorm().hasProgram())
+	 * 			|	then getCurrenWorm().getProgram.runProgram()
 	 */
 	public void startGame() {
 		isStarted = true;
 		setCurrentWormIndex(0);
 		if (getCurrentWorm().hasProgram()) {
-			System.out.println("has program");
 			getCurrentWorm().getProgram().runProgram();
 		}
 	}

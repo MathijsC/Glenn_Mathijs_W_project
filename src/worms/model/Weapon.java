@@ -310,7 +310,6 @@ public enum Weapon {
 	 */
 	public void shoot(World world, Worm worm, int yield) {
 		Position startingPoint = calcStartingPoint(worm);
-		System.out.println("new projectile");
 		new Projectile(startingPoint.getXCoordinate(), startingPoint.getYCoordinate(), world, this,
 				worm.getDirection(), yield);
 	}

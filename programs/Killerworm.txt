@@ -1,5 +1,3 @@
-// Worm that prints the distance to the nearest other worm, turns and fires.
-
 double a;
 entity w;
 entity me;
